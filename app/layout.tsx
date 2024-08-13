@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import Navebare from "@/components/Navebare";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Roboto({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +18,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <SessionProvider>
+        <body
+          className={
+            inter.className &&
+            "grid grid-rows-[46px_auto_46px] md:grid-rows-[66px_auto_46px]"
+          }
+        >
+          <Navebare />
+          <main className="border border-yellow-700">{children}</main>
+          <Footer />
+        </body>
+      </SessionProvider>
     </html>
   );
 }
+
+const Footer = () => {
+  return (
+    <section className="text-white flex items-center justify-center bg-[#353131] truncate">
+      @ Rights Reserved
+    </section>
+  );
+};
