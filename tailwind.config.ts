@@ -21,6 +21,9 @@ const config = {
       fontWeight: {
         750: "750",
       },
+      boxShadow: {
+        "custom-shadow": "#623af3  0px 50px 30px 30px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -77,7 +80,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar")],
 } satisfies Config;
 
 export default config;

@@ -3,7 +3,6 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import Navebare from "@/components/Navebare";
-
 const inter = Roboto({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,15 +18,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-        <body
-          className={
-            inter.className &&
-            "grid grid-rows-[46px_auto_46px] md:grid-rows-[66px_auto_46px]"
-          }
-        >
-          <Navebare />
-          <main className="border border-yellow-700">{children}</main>
-          <Footer />
+        <body className={inter.className}>
+          <main className="grid grid-rows-[46px_auto_46px] md:grid-rows-[66px_auto_46px]">
+            <Navebare />
+            <section className="relative bg-slate-200">
+              <div className="shadow-custom-shadow absolute top-0 left-0 right-0 h-32 bg-[#623af3]"></div>
+              <div className="relative">{children}</div>
+            </section>
+            <Footer />
+          </main>
         </body>
       </SessionProvider>
     </html>
