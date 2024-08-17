@@ -25,7 +25,7 @@ const Home = () => {
       </div>
       <div className="w-[94dvw] sm:w-[96dvw] lg:w-[85dvw] max-w-[1200px] ml-auto lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
         <h1 className="lg:text-lg font-medium my-2">Popular Hotels</h1>
-        <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-scroll scrollbar-none space-x-2 rounded-s-xl lg:rounded-e-xl">
+        <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-auto scrollbar-none space-x-2 rounded-s-xl lg:rounded-e-xl">
           <HotelSliderCard />
           <HotelSliderCard />
           <HotelSliderCard />
@@ -80,7 +80,7 @@ const Home = () => {
       </div>
       <div className="w-[94dvw] sm:w-[96dvw] ml-auto lg:w-[85dvw] max-w-[1200px] lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
         <h1 className="lg:text-lg font-medium my-2">Famous Hotels</h1>
-        <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-scroll space-x-2 rounded-s-xl lg:rounded-e-xl">
+        <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-auto scrollbar-none space-x-2 rounded-s-xl lg:rounded-e-xl">
           <HotelSliderCard />
           <HotelSliderCard />
           <HotelSliderCard />
@@ -133,7 +133,7 @@ const Home = () => {
           <HotelSliderCard />
         </div>
       </div>
-      <Card className="lg:w-[85%] lg:mx-auto mx-2">
+      <Card className="lg:w-[85%] max-w-[1200px] lg:mx-auto mx-2">
         <CardHeader className="p-2 sm:p-4">
           <CardTitle>FAQ</CardTitle>
         </CardHeader>
