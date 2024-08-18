@@ -38,7 +38,7 @@ const HotelsPage = () => {
         </div>
       </div>
       <div className="rounded-3xl bg-[#fceeee]">
-        <section className="md:w-[90%] lg:w-[85%] max-w-[1220px] mx-auto md:flex md:justify-center md:gap-x-4 p-3 md:pt-24 lg:pt-[4rem] lg:mt-10 ">
+        <section className="md:w-[90%] lg:w-[85%] max-w-[76.3rem] mx-auto md:flex md:justify-center md:gap-x-4 p-3 md:pt-24 lg:pt-[4rem] lg:mt-10 ">
           <p className="md:hidden text-[13px] font-bold mb-2">
             2671 Hotels Match your Search critiria
           </p>

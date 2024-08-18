@@ -22,9 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <SessionProvider>
         <body className={inter.className}>
-          <main className="h-screen grid grid-rows-[46px_auto_46px] md:grid-rows-[66px_auto_46px]">
+          <main className="min-h-screen flex flex-col">
             <Navebare />
-            <section className="relative bg-slate-200">
+            <section className="flex-1 relative bg-slate-200">
               <div className="shadow-custom-shadow absolute top-0 left-0 right-0 h-32 bg-[#623af3]"></div>
               <div className="relative">{children}</div>
             </section>
@@ -38,7 +38,7 @@ export default function RootLayout({
 
 const Footer = () => {
   return (
-    <section className="relative text-white flex items-center justify-center bg-[#353131] truncate">
+    <section className="h-[46px] relative text-white flex items-center justify-center bg-[#353131] truncate">
       @ Rights Reserved
     </section>
   );

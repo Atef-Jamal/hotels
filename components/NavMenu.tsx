@@ -39,10 +39,9 @@ const NavMenu = () => {
       </DialogTrigger>
       <DialogContent
         style={{
-          height: `calc(100vh - 46px)`,
-          width: "100vw",
+          height: `calc(100dvh - 46px)`,
         }}
-        className="max-w-screen mt-[22px] border-4 border-black overflow-hidden"
+        className="max-w-screen mt-[22px] overflow-hidden"
       >
         <VisuallyHidden asChild>
           <DialogTitle>Nav Menu</DialogTitle>

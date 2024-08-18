@@ -1,5 +1,4 @@
-"use client";
-import React, { RefObject, useRef } from "react";
+import React from "react";
 import testImage from "@/public/gamePhoto-43.jpg";
 import Image from "next/image";
 import {
@@ -18,22 +17,11 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import MenuBarHotelsPage from "@/components/MenuBarHotelsPage";
 
 const HotelDetailsPage = () => {
-  const overviewRef = useRef<HTMLDivElement>(null);
-  const roomsRef = useRef<HTMLDivElement>(null);
-  const hotelsNearbyRef = useRef<HTMLDivElement>(null);
-  const nearbyAttractionsRef = useRef<HTMLDivElement>(null);
-  const reviewsRef = useRef<HTMLDivElement>(null);
-  const hotelPolicyRef = useRef<HTMLDivElement>(null);
-  const amentitiesRef = useRef<HTMLDivElement>(null);
-
-  const scrollToElement = (refObject: RefObject<HTMLDivElement>) => {
-    refObject.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
-    <section className="bg-slate-200 w-screen">
+    <section className="bg-slate-200">
       <div className="h-44 relative">
         <Image src={testImage} alt="" className="h-full" />
         <span className="absolute top-1 right-1 rounded-sm px-2 text-white text-sm bg-[#0e020263]">
@@ -47,52 +35,9 @@ const HotelDetailsPage = () => {
         </button>
         <div className="absolute bottom-0 w-full shadow-custom-shadow2"></div>
       </div>
-      <div className="-mt-5 mx-3 sticky left-0 top-0 z-[10] whitespace-nowrap space-x-4 px-2 rounded-ss-lg rounded-se-lg overflow-auto scrollbar-none bg-white">
-        <button
-          onClick={() => scrollToElement(overviewRef)}
-          className="inline-block font-bold text-sm py-2 border-b-2 border-blue-800"
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => scrollToElement(roomsRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Rooms
-        </button>
-        <button
-          onClick={() => scrollToElement(hotelsNearbyRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Hotels Nearby
-        </button>
-        <button
-          onClick={() => scrollToElement(nearbyAttractionsRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Nearby Attractions
-        </button>
-        <button
-          onClick={() => scrollToElement(amentitiesRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Amentities
-        </button>
-        <button
-          onClick={() => scrollToElement(hotelPolicyRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Hotel Policy
-        </button>
-        <span
-          onClick={() => scrollToElement(reviewsRef)}
-          className="inline-block font-bold text-sm py-2"
-        >
-          Reviews
-        </span>
-      </div>
+      <MenuBarHotelsPage />
       <div
-        ref={overviewRef}
+        id={"hotel-detail-page-overview-section"}
         className="mx-3 pb-3 space-y-2 rounded-es-lg rounded-ee-lg bg-white relative mb-2 "
       >
         <div className="flex items-center justify-between px-3">
@@ -186,7 +131,7 @@ const HotelDetailsPage = () => {
             </div>
           </div>
         </div>
-        <div className="w-[88dvw] whitespace-nowrap space-x-2 overflow-auto scrollbar-none">
+        <div className="whitespace-nowrap space-x-2 overflow-auto scrollbar-none">
           <span className="inline-block py-1 px-3 bg-[#bdbbbb6b] text-xs">
             Breackfast Included
           </span>
@@ -205,7 +150,7 @@ const HotelDetailsPage = () => {
         </div>
       </div>
       <div
-        ref={roomsRef}
+        id={"hotel-detail-page-rooms-section"}
         className="mx-3 p-3 space-y-2 rounded-lg bg-white flex items-center justify-between mb-2"
       >
         <div className="w-28 h-[7.5rem] rounded-sm overflow-hidden border">
@@ -244,8 +189,8 @@ const HotelDetailsPage = () => {
         </div>
       </div>
       <div
-        ref={hotelsNearbyRef}
-        className="w-auto mx-3 py-3 pl-3 space-y-1 rounded-lg bg-white mb-2"
+        id={"hotel-detail-page-hotels-nearby-section"}
+        className="mx-3 py-3 pl-3 space-y-1 rounded-lg bg-white mb-2"
       >
         <h1 className="text-lg font-extrabold">Hotels Nearby</h1>
         <div className="whitespace-nowrap space-x-2 py-2 overflow-auto scrollbar-none">
@@ -308,7 +253,7 @@ const HotelDetailsPage = () => {
         </div>
       </div>
       <div
-        ref={reviewsRef}
+        id={"hotel-detail-page-reviews-section"}
         className="mx-3 space-y-2 rounded-lg overflow-hidden bg-white mb-2"
       >
         <div className="flex items-center justify-between bg-slate-100 p-2">
@@ -363,7 +308,7 @@ const HotelDetailsPage = () => {
               </div>
             </div>
           </div>
-          <div className="whitespace-nowrap space-x-2 overflow-auto scrollbar-none py-3 pl-3">
+          <div className=" whitespace-nowrap space-x-2 overflow-auto scrollbar-none py-3 pl-3">
             <div className="w-64 inline-block border border-zinc-500 p-3 rounded-md">
               <div className="flex items-center gap-x-3 mb-2">
                 <Image
@@ -408,7 +353,7 @@ const HotelDetailsPage = () => {
         </div>
       </div>
       <div
-        ref={nearbyAttractionsRef}
+        id={"hotel-detail-page-nearby-attractions-section"}
         className="mx-3 p-3 space-y-2 rounded-lg bg-white mb-2"
       >
         <h1 className="text-lg font-extrabold">Nearby Attractions</h1>
@@ -464,7 +409,7 @@ const HotelDetailsPage = () => {
         </div>
       </div>
       <div
-        ref={amentitiesRef}
+        id={"hotel-detail-page-amentities-section"}
         className="mx-3 p-3 space-y-2 rounded-lg bg-white mb-2"
       >
         <h1 className="text-lg font-extrabold">Amentities</h1>
@@ -526,7 +471,7 @@ const HotelDetailsPage = () => {
         </Button>
       </div>
       <div
-        ref={hotelPolicyRef}
+        id={"hotel-detail-page-hotel-policy-section"}
         className="mx-3 p-3 space-y-2 rounded-lg bg-white mb-2"
       >
         <h1 className="text-lg font-extrabold">Hotel Policy</h1>

@@ -1,4 +1,4 @@
-import { HotelSliderCard } from "@/components/HotelsSlider";
+import HotelSliderCard from "@/components/HotelSliderCard";
 import SearchBox from "@/components/SearchBox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -23,8 +23,8 @@ const Home = () => {
       <div className="w-[95%] lg:w-[85%] max-w-[1200px] mx-auto rounded-lg">
         <SearchBox />
       </div>
-      <div className="w-[94dvw] sm:w-[96dvw] lg:w-[85dvw] max-w-[1200px] ml-auto lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
-        <h1 className="lg:text-lg font-medium my-2">Popular Hotels</h1>
+      <div className="w-[97.2%] lg:w-[85%] max-w-[1200px] ml-auto lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
+        <h1 className="text-lg font-bold my-2">Popular Hotels</h1>
         <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-auto scrollbar-none space-x-2 rounded-s-xl lg:rounded-e-xl">
           <HotelSliderCard />
           <HotelSliderCard />
@@ -78,8 +78,8 @@ const Home = () => {
           <HotelSliderCard />
         </div>
       </div>
-      <div className="w-[94dvw] sm:w-[96dvw] ml-auto lg:w-[85dvw] max-w-[1200px] lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
-        <h1 className="lg:text-lg font-medium my-2">Famous Hotels</h1>
+      <div className="w-[97.2%] lg:w-[85%] max-w-[1200px] ml-auto lg:mx-auto rounded-s-xl lg:rounded-e-xl overflow-hidden">
+        <h1 className="text-lg font-bold my-2">Famous Hotels</h1>
         <div className="bg-white px-2 pt-2 pb-1 whitespace-nowrap overflow-x-auto scrollbar-none space-x-2 rounded-s-xl lg:rounded-e-xl">
           <HotelSliderCard />
           <HotelSliderCard />
@@ -133,7 +133,7 @@ const Home = () => {
           <HotelSliderCard />
         </div>
       </div>
-      <Card className="lg:w-[85%] max-w-[1200px] lg:mx-auto mx-2">
+      <Card className="w-[95%] lg:w-[85%] max-w-[1200px] mx-auto ">
         <CardHeader className="p-2 sm:p-4">
           <CardTitle>FAQ</CardTitle>
         </CardHeader>

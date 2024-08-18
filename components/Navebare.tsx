@@ -3,7 +3,7 @@ import NavMenu from "./NavMenu";
 
 const Navebare = () => {
   return (
-    <div className="bg-[#623af3] flex items-center justify-between px-2 sm:px-4 md:px-7">
+    <div className="h-[46px] md:h-[66px] bg-[#623af3] flex items-center justify-between px-2 sm:px-4 md:px-7">
       <p className="font-bold text-xl md:text-2xl text-white">Hotels.com</p>
       <ul className=" hidden md:flex items-center justify-center gap-x-8 ">
         <li className="text-white font-medium">
