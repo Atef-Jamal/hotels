@@ -1,46 +1,46 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IHelperObject {
   [key: string]: string;
 }
 const helperObj: IHelperObject = {
-  "hotel-detail-page-overview-section": "overview-button",
-  "hotel-detail-page-rooms-section": "rooms-button",
-  "hotel-detail-page-hotels-nearby-section": "hotels-nearby-button",
-  "hotel-detail-page-reviews-section": "reviews-button",
-  "hotel-detail-page-nearby-attractions-section": "nearby-attractions-button",
-  "hotel-detail-page-amentities-section": "amentities-button",
-  "hotel-detail-page-hotel-policy-section": "hotel-policy-button",
+  "overview-section": "overview-button",
+  "rooms-section": "rooms-button",
+  "hotels-nearby-section": "hotels-nearby-button",
+  "reviews-section": "reviews-button",
+  "nearby-attractions-section": "nearby-attractions-button",
+  "amentities-section": "amentities-button",
+  "hotel-policy-section": "hotel-policy-button",
 };
 
 const MenuBarHotelsPage = () => {
   const [activeSection, setActiveSection] = useState("");
   const [menuBarIsSticky, setMenuBarIsSticky] = useState(false);
-
+  const timeOutRef1 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef2 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef3 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef4 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef5 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef6 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeOutRef7 = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refs = [
+    timeOutRef1,
+    timeOutRef2,
+    timeOutRef3,
+    timeOutRef4,
+    timeOutRef5,
+    timeOutRef6,
+    timeOutRef7,
+  ];
   const scrollToElement = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (!element) return;
 
-    element.scrollIntoView({
-      block: "center",
-    });
-
-    setTimeout(() => {
-      setActiveSection(elementId);
-    }, 200);
-
+    const rec = element.getBoundingClientRect();
+    window.scrollBy({ top: rec.top - 44, behavior: "smooth" });
     element.classList.add("border", "border-green-800");
-
-    const handleCleanBorder = () => {
-      setTimeout(() => {
-        element.classList.remove("border", "border-green-800");
-      }, 3000);
-      document.removeEventListener("scroll", handleCleanBorder);
-    };
-
-    document.addEventListener("scroll", handleCleanBorder);
   };
 
   useEffect(() => {
@@ -51,25 +51,44 @@ const MenuBarHotelsPage = () => {
         setMenuBarIsSticky(false);
       }
       if (window.scrollY >= 2017) {
-        setActiveSection("hotel-detail-page-hotel-policy-section");
+        setActiveSection("hotel-policy-section");
       } else if (window.scrollY >= 1643) {
-        setActiveSection("hotel-detail-page-amentities-section");
+        setActiveSection("amentities-section");
       } else if (window.scrollY >= 1446) {
-        setActiveSection("hotel-detail-page-nearby-attractions-section");
+        setActiveSection("nearby-attractions-section");
       } else if (window.scrollY >= 1034) {
-        setActiveSection("hotel-detail-page-reviews-section");
+        setActiveSection("reviews-section");
       } else if (window.scrollY >= 645) {
-        setActiveSection("hotel-detail-page-hotels-nearby-section");
+        setActiveSection("hotels-nearby-section");
       } else if (window.scrollY >= 500) {
-        setActiveSection("hotel-detail-page-rooms-section");
+        setActiveSection("rooms-section");
       } else if (window.scrollY >= 200) {
-        setActiveSection("hotel-detail-page-overview-section");
+        setActiveSection("overview-section");
       } else {
         setActiveSection("");
       }
+
+      const elementIds = Object.keys(helperObj);
+      let elements: HTMLElement[] = [];
+      for (let index = 0; index < elementIds.length; index++) {
+        const getElement = document.getElementById(elementIds[index])!;
+        elements.push(getElement);
+      }
+
+      elements.forEach((ele, i) => {
+        if (refs[i].current) clearTimeout(refs[i].current);
+        refs[i].current = setTimeout(() => {
+          ele.classList.remove("border", "border-green-800");
+        }, 3000);
+      });
     };
     document.addEventListener("scroll", handleActiveSection);
-    return () => document.removeEventListener("scroll", handleActiveSection);
+    return () => {
+      refs.forEach((re) => {
+        if (re.current) clearTimeout(re.current);
+      });
+      document.removeEventListener("scroll", handleActiveSection);
+    };
   }, []);
 
   useEffect(() => {
@@ -84,16 +103,18 @@ const MenuBarHotelsPage = () => {
   return (
     <div
       className={cn(
-        "-mt-5 sticky left-0 top-0 z-[10] whitespace-nowrap space-x-4 px-2 rounded-ss-lg rounded-se-lg overflow-auto scrollbar-none bg-white",
-        menuBarIsSticky ? "bg-[#87b1ff]" : "mx-3"
+        "whitespace-nowrap space-x-4 px-2 overflow-auto scrollbar-none",
+        menuBarIsSticky
+          ? "bg-[#87b1ff] lg:mx-3"
+          : "bg-white rounded-ss-lg rounded-se-lg mx-3"
       )}
     >
       <button
         id="overview-button"
-        onClick={() => scrollToElement("hotel-detail-page-overview-section")}
+        onClick={() => scrollToElement("overview-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-overview-section"
+          activeSection === "overview-section" || activeSection === ""
             ? "border-b-2 border-blue-800"
             : ""
         )}
@@ -102,24 +123,20 @@ const MenuBarHotelsPage = () => {
       </button>
       <button
         id="rooms-button"
-        onClick={() => scrollToElement("hotel-detail-page-rooms-section")}
+        onClick={() => scrollToElement("rooms-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-rooms-section"
-            ? "border-b-2 border-blue-800"
-            : ""
+          activeSection === "rooms-section" ? "border-b-2 border-blue-800" : ""
         )}
       >
         Rooms
       </button>
       <button
         id="hotels-nearby-button"
-        onClick={() =>
-          scrollToElement("hotel-detail-page-hotels-nearby-section")
-        }
+        onClick={() => scrollToElement("hotels-nearby-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-hotels-nearby-section"
+          activeSection === "hotels-nearby-section"
             ? "border-b-2 border-blue-800"
             : ""
         )}
@@ -128,10 +145,10 @@ const MenuBarHotelsPage = () => {
       </button>
       <button
         id="reviews-button"
-        onClick={() => scrollToElement("hotel-detail-page-reviews-section")}
+        onClick={() => scrollToElement("reviews-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-reviews-section"
+          activeSection === "reviews-section"
             ? "border-b-2 border-blue-800"
             : ""
         )}
@@ -140,12 +157,10 @@ const MenuBarHotelsPage = () => {
       </button>
       <button
         id="nearby-attractions-button"
-        onClick={() =>
-          scrollToElement("hotel-detail-page-nearby-attractions-section")
-        }
+        onClick={() => scrollToElement("nearby-attractions-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-nearby-attractions-section"
+          activeSection === "nearby-attractions-section"
             ? "border-b-2 border-blue-800"
             : ""
         )}
@@ -154,10 +169,10 @@ const MenuBarHotelsPage = () => {
       </button>
       <button
         id="amentities-button"
-        onClick={() => scrollToElement("hotel-detail-page-amentities-section")}
+        onClick={() => scrollToElement("amentities-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-amentities-section"
+          activeSection === "amentities-section"
             ? "border-b-2 border-blue-800"
             : ""
         )}
@@ -166,12 +181,10 @@ const MenuBarHotelsPage = () => {
       </button>
       <button
         id="hotel-policy-button"
-        onClick={() =>
-          scrollToElement("hotel-detail-page-hotel-policy-section")
-        }
+        onClick={() => scrollToElement("hotel-policy-section")}
         className={cn(
           "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-detail-page-hotel-policy-section"
+          activeSection === "hotel-policy-section"
             ? "border-b-2 border-blue-800"
             : ""
         )}

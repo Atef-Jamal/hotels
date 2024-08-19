@@ -18,9 +18,6 @@ const config = {
       },
     },
     extend: {
-      fontWeight: {
-        750: "750",
-      },
       boxShadow: {
         "custom-shadow": "#623af3  0px 50px 30px 30px",
         "custom-shadow2": "#e2e8f0 0px 0px 20px 20px",
