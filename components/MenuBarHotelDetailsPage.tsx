@@ -42,13 +42,15 @@ const MenuBarHotelDetailsPage = () => {
     if (!element) return;
 
     const rec = element.getBoundingClientRect();
-    window.scrollBy({ top: rec.top - 44, behavior: "smooth" });
+    if (typeof window !== undefined) {
+      window.scrollBy({ top: rec.top - 44, behavior: "smooth" });
+    }
     element.classList.add("border", "border-green-800");
   };
 
   useEffect(() => {
-    console.log("first");
     const handleActiveSection = () => {
+      if (typeof window === undefined) return;
       if (window.scrollY >= 204) {
         setMenuBarIsSticky(true);
       } else {
