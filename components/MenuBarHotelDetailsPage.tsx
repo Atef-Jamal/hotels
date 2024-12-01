@@ -15,7 +15,7 @@ const helperObj: IHelperObject = {
   "hotel-policy-section": "hotel-policy-button",
 };
 
-const MenuBarHotelsPage = () => {
+const MenuBarHotelDetailsPage = () => {
   const [activeSection, setActiveSection] = useState("");
   const [menuBarIsSticky, setMenuBarIsSticky] = useState(false);
   const timeOutRef1 = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -105,8 +105,8 @@ const MenuBarHotelsPage = () => {
       className={cn(
         "whitespace-nowrap space-x-4 px-2 overflow-auto scrollbar-none",
         menuBarIsSticky
-          ? "bg-[#87b1ff] lg:mx-3"
-          : "bg-white rounded-ss-lg rounded-se-lg mx-3"
+          ? "bg-[#87b1ff] lg:mx-2"
+          : "bg-white rounded-ss-lg rounded-se-lg mx-2"
       )}
     >
       <button
@@ -195,4 +195,4 @@ const MenuBarHotelsPage = () => {
   );
 };
 
-export default MenuBarHotelsPage;
+export default MenuBarHotelDetailsPage;

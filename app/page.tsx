@@ -8,10 +8,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const Home = () => {
+const Home = async () => {
   return (
     <section className="space-y-3 py-3 sm:space-y-4 sm:py-4 md:space-y-6 md:py-6">
-      <h1 className="">
+      <h1>
         <p className="text-lg font-medium mx-4 text-[#f5efef] text-center">
           Effortlessly book your perfect stay with our intuitive hotel booking
           platform

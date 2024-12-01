@@ -1,7 +1,8 @@
 import Image from "next/image";
 import testImage from "@/public/gamePhoto-43.jpg";
+import { IHotel } from "@/types/types";
 
-const HotelDetailCard = () => {
+const HotelDetailCard = ({ hotel }: { hotel: IHotel }) => {
   return (
     <div className="flex items-center justify-center rounded-md overflow-hidden bg-[#fff] h-[190px]">
       <Image
@@ -11,19 +12,23 @@ const HotelDetailCard = () => {
       />
       <div className="flex-1 h-full p-2 sm:p-3 space-y-1">
         <h1 className="font-bold leading-4 truncate">
-          Ramda Blaza by Dubai Derie
+          {/* Ramda Blaza by Dubai Derie */}
+          {hotel.name}
         </h1>
         <div className="flex gap-x-1">
           <span className="rounded-s-lg rounded-b-lg bg-blue-900 text-white text-[13px] font-medium p-[3px]">
-            4.2/5
+            {hotel.averageRating}/5
           </span>
-          <p className="text-sm font-medium">Very good | 142 Review</p>
+          <p className="text-sm font-medium">
+            Very good | {hotel.reviews.length} Review
+          </p>
         </div>
         <p className="text-[13px] sm:text-sm font-medium text-muted-foreground leading-4">
-          {"some words about this hotel might be beneficial so give some words please and taht it djh skjh sdjhgse zlk".slice(
+          {/* {"some words about this hotel might be beneficial so give some words please and taht it djh skjh sdjhgse zlk".slice(
             0,
             80
-          )}
+          )} */}
+          {hotel.description.slice(0, 80)}
         </p>
         <p className="text-[13px] sm:text-sm font-medium text-muted-foreground">
           Saved by 1,698 people

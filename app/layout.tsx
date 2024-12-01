@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import Navebare from "@/components/Navebare";
+import Footer from "@/components/Footer";
+import "./globals.css";
+
 const inter = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   subsets: ["latin"],
@@ -19,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <SessionProvider>
+    <SessionProvider>
+      <html lang="en">
         <body className={inter.className}>
           <main className="min-h-screen flex flex-col">
             <Navebare />
@@ -31,15 +33,7 @@ export default function RootLayout({
             <Footer />
           </main>
         </body>
-      </SessionProvider>
-    </html>
+      </html>
+    </SessionProvider>
   );
 }
-
-const Footer = () => {
-  return (
-    <section className="h-[46px] relative text-white flex items-center justify-center bg-[#353131] truncate">
-      @ Rights Reserved
-    </section>
-  );
-};

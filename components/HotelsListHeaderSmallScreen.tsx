@@ -1,9 +1,20 @@
+"use client";
+import { cn } from "@/lib/utils";
 import { ArrowDown, SearchIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const HotelsListHeaderSmallScreen = () => {
+  const pathname = usePathname();
+  const isHotelDetailPage = pathname.startsWith("/hotels/");
+
   return (
-    <header className="py-2 md:hidden sticky top-0 z-[1] bg-[#623af3]">
+    <header
+      className={cn(
+        "py-2 md:hidden sticky top-0 z-[1] bg-[#623af3]",
+        isHotelDetailPage && "hidden"
+      )}
+    >
       <div className="flex items-center justify-between mb-2 mx-3 py-1 px-3 bg-white rounded-sm">
         <div>
           <p className="text-[13px] font-bold">Dubai, Untited Arab Emirates</p>

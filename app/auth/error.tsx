@@ -6,7 +6,7 @@ interface IErrorPageProps {
   reset?: () => void;
 }
 const error = (error: IErrorPageProps) => {
-  return <div>{error.error?.message} at Test Page</div>;
+  return <div>{error.error?.message} there was an error in auth</div>;
 };
 
 export default error;
