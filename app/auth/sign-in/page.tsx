@@ -120,7 +120,7 @@ const SignInPage = () => {
                   href={"/auth/sign-up"}
                   className="text-sm font-bold ml-auto underline text-blue-700"
                 >
-                  Don't have an account
+                  Do not have an account
                 </Link>
               </div>
               <Button type="submit" className="w-full">

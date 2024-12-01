@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface IHelperObject {
   [key: string]: string;
@@ -25,15 +25,18 @@ const MenuBarHotelDetailsPage = () => {
   const timeOutRef5 = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timeOutRef6 = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timeOutRef7 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refs = [
-    timeOutRef1,
-    timeOutRef2,
-    timeOutRef3,
-    timeOutRef4,
-    timeOutRef5,
-    timeOutRef6,
-    timeOutRef7,
-  ];
+  const refs = useMemo(
+    () => [
+      timeOutRef1,
+      timeOutRef2,
+      timeOutRef3,
+      timeOutRef4,
+      timeOutRef5,
+      timeOutRef6,
+      timeOutRef7,
+    ],
+    []
+  );
   const scrollToElement = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -44,6 +47,7 @@ const MenuBarHotelDetailsPage = () => {
   };
 
   useEffect(() => {
+    console.log("first");
     const handleActiveSection = () => {
       if (window.scrollY >= 204) {
         setMenuBarIsSticky(true);
@@ -89,7 +93,7 @@ const MenuBarHotelDetailsPage = () => {
       });
       document.removeEventListener("scroll", handleActiveSection);
     };
-  }, []);
+  }, [refs]);
 
   useEffect(() => {
     const elementId = helperObj[activeSection];
