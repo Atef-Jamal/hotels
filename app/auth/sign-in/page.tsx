@@ -3,21 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MdEmail, MdPassword } from "react-icons/md";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
@@ -62,7 +50,7 @@ const SignInPage = () => {
       }}
       className="flex items-center justify-center bg-gradient-to-b from-[#78c5f8] to-[#fffe]"
     >
-      <Card className="w-[90%] sm:w-[80%] md:w-[30rem] rounded-3xl shadow-xl bg-gradient-to-b from-[#cadff3] to-[#ffffff]">
+      <Card className="w-[90%] rounded-3xl bg-gradient-to-b from-[#cadff3] to-[#ffffff] shadow-xl sm:w-[80%] md:w-[30rem]">
         <CardHeader className="pb-2 pt-4">
           <CardTitle className="mx-auto">Sign In</CardTitle>
           <CardDescription className="mx-auto">
@@ -71,27 +59,20 @@ const SignInPage = () => {
         </CardHeader>
         <CardContent>
           {formState.errors.root && (
-            <p className="text-sm sm:text-base font-medium text-center bg-[#d42424d7] text-white p-1 rounded-sm">
+            <p className="rounded-sm bg-[#d42424d7] p-1 text-center text-sm font-medium text-white sm:text-base">
               {formState.errors.root.message}
             </p>
           )}
           <Form {...form}>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-2 md:space-y-3"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 md:space-y-3">
               <FormField
                 control={control}
                 name="email"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdEmail className="absolute top-2 left-1" size={23} />
+                    <MdEmail className="absolute left-1 top-2" size={23} />
                     <FormControl>
-                      <Input
-                        placeholder="Email"
-                        {...field}
-                        className="font-bold pl-10 bg-[#d8cfcf]"
-                      />
+                      <Input {...field} placeholder="Email" className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,13 +83,9 @@ const SignInPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdPassword className="absolute top-2 left-1" size={23} />
+                    <MdPassword className="absolute left-1 top-2" size={23} />
                     <FormControl>
-                      <Input
-                        placeholder="Password"
-                        {...field}
-                        className="font-bold pl-10 bg-[#d8cfcf]"
-                      />
+                      <Input {...field} placeholder="Password" className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,10 +93,7 @@ const SignInPage = () => {
               />
 
               <div className="flex">
-                <Link
-                  href={"/auth/sign-up"}
-                  className="text-sm font-bold ml-auto underline text-blue-700"
-                >
+                <Link href={"/auth/sign-up"} className="ml-auto text-sm font-bold text-blue-700 underline">
                   Do not have an account
                 </Link>
               </div>
@@ -129,16 +103,16 @@ const SignInPage = () => {
               <p className="w-full text-center font-bold">OR</p>
             </form>
           </Form>
-          <div className="flex items-center justify-center gap-x-10 ">
+          <div className="flex items-center justify-center gap-x-10">
             <button
               onClick={() => handleSignInWithProvider("google")}
-              className="border rounded-md px-5 py-2 bg-white"
+              className="rounded-md border bg-white px-5 py-2"
             >
               <FaGoogle size={25} />
             </button>
             <button
               onClick={() => handleSignInWithProvider("github")}
-              className="border rounded-md px-5 py-2 bg-white"
+              className="rounded-md border bg-white px-5 py-2"
             >
               <FaGithub size={25} />
             </button>

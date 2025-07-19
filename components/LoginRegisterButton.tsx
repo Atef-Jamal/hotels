@@ -14,24 +14,19 @@ const LoginRegisterButton = () => {
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/auth/sign-in" });
   };
-  // useEffect(() => {
-  //   const ins = setInterval(() => {
-  //     console.log();
-  //   }, 1000);
-  //   return () => clearInterval(ins);
-  // }, []);
+
   if (userLoading) {
     return (
-      <span className="animate-pulse hidden md:flex text-sm leading-[18px] font-[700] bg-white py-2 px-4 rounded-sm text-blue-900 tracking-wide">
+      <button className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base">
         Loading
-      </span>
+      </button>
     );
   }
   if (userAuthenticated) {
     return (
       <button
         onClick={handleSignOut}
-        className="hidden md:flex items-center gap-x-2 text-sm leading-[18px] font-[700] bg-white py-2 px-4 rounded-sm text-blue-900 tracking-wide"
+        className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base"
       >
         <LogOut size={18} />
         Signout
@@ -40,9 +35,8 @@ const LoginRegisterButton = () => {
   }
   if (userUnAuthenticated) {
     return (
-      <button className="hidden md:flex gap-x-1 text-sm leading-[18px] font-[700] bg-white py-2 px-4 rounded-sm text-blue-900 tracking-wide">
-        <Link href={"/auth/sign-in"}>Sign in</Link> /
-        <Link href={"/auth/sign-up"}>Register</Link>
+      <button className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base">
+        <Link href={"/auth/sign-in"}>Sign in</Link> /<Link href={"/auth/sign-up"}>Register</Link>
       </button>
     );
   }

@@ -1,17 +1,13 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import testImage from "@/public/gamePhoto-43.jpg";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 
-const ImageSlider = () => {
+const ImageSlider = ({ images }: { images: string[] }) => {
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeImage, setActiveImage] = useState(0);
-  const imagesNum = 10;
 
-  const handlePrev = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handlePrev = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // @ts-ignore: Ignoring TypeScript error on the next line
     event.currentTarget.nextElementSibling.disabled = false;
 
@@ -21,12 +17,10 @@ const ImageSlider = () => {
     }
     setActiveImage((prev) => prev - 1);
   };
-  const handleNext = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleNext = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // @ts-ignore: Ignoring TypeScript error on the next line
     event.currentTarget.previousElementSibling.disabled = false;
-    if (activeImage === imagesNum - 1) {
+    if (activeImage === images.length - 1) {
       event.currentTarget.disabled = true;
     } else {
       setActiveImage((prev) => prev + 1);
@@ -41,38 +35,41 @@ const ImageSlider = () => {
   }, [activeImage]);
 
   return (
-    <div className="sm:hidden h-44 whitespace-nowrap overflow-x-hidden scrollbar-none space-x-2">
-      {[...Array(imagesNum).keys()].map((_, index) => {
+    <div className="h-44 space-x-2 overflow-x-hidden whitespace-nowrap scrollbar-none">
+      {images.map((img, index) => {
         return (
           <div
-            ref={(ele) => (imageRefs.current[index] = ele as any)}
             key={index}
+            ref={(ele) => (imageRefs.current[index] = ele as any)}
             className="inline-block h-full w-full"
           >
             <Image
-              src={testImage}
-              alt=""
+              src={img}
+              priority={true}
+              width={200}
+              height={200}
+              alt="hotel image"
               className="h-full w-full object-cover"
             />
           </div>
         );
       })}
-      <span className="absolute top-1 right-1 rounded-sm px-2 text-white text-sm bg-[#0e020263]">
-        {activeImage + 1} / {imagesNum}
+      <span className="absolute right-1 top-1 rounded-sm bg-[#0e020263] px-2 text-sm text-white">
+        {activeImage + 1} / {images.length}
       </span>
       <button
         onClick={(e) => handlePrev(e)}
-        className="py-1 px-3 absolute -left-1 top-16 bg-[#140404af] disabled:bg-[#14040463] rounded-e-sm"
+        className="absolute -left-2 top-16 rounded-e-sm bg-[#140404af] px-3 py-1 disabled:bg-[#14040463]"
       >
         <ArrowBigLeft color="white" />
       </button>
       <button
         onClick={(e) => handleNext(e)}
-        className="py-1 px-3 absolute right-0 top-16 bg-[#140404af] disabled:bg-[#14040463] rounded-s-sm"
+        className="absolute right-0 top-16 rounded-s-sm bg-[#140404af] px-3 py-1 disabled:bg-[#14040463]"
       >
         <ArrowBigRight color="white" />
       </button>
-      <div className="absolute top-44 left-0 w-full shadow-custom-shadow2"></div>
+      <div className="absolute left-0 top-44 w-full shadow-custom-shadow2"></div>
     </div>
   );
 };

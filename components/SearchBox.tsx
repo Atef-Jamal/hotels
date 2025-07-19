@@ -1,295 +1,108 @@
 "use client";
-import React, { useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { useRouter, useSearchParams } from "next/navigation";
+import SelectDistinationDialog from "./SelectDistinationDialog";
+import SelectDatesDialog from "./SelectDatesDialog";
+import SelectPriceRatingDrawer from "./SelectPriceRatingDrawer";
+import ResponsiveSelectGuestsRooms from "./ResponsiveSelectGuestsRooms";
+import { cn } from "@/lib/utils";
 import { Calendar, SearchIcon, SendIcon, User } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { Input } from "./ui/input";
-import { FaLocationArrow } from "react-icons/fa";
-import Image from "next/image";
-import { MdAddLocation } from "react-icons/md";
-import testImage from "@/public/gamePhoto-43.jpg";
-import { Calendar as CalenderDates } from "@/components/ui/calendar";
-import { DateRange } from "react-day-picker";
+import { DrawerTrigger } from "./ui/drawer";
+import { DialogTrigger } from "./ui/dialog";
+import { useState } from "react";
 
 const SearchBox = () => {
-  const [checkIn, setCheckIn] = useState<Date | undefined>(
-    new Date(new Date().setDate(new Date().getDate() + 1))
-  );
-  const [checkOut, setCheckOut] = useState<Date | undefined>(
-    new Date(new Date().setDate(new Date().getDate() + 3))
-  );
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleSelectDates = (newSelect: DateRange | undefined) => {
-    setCheckIn(newSelect?.from);
-    setCheckOut(newSelect?.to);
+  const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
+
+  const [hotelName, setHotelName] = useState(searchParams.get("hotelName") || "");
+  const [country, setCountry] = useState(searchParams.get("country") || "");
+  const [city, setCity] = useState(searchParams.get("city") || "");
+  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || today);
+  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || tomorrow);
+  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")));
+  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")));
+  const [averageRating, setAverageRating] = useState(Number(searchParams.get("averageRating")));
+
+  const handelSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    router.push(`/hotels?${params.toString()}`);
   };
-
-  // let difference: number = 0;
-
-  // if (checkIn && checkOut) {
-  //   const differenceInMilliSeconds = checkOut?.getTime() - checkIn?.getTime();
-  //   difference = differenceInMilliSeconds / (1000 * 60 * 60 * 24);
-  // }
 
   return (
     <Card className="shadow-xl">
-      <CardContent className="p-2 grid grid-cols-1 md:flex gap-2">
-        <Dialog>
-          <DialogTrigger className="md:w-[30%]">
-            <span className="font-[500] text-muted-foreground border w-full flex items-center justify-between py-2 px-4 rounded-sm truncate">
-              <SearchIcon size={18} className="mr-2" /> Enter destination
+      <CardContent className="flex flex-col items-center gap-2 p-2 md:flex-row">
+        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+          <SelectDistinationDialog
+            hotelName={hotelName}
+            country={country}
+            city={city}
+            setHotelName={setHotelName}
+            setCountry={setCountry}
+            setCity={setCity}
+          >
+            <DialogTrigger
+              className={cn(
+                "flex items-center justify-between truncate rounded-sm border p-2",
+                !hotelName && !city && !country && "text-muted-foreground",
+              )}
+            >
+              <SearchIcon size={16} />
+              <span className="ml-2">{hotelName || country || city || "Enter destination"}</span>
               <SendIcon size={20} className="ml-auto" />
-            </span>
-          </DialogTrigger>
-          <DialogContent className="h-full p-2 max-w-[45rem] overflow-y-auto scrollbar-none md:scrollbar-thin">
-            <div className="space-y-2">
-              <Input placeholder="Enter a destination " className="w-[90%] " />
-              <div className="h-10 p-2 flex items-center gap-x-3 border-b mb-2">
-                <FaLocationArrow color="blue" /> Current Location
+            </DialogTrigger>
+          </SelectDistinationDialog>
+
+          <SelectDatesDialog
+            checkIn={checkIn}
+            checkOut={checkOut}
+            setCheckIn={setCheckIn}
+            setCheckOut={setCheckOut}
+          >
+            <DialogTrigger className="flex items-center justify-between gap-x-2 truncate rounded-sm border p-2">
+              <Calendar size={15} />
+              <div className="flex flex-1 items-center justify-between">
+                <p>{checkIn}</p>
+                <small className="h-5 w-5 border-b border-b-blue-800 font-semibold text-blue-600">To</small>
+                <p>{checkOut}</p>
               </div>
-              <div className="space-y-2">
-                <h1 className="font-medium">Popular destinations</h1>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 ">
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                  <div className="rounded-md overflow-hidden">
-                    <Image
-                      src={testImage}
-                      alt=""
-                      className="h-24 object-cover"
-                    />
-                    <div className="flex items-center gap-x-2 p-2 bg-slate-100">
-                      <MdAddLocation color="blue" size={20} />
-                      Dubai
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-        <Dialog>
-          <DialogTrigger className="md:w-[30%]">
-            <div className="font-[500] text-muted-foreground border w-full flex items-center justify-between py-2 px-4 rounded-sm truncate">
-              <Calendar size={18} className="mr-2" />{" "}
-              {checkIn?.toDateString().split(" ").slice(0, -1).join(" ")} -{" "}
-              {checkOut?.toDateString().split(" ").slice(0, -1).join(" ")}
-              <Badge variant={"secondary"} className="ml-auto">
-                {/* {difference} night */} 1 night
+              <Badge variant={"secondary"} className="ml-auto px-2 py-0 text-[10px]">
+                1 night
               </Badge>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="rounded-lg h-[52%] p-2 max-w-[25rem] overflow-y-auto scrollbar-none md:scrollbar-thin">
-            <div>
-              <CalenderDates
-                mode="range"
-                selected={{
-                  from: checkIn,
-                  to: checkOut,
-                }}
-                onSelect={handleSelectDates}
-                className="rounded-md border w-fit mx-auto"
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+          </SelectDatesDialog>
 
-        <Dialog>
-          <DialogTrigger className="md:w-[30%]">
-            <span className="font-[500] text-muted-foreground border w-full flex items-center gap-x-2 py-2 px-4 rounded-sm truncate">
-              <User size={18} /> 1 Room 2 Adults 0 Children
-            </span>
-          </DialogTrigger>
-          <DialogContent className="h-full">
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+          <ResponsiveSelectGuestsRooms />
 
-        <Dialog>
-          <DialogTrigger className="md:hidden">
-            <span className="font-[500] text-muted-foreground border w-full flex items-center gap-x-2 py-2 px-4 rounded-sm truncate">
-              <User size={18} /> Price, Guest rating, star rating
-            </span>
-          </DialogTrigger>
-          <DialogContent className="h-full">
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-
-        <Button className="w-full sm:col-span-2 md:col-span-1 md:w-[10%]">
+          <SelectPriceRatingDrawer
+            minPrice={minPrice}
+            averageRating={averageRating}
+            maxPrice={maxPrice}
+            setMinPrice={setMinPrice}
+            setMaxPrice={setMaxPrice}
+            setAverageRating={setAverageRating}
+          >
+            <DrawerTrigger
+              className={cn(
+                "flex w-full items-center gap-x-2 truncate rounded-sm border p-2 md:hidden",
+                !minPrice && !maxPrice && !averageRating && "text-muted-foreground",
+              )}
+            >
+              <User size={15} />
+              <span>
+                {minPrice && maxPrice && averageRating
+                  ? `${minPrice} SAR - ${maxPrice} SAR, ${averageRating} stars`
+                  : "Enter Price, average rating"}
+              </span>
+            </DrawerTrigger>
+          </SelectPriceRatingDrawer>
+        </div>
+        <Button onClick={handelSearch} className="w-full md:w-24 lg:w-40 xl:w-60">
           Search
         </Button>
       </CardContent>

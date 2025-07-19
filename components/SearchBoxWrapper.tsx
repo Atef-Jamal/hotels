@@ -3,12 +3,9 @@ import React from "react";
 import SearchBox from "./SearchBox";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 const SearchWrapper = () => {
   const [color, setColor] = useState(false);
-  const pathname = usePathname();
-  const isHotelDetailPage = pathname.startsWith("/hotels/");
 
   useEffect(() => {
     const handleChange = () => {
@@ -28,12 +25,11 @@ const SearchWrapper = () => {
   return (
     <div
       className={cn(
-        "transition-all hidden md:block py-1 relative -mb-8",
-        !isHotelDetailPage && color && "bg-[#623af3]",
-        !isHotelDetailPage && "sticky top-0 z-[1]"
+        "sticky top-10 z-[2] hidden -translate-y-10 px-2 py-1 transition-all md:block",
+        color && "bg-[#623af3]",
       )}
     >
-      <div className="w-[95%] lg:w-[90%] max-w-[1200px] mx-auto">
+      <div className="mx-auto max-w-[1200px]">
         <SearchBox />
       </div>
     </div>

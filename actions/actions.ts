@@ -1,10 +1,35 @@
 "use server";
-
 import { FormSchemaField } from "@/app/auth/sign-up/page";
 import { connectToDB } from "@/lib/database";
 import Hotel from "@/models/hotel";
 import User from "@/models/user";
+import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 import bcrypt from "bcryptjs";
+
+// interface IProps extends IOptions {
+//   page: number;
+// }
+type IProps = Record<string, string | string[]>;
+
+export type ISearchItem = {
+  type: "property" | "country" | "city";
+  item: string;
+};
+type ISearchResult = ISearchItem[];
+export type GetPlacesParams = { city?: string; country?: string };
+type GetPlacesFn = (argu: GetPlacesParams) => Promise<string[]>;
+
+// type ISuccessAction<T> = {
+//   success: true;
+//   data: T;
+// };
+
+// type IFailedAction = {
+//   success: false;
+//   message: string;
+// };
+
+// type IActionResult<T> = ISuccessAction<T> | IFailedAction;
 
 export const register = async (formData: FormSchemaField) => {
   try {
@@ -60,16 +85,361 @@ export const register = async (formData: FormSchemaField) => {
   }
 };
 
-export const getHotles = async ({ destination }: { destination: string }) => {
+export const getHotles = async ({
+  minPrice,
+  maxPrice,
+  hotelName,
+  breakfastIncluded,
+  roomsCount = "1",
+  roomServices,
+  checkIn = new Date().toISOString().split("T")[0],
+  checkOut = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0],
+  averageRating,
+  cancellationPolicy,
+  paymentFacilities,
+  country,
+  city,
+  address,
+  adults = "1",
+  children = "0",
+  page = "1",
+}: IProps): Promise<{ hotels: IHotelWithRoomsReviewsNearbyAttractions[]; hasMore: boolean }> => {
   try {
     await connectToDB();
-    const response = await Hotel.find({
-      "location.country": destination,
-    }).lean();
-    console.log(response[0]);
-    return response;
+    const pageParam = Number(page) || 1;
+    const limitPerPage = 10;
+    const skip = (pageParam - 1) * limitPerPage;
+
+    const hotelMatchStage: any = {};
+
+    const roomMatchStage: any = {};
+
+    if (hotelName) {
+      hotelMatchStage["name"] = hotelName;
+    } else {
+      if (country) {
+        hotelMatchStage["location.country"] = country;
+      }
+      if (city) {
+        hotelMatchStage["location.city"] = city;
+      }
+      if (address) {
+        hotelMatchStage["location.address"] = address;
+      }
+    }
+    if (averageRating) {
+      hotelMatchStage["averageRating"] = Number(averageRating);
+    }
+
+    if (cancellationPolicy) {
+      if (cancellationPolicy === "true") {
+        hotelMatchStage["policies.cancellationPolicy"] = true;
+      }
+      if (cancellationPolicy === "false") {
+        hotelMatchStage["policies.cancellationPolicy"] = false;
+      }
+    }
+
+    if (paymentFacilities) {
+      hotelMatchStage["paymentFacilities"] = paymentFacilities;
+    }
+
+    if (minPrice && maxPrice) {
+      roomMatchStage["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+    }
+
+    if (roomServices) {
+      roomMatchStage["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
+    }
+
+    if (breakfastIncluded) {
+      if (breakfastIncluded === "true") {
+        roomMatchStage["breakfastIncluded"] = true;
+      }
+      if (breakfastIncluded === "false") {
+        roomMatchStage["breakfastIncluded"] = false;
+      }
+    }
+
+    if (adults) {
+      roomMatchStage["capacity.adults"] = { $gte: Number(adults) };
+    }
+    if (children) {
+      roomMatchStage["capacity.children"] = { $gte: Number(children) };
+    }
+
+    const findHotels = await Hotel.aggregate([
+      { $match: hotelMatchStage },
+      {
+        $lookup: {
+          from: "rooms",
+          localField: "_id",
+          foreignField: "hotel",
+          as: "rooms",
+          pipeline: [
+            { $match: roomMatchStage },
+            {
+              $lookup: {
+                from: "bookings",
+                localField: "_id",
+                foreignField: "roomId",
+                as: "bookedRoom",
+                pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
+              },
+            },
+            { $match: { bookedRoom: { $eq: [] } } },
+            { $sort: { "capacity.adults": 1, pricePerNight: 1 } },
+            { $limit: Number(roomsCount) },
+          ],
+        },
+      },
+      { $match: { $expr: { $gte: [{ $size: "$rooms" }, Number(roomsCount)] } } },
+
+      {
+        $lookup: {
+          from: "nearbyattractions",
+          // localField: "_id",
+          // foreignField: "hotel",
+          as: "nearbyAttractionsData",
+          pipeline: [
+            { $limit: 5 },
+            {
+              $project: {
+                category: 1,
+                name: 1,
+                distance: 1,
+                travelTime: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "reviews",
+          // localField: "_id",
+          // foreignField: "hotel",
+          as: "reviews",
+          pipeline: [
+            {
+              $limit: 10,
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          images: 1,
+          location: 1,
+          amenities: 1,
+          averageRating: 1,
+          paymentFacilities: 1,
+          policies: 1,
+          rooms: 1,
+          nearbyAttractions: "$nearbyAttractionsData",
+          reviews: 1,
+          createdAt: 1,
+        },
+      },
+      // { $sort: { name: 1 } },
+      { $skip: skip },
+      { $limit: limitPerPage },
+    ]);
+
+    const hotels = JSON.parse(JSON.stringify(findHotels));
+    const hasMore = limitPerPage === hotels.length;
+    return { hotels, hasMore };
   } catch (error) {
     console.log(error);
-    throw new Error("an error occurred");
+    throw new Error("can't load hotels list");
+  }
+};
+
+export const getTotalHotelsCount = async ({
+  minPrice,
+  maxPrice,
+  hotelName,
+  breakfastIncluded,
+  roomsCount = "1",
+  roomServices,
+  checkIn = new Date().toISOString().split("T")[0],
+  checkOut = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0],
+  averageRating,
+  cancellationPolicy,
+  paymentFacilities,
+  country,
+  city,
+  address,
+  adults = "1",
+  children = "0",
+}: IProps): Promise<{ totalHotels: number }> => {
+  try {
+    await connectToDB();
+
+    const hotelMatchStage: any = {};
+    const roomMatchStage: any = {};
+
+    if (hotelName) {
+      hotelMatchStage["name"] = hotelName;
+    } else {
+      if (country) {
+        hotelMatchStage["location.country"] = country;
+      }
+      if (city) {
+        hotelMatchStage["location.city"] = city;
+      }
+      if (address) {
+        hotelMatchStage["location.address"] = address;
+      }
+    }
+    if (averageRating) {
+      hotelMatchStage["averageRating"] = Number(averageRating);
+    }
+
+    if (cancellationPolicy) {
+      if (cancellationPolicy === "true") {
+        hotelMatchStage["policies.cancellationPolicy"] = true;
+      }
+      if (cancellationPolicy === "false") {
+        hotelMatchStage["policies.cancellationPolicy"] = false;
+      }
+    }
+
+    if (paymentFacilities) {
+      hotelMatchStage["paymentFacilities"] = paymentFacilities;
+    }
+
+    if (minPrice && maxPrice) {
+      roomMatchStage["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+    }
+
+    if (roomServices) {
+      roomMatchStage["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
+    }
+
+    if (breakfastIncluded) {
+      if (breakfastIncluded === "true") {
+        roomMatchStage["breakfastIncluded"] = true;
+      }
+      if (breakfastIncluded === "false") {
+        roomMatchStage["breakfastIncluded"] = false;
+      }
+    }
+
+    if (adults) {
+      roomMatchStage["capacity.adults"] = { $gte: Number(adults) };
+    }
+    if (children) {
+      roomMatchStage["capacity.children"] = { $gte: Number(children) };
+    }
+    const findHotels = await Hotel.aggregate([
+      { $match: hotelMatchStage },
+      {
+        $lookup: {
+          from: "rooms",
+          localField: "_id",
+          foreignField: "hotel",
+          as: "rooms",
+          pipeline: [
+            { $match: roomMatchStage },
+            {
+              $lookup: {
+                from: "bookings",
+                localField: "_id",
+                foreignField: "roomId",
+                as: "bookedRoom",
+                pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
+              },
+            },
+            { $match: { bookedRoom: { $eq: [] } } },
+          ],
+        },
+      },
+      { $match: { $expr: { $gte: [{ $size: "$rooms" }, Number(roomsCount)] } } },
+      { $count: "total" },
+    ]);
+
+    return { totalHotels: findHotels[0].total };
+  } catch (error) {
+    console.log(error);
+    throw new Error("can't get hotels count");
+  }
+};
+
+export const getPlaces: GetPlacesFn = async ({ city, country }) => {
+  await connectToDB();
+  let distinations: any[] = [];
+  if (!country && !city) {
+    distinations = await Hotel.find({}).select("location.country");
+    distinations = [...new Set(distinations.map((i) => i.location.country))];
+  }
+  if (country) {
+    distinations = await Hotel.find({ "location.country": country }).select("location.city");
+    distinations = [...new Set(distinations.map((i) => i.location.city))];
+  }
+  if (country && city) {
+    distinations = await Hotel.find({ "location.country": country, "location.city": city }).select(
+      "location.address",
+    );
+    distinations = [...new Set(distinations.map((i) => i.location.address))];
+  }
+
+  return distinations;
+};
+
+export const getDistinations = async (searchTerm: string): Promise<ISearchResult> => {
+  try {
+    await connectToDB();
+
+    const escapeRegex = (param: string) => param.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const safeInput = escapeRegex(searchTerm);
+    const regex = new RegExp(`^${safeInput}`, "i");
+
+    const distinations = await Hotel.aggregate([
+      {
+        $group: {
+          _id: "$location.country",
+          cities: { $addToSet: "$location.city" },
+        },
+      },
+      {
+        $project: {
+          country: "$_id",
+          cities: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    const allDistinations: ISearchResult = [];
+
+    distinations.forEach((item) => {
+      allDistinations.push({ type: "country", item: item.country });
+      item.cities.forEach((city: string) => {
+        allDistinations.push({ type: "city", item: city });
+      });
+    });
+
+    if (!searchTerm) {
+      return allDistinations;
+    }
+
+    const hotels = await Hotel.find({ name: regex }).limit(2).select("name");
+    const mapedHotels: ISearchResult = hotels.map((hotel) => ({
+      type: "property",
+      item: hotel.name,
+    }));
+
+    const filteredDistinations: ISearchResult = allDistinations.filter((distination) =>
+      distination.item.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    );
+
+    const results = [...mapedHotels, ...filteredDistinations];
+
+    return results;
+  } catch (error) {
+    throw new Error("can not load distinations");
   }
 };

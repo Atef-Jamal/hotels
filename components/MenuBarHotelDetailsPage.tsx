@@ -1,202 +1,135 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useRef, useState } from "react";
-
-interface IHelperObject {
-  [key: string]: string;
-}
-const helperObj: IHelperObject = {
-  "overview-section": "overview-button",
-  "rooms-section": "rooms-button",
-  "hotels-nearby-section": "hotels-nearby-button",
-  "reviews-section": "reviews-button",
-  "nearby-attractions-section": "nearby-attractions-button",
-  "amentities-section": "amentities-button",
-  "hotel-policy-section": "hotel-policy-button",
-};
+import { useEffect, useRef, useState } from "react";
 
 const MenuBarHotelDetailsPage = () => {
-  const [activeSection, setActiveSection] = useState("");
-  const [menuBarIsSticky, setMenuBarIsSticky] = useState(false);
-  const timeOutRef1 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef2 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef3 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef4 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef5 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef6 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timeOutRef7 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refs = useMemo(
-    () => [
-      timeOutRef1,
-      timeOutRef2,
-      timeOutRef3,
-      timeOutRef4,
-      timeOutRef5,
-      timeOutRef6,
-      timeOutRef7,
-    ],
-    []
-  );
-  const scrollToElement = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+  const [activeTab, setActiveTab] = useState("overview");
+  const tabsContainer = useRef<HTMLDivElement>(null);
 
-    const rec = element.getBoundingClientRect();
-    if (typeof window !== undefined) {
-      window.scrollBy({ top: rec.top - 44, behavior: "smooth" });
+  const handleClick = (arg: string) => {
+    setActiveTab(arg);
+    const section = document.getElementById(arg);
+    if (section) {
+      const elementPosition = section.getBoundingClientRect().top + window.pageYOffset - 40;
+      window.scrollTo({ top: elementPosition, behavior: "smooth" });
     }
-    element.classList.add("border", "border-green-800");
   };
 
   useEffect(() => {
-    const handleActiveSection = () => {
-      if (typeof window === undefined) return;
-      if (window.scrollY >= 204) {
-        setMenuBarIsSticky(true);
-      } else {
-        setMenuBarIsSticky(false);
-      }
-      if (window.scrollY >= 2017) {
-        setActiveSection("hotel-policy-section");
-      } else if (window.scrollY >= 1643) {
-        setActiveSection("amentities-section");
-      } else if (window.scrollY >= 1446) {
-        setActiveSection("nearby-attractions-section");
-      } else if (window.scrollY >= 1034) {
-        setActiveSection("reviews-section");
-      } else if (window.scrollY >= 645) {
-        setActiveSection("hotels-nearby-section");
-      } else if (window.scrollY >= 500) {
-        setActiveSection("rooms-section");
-      } else if (window.scrollY >= 200) {
-        setActiveSection("overview-section");
-      } else {
-        setActiveSection("");
-      }
-
-      const elementIds = Object.keys(helperObj);
-      let elements: HTMLElement[] = [];
-      for (let index = 0; index < elementIds.length; index++) {
-        const getElement = document.getElementById(elementIds[index])!;
-        elements.push(getElement);
-      }
-
-      elements.forEach((ele, i) => {
-        if (refs[i].current) clearTimeout(refs[i].current);
-        refs[i].current = setTimeout(() => {
-          ele.classList.remove("border", "border-green-800");
-        }, 3000);
-      });
+    const options = {
+      root: null,
+      rootMargin: "0px 0px",
+      threshold: 0.7,
     };
-    document.addEventListener("scroll", handleActiveSection);
-    return () => {
-      refs.forEach((re) => {
-        if (re.current) clearTimeout(re.current);
-      });
-      document.removeEventListener("scroll", handleActiveSection);
-    };
-  }, [refs]);
+    // let timeOutId: NodeJS.Timeout;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute("id");
+          const tabElement = document.getElementById(`${id}-tab`);
+          if (id && tabElement) {
+            // clearTimeout(timeOutId);
+            // timeOutId = setTimeout(() => {
+            if (tabsContainer.current) {
+              const containerWidth = tabsContainer.current.offsetWidth;
+              const tabLeft = tabElement.offsetLeft;
+              const tabWidth = tabElement.offsetWidth;
+              const scrollTo = tabLeft - containerWidth / 2 + tabWidth / 2;
 
-  useEffect(() => {
-    const elementId = helperObj[activeSection];
-    const element = document.getElementById(elementId);
-    if (!element) return;
-    element.scrollIntoView({
-      inline: "center",
+              tabsContainer.current.scrollTo({
+                left: scrollTo,
+                behavior: "smooth",
+              });
+            }
+            // tabElement.scrollIntoView({ block: "start" });
+            // }, 500);
+            setActiveTab(id);
+          }
+        }
+      });
+    }, options);
+
+    const section1 = document.getElementById("overview");
+    const section2 = document.getElementById("rooms");
+    const section3 = document.getElementById("nearby-attractions");
+    const section4 = document.getElementById("policies");
+    const section5 = document.getElementById("reviews");
+    const section6 = document.getElementById("hotels-nearby");
+    const sections = [section1, section2, section3, section4, section5, section6];
+
+    sections.forEach((section) => {
+      if (section) observer.observe(section);
     });
-  }, [activeSection]);
-
+    return () => {
+      // clearTimeout(timeOutId);
+      observer.disconnect();
+    };
+  }, []);
   return (
     <div
-      className={cn(
-        "whitespace-nowrap space-x-4 px-2 overflow-auto scrollbar-none",
-        menuBarIsSticky
-          ? "bg-[#87b1ff] lg:mx-2"
-          : "bg-white rounded-ss-lg rounded-se-lg mx-2"
-      )}
+      ref={tabsContainer}
+      className="sticky top-0 z-10 flex w-full flex-nowrap overflow-x-auto bg-white scrollbar-none md:top-5"
     >
-      <button
-        id="overview-button"
-        onClick={() => scrollToElement("overview-section")}
+      <span
+        id="overview-tab"
+        onClick={() => handleClick("overview")}
         className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "overview-section" || activeSection === ""
-            ? "border-b-2 border-blue-800"
-            : ""
+          "cursor-pointer px-5 py-2 font-semibold md:text-lg",
+          activeTab === "overview" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
         Overview
-      </button>
-      <button
-        id="rooms-button"
-        onClick={() => scrollToElement("rooms-section")}
+      </span>
+      <span
+        id="rooms-tab"
+        onClick={() => handleClick("rooms")}
         className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "rooms-section" ? "border-b-2 border-blue-800" : ""
+          "cursor-pointer px-5 py-2 font-semibold md:text-lg",
+          activeTab === "rooms" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
         Rooms
-      </button>
-      <button
-        id="hotels-nearby-button"
-        onClick={() => scrollToElement("hotels-nearby-section")}
+      </span>
+      <span
+        id="nearby-attractions-tab"
+        onClick={() => handleClick("nearby-attractions")}
         className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "hotels-nearby-section"
-            ? "border-b-2 border-blue-800"
-            : ""
-        )}
-      >
-        Hotels Nearby
-      </button>
-      <button
-        id="reviews-button"
-        onClick={() => scrollToElement("reviews-section")}
-        className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "reviews-section"
-            ? "border-b-2 border-blue-800"
-            : ""
-        )}
-      >
-        Reviews
-      </button>
-      <button
-        id="nearby-attractions-button"
-        onClick={() => scrollToElement("nearby-attractions-section")}
-        className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "nearby-attractions-section"
-            ? "border-b-2 border-blue-800"
-            : ""
+          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          activeTab === "nearby-attractions" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
         Nearby Attractions
-      </button>
-      <button
-        id="amentities-button"
-        onClick={() => scrollToElement("amentities-section")}
+      </span>
+      <span
+        id="reviews-tab"
+        onClick={() => handleClick("reviews")}
         className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "amentities-section"
-            ? "border-b-2 border-blue-800"
-            : ""
+          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          activeTab === "reviews" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
-        Amentities
-      </button>
-      <button
-        id="hotel-policy-button"
-        onClick={() => scrollToElement("hotel-policy-section")}
+        Reviews
+      </span>
+      <span
+        id="hotels-nearby-tab"
+        onClick={() => handleClick("hotels-nearby")}
         className={cn(
-          "inline-block font-bold text-sm py-2",
-          activeSection === "hotel-policy-section"
-            ? "border-b-2 border-blue-800"
-            : ""
+          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          activeTab === "hotels-nearby" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
-        Hotel Policy
-      </button>
+        Hotels Nearby
+      </span>
+      <span
+        id="policies-tab"
+        onClick={() => handleClick("policies")}
+        className={cn(
+          "cursor-pointer px-5 py-2 font-semibold md:text-lg",
+          activeTab === "policies" && "border-b-2 border-b-black md:border-b-[3px]",
+        )}
+      >
+        Policies
+      </span>
     </div>
   );
 };

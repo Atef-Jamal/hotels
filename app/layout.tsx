@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Signika_Negative } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import Navebare from "@/components/Navebare";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
+import { AppContextProvider } from "@/context/context";
+import QueryProvider from "@/context/reactQuery";
 
-const inter = Roboto({
-  weight: ["100", "300", "400", "500", "700", "900"],
+const inter = Signika_Negative({
+  weight: ["300", "400", "500", "700"],
+  // weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
 
@@ -21,19 +24,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <main className="min-h-screen flex flex-col">
-            <Navebare />
-            <section className="flex-1 relative bg-slate-200">
-              <div className="shadow-custom-shadow absolute top-0 left-0 right-0 h-32 bg-[#623af3]"></div>
-              <div className="relative">{children}</div>
-            </section>
-            <Footer />
-          </main>
-        </body>
-      </html>
-    </SessionProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <SessionProvider>
+          <QueryProvider>
+            <AppContextProvider>
+              <main className="flex min-h-screen flex-col">
+                <Navbar />
+                <section className="flex-1">{children}</section>
+                <Footer />
+              </main>
+            </AppContextProvider>
+          </QueryProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }

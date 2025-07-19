@@ -1,45 +1,57 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { ArrowDown, SearchIcon } from "lucide-react";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { ArrowDown } from "lucide-react";
+import { useAppContext } from "@/context/context";
+import SelectPriceRatingDrawer from "./SelectPriceRatingDrawer";
+import SelectDistinationDialog from "./SelectDistinationDialog";
+import SelectDatesDialog from "./SelectDatesDialog";
+import ResponsiveSortHotels from "./ResponsiveSortHotels";
+import { DrawerTrigger } from "./ui/drawer";
+import { DialogTrigger } from "./ui/dialog";
 
 const HotelsListHeaderSmallScreen = () => {
-  const pathname = usePathname();
-  const isHotelDetailPage = pathname.startsWith("/hotels/");
-
+  const { options } = useAppContext();
   return (
-    <header
-      className={cn(
-        "py-2 md:hidden sticky top-0 z-[1] bg-[#623af3]",
-        isHotelDetailPage && "hidden"
-      )}
-    >
-      <div className="flex items-center justify-between mb-2 mx-3 py-1 px-3 bg-white rounded-sm">
-        <div>
-          <p className="text-[13px] font-bold">Dubai, Untited Arab Emirates</p>
-          <p className="text-[13px] font-medium">Aug 15 - Aug 16 | 2 Adults</p>
-        </div>
-        <SearchIcon />
+    <header className="sticky top-0 z-[1] bg-[#623af3] py-2 md:hidden">
+      <div className="mx-2 mb-2 rounded-sm bg-white px-2 py-1">
+        <SelectDistinationDialog>
+          <DialogTrigger
+            className={cn(
+              "w-full border-b py-1 text-left text-xs font-medium",
+              !options.hotelName &&
+                !options.location?.city &&
+                !options.location?.country &&
+                "text-muted-foreground",
+            )}
+          >
+            {options.hotelName || options.location?.country || options.location?.city || "Enter destination"}
+          </DialogTrigger>
+        </SelectDistinationDialog>
+        <SelectDatesDialog>
+          <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-xs font-medium">
+            <p>{options.checkIn}</p>
+            <small className="h-5 w-5 border-b-blue-800 font-semibold text-blue-600">To</small>
+            <p>{options.checkOut}</p>
+          </DialogTrigger>
+        </SelectDatesDialog>
       </div>
-      <div className="px-3 flex flex-nowrap gap-x-2 overflow-auto scrollbar-thin">
-        <button className="flex items-center justify-center py-[3px] px-[6px] font-bold rounded-sm text-[13px] bg-white text-blue-950">
-          Filter
-          <ArrowDown size={18} className="ml-1 min-w-fit" />
-        </button>
-        <button className="flex items-center justify-center py-[3px] px-[6px] font-bold rounded-sm text-[13px] bg-white text-blue-950">
-          Location
-          <ArrowDown size={18} className="ml-1 min-w-fit" />
-        </button>
-        <button className="flex items-center justify-center py-[3px] px-[6px] font-bold rounded-sm text-[13px] bg-white text-blue-950">
-          Sort
-          <ArrowDown size={18} className="ml-1 min-w-fit" />
-        </button>
+      <div className="flex flex-nowrap gap-x-2 overflow-auto px-3 scrollbar-thin">
+        <SelectPriceRatingDrawer>
+          <DrawerTrigger className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950">
+            Filter
+            <ArrowDown size={16} className="ml-1 min-w-fit" />
+          </DrawerTrigger>
+        </SelectPriceRatingDrawer>
 
-        <span className="py-[3px] px-[6px] min-w-fit rounded-sm text-[13px] bg-[#daeeff3b] text-white font-normal">
+        <button className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950">
+          Location
+          <ArrowDown size={16} className="ml-1 min-w-fit" />
+        </button>
+        <ResponsiveSortHotels />
+        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-[6px] py-[3px] text-[13px] text-white">
           Breakfast Included
         </span>
-        <span className="py-[3px] px-[6px] min-w-fit rounded-sm text-sm bg-[#daeeff3b] text-white font-normal">
+        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-[6px] py-[3px] text-sm text-white">
           Free Cancellation
         </span>
       </div>

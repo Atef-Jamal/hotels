@@ -1,25 +1,30 @@
 import Image from "next/image";
 import gamePhoto from "@/public/gamePhoto-43.jpg";
+import { MapPin } from "lucide-react";
 
 export const HotelSliderCard = () => {
   return (
-    <div className="inline-block w-[210px] h-[250px] rounded-sm overflow-hidden">
-      <Image src={gamePhoto} alt="" className="w-full h-[45%] object-cover" />
-      <div className="bg-[#fcdfdf] h-[55%] px-2 py-1">
-        <h1 className="sm:text-lg font-medium sm:font-[600] truncate">
-          Asia international Hotel
-        </h1>
-        <p className="whitespace-normal mb-2 h-10 leading-4 text-[13px] font-medium text-muted-foreground flex-1 border-white border-b">
-          {"This is the Hotel Description as you might say what is it i told Hotel Dksjdh sdkjhjkdh s".slice(
-            0,
-            70
-          ) + "..."}
-        </p>
-        <p className="whitespace-normal h-10 leading-4 text-[13px] font-medium text-muted-foreground flex-1">
-          {"This is the Hotel Description as you might say what is it i told Hotel Dksjdh sdkjhjkdh s".slice(
-            0,
-            70
-          ) + "..."}
+    <div className="inline-block h-[250px] w-[210px] overflow-hidden rounded-sm">
+      <Image src={gamePhoto} priority={true} alt="" className="h-[45%] w-full object-cover" />
+      <div className="h-[55%] bg-foreground/5 px-2 py-1">
+        <h1 className="truncate font-medium sm:text-lg sm:font-[600]">Asia international Hotel</h1>
+        <div className="flex gap-x-1 text-muted-foreground">
+          <MapPin size={11} className="mt-1" />
+          <p className="h-9 flex-1 overflow-hidden text-wrap text-[12px]">
+            No. 365 West Huanshi Road | 4.5 KM From City Center
+          </p>
+        </div>
+        <hr className="my-0.5 bg-black" />
+        <p className="h-[67px] overflow-hidden text-wrap text-[12px] leading-4">
+          The Asia International Hotel is located in Guangzhou&apos;s business district along the Huanshi Dong
+          Road. Standing with a total height of 180 meters, this is a multifunctional hotel that features with
+          deluxe rooms, 14-floor of Grade-A office, different type of Chinese & Western restaurants,
+          entertainment and apartments. It is your ideal place for business, convention & exhibition, food &
+          beverage, gathering in Guangzhou. The 440 hotel rooms and suites integrate elegance and fashion with
+          delicate and simple style.Rooms above 25th floor are completed with high-speed Broadband Internet
+          Access. All rooms feature terrific city view.Sky Cafe - Revolving Restaurant The city&apos;s highest
+          revolving restaurant, commanding a panoramic view of Guangzhou, features an innovative buffet
+          dishes, serves you a romantic dining experience.
         </p>
       </div>
     </div>

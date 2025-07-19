@@ -1,19 +1,13 @@
-import HotelsListHeaderSmallScreen from "@/components/HotelsListHeaderSmallScreen";
-import SearchWrapper from "@/components/SearchWrapper";
-import React from "react";
-
-const layout = async ({ children }: { children: React.ReactNode }) => {
+import HotelsLayoutHeader from "@/components/HotelsLayoutHeader";
+function HotelsListLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <HotelsListHeaderSmallScreen />
-      <SearchWrapper />
-      <div className="bg-[#fceeee] rounded-3xl md:pt-10 lg:pt-14">
-        <div className="md:w-[95%] lg:w-[90%] max-w-[1200px] mx-auto">
-          {children}
-        </div>
+    <section className="bg-[#623af3] md:pt-10">
+      <div className="relative bg-purple-200 md:rounded-t-3xl">
+        <HotelsLayoutHeader />
+        <div className="mx-auto max-w-[1200px] md:-translate-y-5">{children}</div>
       </div>
-    </div>
+    </section>
   );
-};
+}
 
-export default layout;
+export default HotelsListLayout;
