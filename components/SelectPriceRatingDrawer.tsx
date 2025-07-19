@@ -13,7 +13,6 @@ import { Star } from "lucide-react";
 import RcSlider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { useAppContext } from "@/context/context";
 
 function SelectPriceRatingDrawer({
   children,

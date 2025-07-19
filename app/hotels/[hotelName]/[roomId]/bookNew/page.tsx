@@ -5,14 +5,12 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { useAppContext } from "@/context/context";
 import { cn } from "@/lib/utils";
 import { BadgeCheck, BedDouble, BedSingle, Calendar, ChevronDown, InfoIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function BookNew() {
   const [promoCode, setPromoCode] = useState("");
-  const { options } = useAppContext();
   const user = { name: "atef", email: "atefgmal778@gmail.com", phone: "01095938927", emailVerified: false };
   return (
     <section className="bg-[#623af3] pt-16">
@@ -138,9 +136,8 @@ export default function BookNew() {
                 <p>Check Out</p>
               </div>
               <div className="my-2 flex items-center justify-around">
-                <p>{options.checkIn}</p>
-
-                <p>{options.checkOut}</p>
+                <p>{new Date().toISOString().split("T")[0]}</p>
+                <p>{new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}</p>
               </div>
               <Separator orientation="horizontal" className="bg-black/30" />
               <div className="flex items-center gap-1 text-sm">

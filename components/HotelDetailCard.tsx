@@ -1,4 +1,3 @@
-// import { IOptions } from "@/context/context";
 import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";

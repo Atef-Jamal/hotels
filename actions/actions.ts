@@ -6,9 +6,6 @@ import User from "@/models/user";
 import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 import bcrypt from "bcryptjs";
 
-// interface IProps extends IOptions {
-//   page: number;
-// }
 type IProps = Record<string, string | string[]>;
 
 export type ISearchItem = {

@@ -4,7 +4,6 @@ import { SessionProvider } from "next-auth/react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
-import { AppContextProvider } from "@/context/context";
 import QueryProvider from "@/context/reactQuery";
 
 const inter = Signika_Negative({
@@ -28,13 +27,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <QueryProvider>
-            <AppContextProvider>
-              <main className="flex min-h-screen flex-col">
-                <Navbar />
-                <section className="flex-1">{children}</section>
-                <Footer />
-              </main>
-            </AppContextProvider>
+            <main className="flex min-h-screen flex-col">
+              <Navbar />
+              <section className="flex-1">{children}</section>
+              <Footer />
+            </main>
           </QueryProvider>
         </SessionProvider>
       </body>

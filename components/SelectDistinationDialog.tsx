@@ -2,7 +2,6 @@
 import { Blinds, Hotel, MapPin, Navigation } from "lucide-react";
 import React, { useState } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
-// import { useAppContext } from "@/context/context";
 import { Input } from "./ui/input";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
