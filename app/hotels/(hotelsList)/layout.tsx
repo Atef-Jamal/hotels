@@ -1,8 +1,6 @@
 import FilterHotels from "@/components/FilterHotels";
-import Hotels from "@/components/Hotels";
-import { Suspense } from "react";
 
-function HotelsPage({ searchParams }: { searchParams: Record<string, string | string[]> }) {
+export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-2 flex gap-x-2 lg:gap-x-4">
       <div
@@ -13,13 +11,7 @@ function HotelsPage({ searchParams }: { searchParams: Record<string, string | st
       >
         <FilterHotels />
       </div>
-      <div className="flex-1 pt-2 md:pt-0">
-        <Suspense fallback={<p>Loading Hotels List...</p>}>
-          <Hotels searchParams={searchParams} />
-        </Suspense>
-      </div>
+      <div className="flex-1 pt-2 md:pt-0">{children}</div>
     </div>
   );
 }
-
-export default HotelsPage;

@@ -1,7 +1,7 @@
 import { getHotles, getTotalHotelsCount } from "@/actions/actions";
-import HotelList from "./HotelList";
+import HotelList from "@/components/HotelList";
 
-async function Hotels({ searchParams }: { searchParams: Record<string, string | string[]> }) {
+async function HotelsPage({ searchParams }: { searchParams: Record<string, string | string[]> }) {
   const [hotelsCount, initialFirstPage] = await Promise.all([
     getTotalHotelsCount(searchParams),
     getHotles(searchParams),
@@ -17,4 +17,4 @@ async function Hotels({ searchParams }: { searchParams: Record<string, string | 
   );
 }
 
-export default Hotels;
+export default HotelsPage;

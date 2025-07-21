@@ -27,7 +27,7 @@ const HotelsListHeaderSmallScreen = () => {
 
   return (
     <header className="sticky top-0 z-[1] bg-[#623af3] py-2 md:hidden">
-      <div className="mx-2 mb-2 rounded-sm bg-white px-2 py-1">
+      <div className="mx-2 mb-2 rounded-sm bg-white px-2">
         <SelectDistinationDialog
           hotelName={hotelName}
           country={country}
@@ -38,7 +38,7 @@ const HotelsListHeaderSmallScreen = () => {
         >
           <DialogTrigger
             className={cn(
-              "w-full border-b py-1 text-left text-xs font-medium",
+              "w-full border-b py-1 text-left text-sm font-medium",
               hotelName && city && country && "text-muted-foreground",
             )}
           >
@@ -51,9 +51,9 @@ const HotelsListHeaderSmallScreen = () => {
           setCheckIn={setCheckIn}
           setCheckOut={setCheckOut}
         >
-          <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-xs font-medium">
+          <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-sm font-medium">
             <p>{checkIn}</p>
-            <small className="h-5 w-5 border-b-blue-800 font-semibold text-blue-600">To</small>
+            <small className="border-b-blue-800 font-semibold text-blue-600">To</small>
             <p>{checkOut}</p>
           </DialogTrigger>
         </SelectDatesDialog>

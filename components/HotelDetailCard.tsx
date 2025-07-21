@@ -1,8 +1,9 @@
 import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
-import { StarIcon } from "lucide-react";
+import { BedDouble, BedSingle, MapPin, PlusIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { MdBreakfastDining, MdFreeCancellation } from "react-icons/md";
+import { MdBreakfastDining } from "react-icons/md";
+import { Button } from "./ui/button";
 
 interface IProps {
   hotel: IHotelWithRoomsReviewsNearbyAttractions;
@@ -15,28 +16,49 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
   return (
     <Link
       href={{ pathname: `/hotels/${nameSlug}`, query: options }}
-      className="flex h-[11rem] items-center justify-center overflow-hidden rounded-md bg-[#fff] md:h-[12rem]"
+      className="grid grid-cols-1 gap-2 overflow-hidden rounded-md bg-[#fff] p-2 lg:h-64 lg:grid-cols-4"
     >
-      <Image
-        src={hotel.images[0]}
-        priority={true}
-        alt="hotel image"
-        height={100}
-        width={300}
-        className="h-full w-[7rem] bg-gray-500 object-cover lg:w-[15rem]"
-      />
-      <div className="flex h-full flex-1 flex-col gap-y-1 overflow-hidden border p-1">
-        <div className="leading-tigh flex flex-wrap gap-x-1 font-semibold">
-          <p className="max-w-[210px] truncate text-base leading-4 sm:max-w-max lg:text-lg">{hotel.name}</p>
+      <div className="grid h-28 auto-cols-[100%] grid-flow-col gap-x-2 overflow-hidden min-[380px]:auto-cols-[50%] sm:auto-cols-[33.3%] md:auto-cols-[50%] min-[900px]:auto-cols-[33.3%] lg:h-full lg:auto-cols-[100%]">
+        <div className="relative bg-gray-500">
+          <Image
+            src={hotel.images[0]}
+            priority={true}
+            alt="hotel image"
+            fill={true}
+            className="object-cover"
+          />
+        </div>
+        <div className="relative bg-gray-500">
+          <Image
+            src={hotel.images[0]}
+            priority={true}
+            alt="hotel image"
+            fill={true}
+            className="object-cover"
+          />
+        </div>
+        <div className="relative bg-gray-500">
+          <Image
+            src={hotel.images[0]}
+            priority={true}
+            alt="hotel image"
+            fill={true}
+            className="object-cover"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-1 lg:col-span-3 lg:h-full">
+        <div className="flex w-full items-center">
+          <p className="flex-1 truncate font-semibold">{hotel.name}</p>
           <span className="flex items-center gap-x-0.5">
             {[...Array(Number(hotel.averageRating.toFixed())).keys()].map((item) => (
-              <StarIcon size={10} key={item} fill="#b3e04a" color="#b3e04a" />
+              <StarIcon size={15} key={item} fill="#4ce747" color="#57c953" />
             ))}
           </span>
         </div>
-        <div className="flex items-center gap-x-1 text-sm sm:text-base sm:font-medium">
-          <span className="rounded-b-lg rounded-s-lg bg-blue-800 px-1 py-0.5 text-xs text-white">
-            {hotel.averageRating}/5
+        <div className="flex items-center gap-x-3 text-sm font-medium sm:text-base">
+          <span className="rounded-b-lg rounded-s-lg bg-blue-800 px-1 py-0.5 text-xs font-semibold text-white">
+            {hotel.averageRating} / 5
           </span>
           <span className="leading-3 text-blue-800">
             {hotel.averageRating >= 4.5
@@ -46,65 +68,65 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
                 : hotel.averageRating >= 2.5
                   ? "Good"
                   : "Intermediate"}
-            <span className="mx-1">|</span>
-            <span className="text-muted-foreground"> {hotel.reviews.length} Review</span>
           </span>
+          <span className="text-muted-foreground"> {hotel.reviews.length} Review</span>
+          <button className="ml-auto flex items-center gap-2 rounded-sm bg-[#6a5d99] pl-1 pr-2 text-sm text-white">
+            <PlusIcon size={18} className="" /> WhitList
+          </button>
         </div>
-        <p className="max-h-7 overflow-hidden text-xs font-thin leading-tight text-muted-foreground md:text-base">
-          {hotel.nearbyAttractions.map((item) => `${item.name} (${item.distance} meter)`).join(" . ")}
-        </p>
-        <div className="mt-auto space-y-1">
-          <div className="flex items-center gap-x-1">
-            <small className="ml-auto rounded-[1px] bg-[#e0d0d0a6] px-1 py-0.5 text-xs font-thin text-primary-foreground text-red-900 md:text-sm">
-              First Booking Deal
-            </small>
-            <small className="rounded-[1px] bg-[#ee3f3ff8] px-1 py-0.5 text-xs font-thin text-primary-foreground text-white md:text-sm">
-              40% Off
-            </small>
-          </div>
-          <div className="flex bg-gradient-to-r from-[#ebebeb] to-[#fff]">
-            <div className="hidden px-2 py-1 font-thin md:block">
-              <p className="font-medium leading-5">{hotel.rooms[0].type} Room</p>
-              <div className="flex flex-wrap items-center gap-x-2">
-                {hotel.rooms[0].breakfastIncluded && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MdBreakfastDining size={15} /> <p>Breakfast Included</p>
-                  </div>
-                )}
-                {!hotel.rooms[0].breakfastIncluded && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MdBreakfastDining size={15} /> <p>Breakfast Not Included</p>
-                  </div>
-                )}
-                {hotel.policies.cancellationPolicy && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MdFreeCancellation size={15} /> <p>Free Cancellation</p>
-                  </div>
-                )}
-                {!hotel.policies.cancellationPolicy && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MdFreeCancellation size={15} /> <p>Not Free Cancellation</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="ml-auto flex-1">
-              <div className="flex items-end justify-end gap-x-1 text-blue-700">
-                <span className="mr-1 text-nowrap font-thin text-zinc-800 line-through md:text-xl">
-                  SAR 313
-                </span>
-                <span className="flex items-end text-nowrap text-base font-medium md:text-lg">
-                  <span className="font-medium md:text-xl">SAR</span>
-                  <span className="ml-1 text-xl font-semibold md:text-2xl">
-                    {hotel.rooms[0].pricePerNight}
-                  </span>
-                </span>
-              </div>
-
-              <button className="my-1 w-full text-nowrap rounded-sm bg-blue-700 px-3 py-1 text-sm font-medium text-white md:text-base">
-                Check Availability
+        <div>
+          {hotel.nearbyAttractions.map((item, indx) => (
+            <div key={indx} className="flex items-center gap-1">
+              <MapPin size={14} />
+              <p className="flex-1 truncate text-sm font-thin leading-tight text-black/80 md:text-base">
+                {`Near ${item.name} - (${item.distance} meter) - (${item.travelTime})`}
+              </p>
+              <button className="rounded-sm bg-green-200 px-2 text-xs font-medium sm:px-4 md:py-0.5">
+                Map
               </button>
             </div>
+          ))}
+        </div>
+        <div className="relative mx-2 mt-3 rounded-md bg-purple-200 px-3 py-1 md:mt-auto">
+          <div className="absolute -top-2 right-3 flex items-center gap-1 text-xs font-thin text-primary-foreground text-white">
+            <p className="rounded-[2px] bg-[#63c24be3] px-1 py-0.5">First Booking Deal</p>
+            <p className="rounded-[2px] bg-[#ee3f3ff8] px-1 py-0.5">40% Off</p>
+          </div>
+          <p className="font-medium">{hotel.rooms[0].type} Room</p>
+          <div className="flex flex-wrap items-center gap-x-4">
+            {hotel.rooms[0].breakfastIncluded && (
+              <div className="flex items-center gap-2">
+                <MdBreakfastDining size={16} />{" "}
+                <span className="text-sm text-black/75">Breakfast Included</span>
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-x-4">
+              {hotel.rooms[0].beds.map((bed, indx) => (
+                <div key={indx} className="flex items-center gap-2">
+                  <div className="flex">
+                    {[...Array(bed.count).keys()].map((num) => {
+                      if (bed.type === "Single") return <BedSingle key={num} size={15} />;
+                      return <BedDouble key={num} size={15} />;
+                    })}
+                  </div>
+
+                  <span className="text-sm text-black/75">
+                    {bed.count} {bed.type} Beds
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="ml-auto flex items-end gap-1">
+              <span className="line-through">390 SAR</span>
+              <span className="text-xl font-medium text-blue-700 md:text-2xl">
+                {hotel.rooms[0].pricePerNight} SAR
+              </span>
+            </div>
+            <Button size={"sm"} className="w-full bg-blue-700">
+              Check Availability
+            </Button>
           </div>
         </div>
       </div>

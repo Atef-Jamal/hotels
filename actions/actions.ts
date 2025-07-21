@@ -8,10 +8,20 @@ import bcrypt from "bcryptjs";
 
 type IProps = Record<string, string | string[]>;
 
-export type ISearchItem = {
-  type: "property" | "country" | "city";
-  item: string;
-};
+export type ISearchItem =
+  | {
+      type: "property-name";
+      name: string;
+      country: string;
+      city: string;
+    }
+  | {
+      type: "city";
+      city: string;
+      country: string;
+    }
+  | { type: "country"; country: string };
+
 type ISearchResult = ISearchItem[];
 export type GetPlacesParams = { city?: string; country?: string };
 type GetPlacesFn = (argu: GetPlacesParams) => Promise<string[]>;
@@ -199,7 +209,7 @@ export const getHotles = async ({
           // foreignField: "hotel",
           as: "nearbyAttractionsData",
           pipeline: [
-            { $limit: 5 },
+            { $limit: 2 },
             {
               $project: {
                 category: 1,
@@ -240,7 +250,6 @@ export const getHotles = async ({
           createdAt: 1,
         },
       },
-      // { $sort: { name: 1 } },
       { $skip: skip },
       { $limit: limitPerPage },
     ]);
@@ -386,7 +395,7 @@ export const getPlaces: GetPlacesFn = async ({ city, country }) => {
   return distinations;
 };
 
-export const getDistinations = async (searchTerm: string): Promise<ISearchResult> => {
+export const getDistinations = async (searchTerm: string) => {
   try {
     await connectToDB();
 
@@ -394,49 +403,118 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
     const safeInput = escapeRegex(searchTerm);
     const regex = new RegExp(`^${safeInput}`, "i");
 
-    const distinations = await Hotel.aggregate([
+    // const searchHotelsByCountry = Hotel.find({ "location.country": regex })
+    //   .limit(2)
+    //   .select("location.country");
+    // const searchHotelsByCity = Hotel.find({ "location.city": regex }).select(
+    //   "location.country location.city",
+    // );
+    const searchHotelsByCountry = Hotel.aggregate([
+      { $match: { "location.country": regex } },
       {
         $group: {
           _id: "$location.country",
-          cities: { $addToSet: "$location.city" },
         },
       },
       {
         $project: {
           country: "$_id",
-          cities: 1,
-          _id: 0,
         },
       },
+      { $limit: 2 },
     ]);
 
-    const allDistinations: ISearchResult = [];
+    const searchHotelsByCity = Hotel.aggregate([
+      { $match: { "location.city": regex } },
+      {
+        $group: {
+          _id: "$location.city",
+          country: { $addToSet: "$location.country" },
+        },
+      },
+      {
+        $project: {
+          city: "$_id",
+          country: 1,
+        },
+      },
+      { $limit: 2 },
+    ]);
+    const searchHotelsByName = Hotel.find({ name: regex })
+      .limit(2)
+      .select("location.country location.city name");
 
-    distinations.forEach((item) => {
-      allDistinations.push({ type: "country", item: item.country });
-      item.cities.forEach((city: string) => {
-        allDistinations.push({ type: "city", item: city });
-      });
-    });
+    const [byCountry, byCity, byName] = await Promise.all([
+      searchHotelsByCountry,
+      searchHotelsByCity,
+      searchHotelsByName,
+    ]);
 
-    if (!searchTerm) {
-      return allDistinations;
-    }
-
-    const hotels = await Hotel.find({ name: regex }).limit(2).select("name");
-    const mapedHotels: ISearchResult = hotels.map((hotel) => ({
-      type: "property",
-      item: hotel.name,
+    console.log(byCity);
+    const transformByHotelName: ISearchResult = byName.map((hotel) => ({
+      type: "property-name",
+      name: hotel.name,
+      city: hotel.location.city,
+      country: hotel.location.country,
     }));
 
-    const filteredDistinations: ISearchResult = allDistinations.filter((distination) =>
-      distination.item.toLowerCase().startsWith(searchTerm.toLowerCase()),
-    );
+    const transformByCity: ISearchResult = byCity.map((hotel) => ({
+      type: "city",
+      city: hotel.city,
+      country: hotel.country[0],
+    }));
 
-    const results = [...mapedHotels, ...filteredDistinations];
+    const transformByCountry: ISearchResult = byCountry.map((hotel) => ({
+      type: "country",
+      country: hotel.country,
+    }));
+
+    const results: ISearchResult = [...transformByHotelName, ...transformByCity, ...transformByCountry];
+    console.log(results.length);
+    // const distinations = await Hotel.aggregate([
+    //   {
+    //     $group: {
+    //       _id: "$location.country",
+    //       cities: { $addToSet: "$location.city" },
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       country: "$_id",
+    //       cities: 1,
+    //       _id: 0,
+    //     },
+    //   },
+    // ]);
+
+    // const allDistinations: ISearchResult = [];
+
+    // distinations.forEach((item) => {
+    //   allDistinations.push({ type: "country", name: item.country });
+    //   item.cities.forEach((city: string) => {
+    //     allDistinations.push({ type: "city", name: city });
+    //   });
+    // });
+
+    // if (!searchTerm) {
+    //   return allDistinations;
+    // }
+
+    // const hotels = await Hotel.find({ name: regex }).limit(2).select("name");
+    // const mapedHotels: ISearchResult = hotels.map((hotel) => ({
+    //   type: "property-name",
+    //   name: hotel.name,
+    // }));
+
+    // const filteredDistinations: ISearchResult = allDistinations.filter((distination) =>
+    //   distination.item.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    // );
+
+    // const results = [...mapedHotels, ...filteredDistinations];
 
     return results;
   } catch (error) {
+    console.log(error);
     throw new Error("can not load distinations");
   }
 };
