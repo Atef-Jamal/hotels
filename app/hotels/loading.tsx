@@ -1,7 +1,3 @@
-import React from "react";
-
-function loading() {
-  return <div>loading Hotels Page...</div>;
+export default async function loading() {
+  return <div className="rounded-lg"></div>;
 }
-
-export default loading;

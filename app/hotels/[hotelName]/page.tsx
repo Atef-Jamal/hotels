@@ -7,10 +7,9 @@ import { MdBathroom, MdOutlineBed, MdOutlineKingBed } from "react-icons/md";
 import { Separator } from "@/components/ui/separator";
 import MenuBarHotelDetailsPage from "@/components/MenuBarHotelDetailsPage";
 import Link from "next/link";
-import Hotel from "@/models/hotel";
-import { connectToDB } from "@/lib/database";
 import NearbyAttractionSection from "@/components/NearbyAttractionSection";
-import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
+import SearchBox from "@/components/SearchBox";
+import { getHotelDetails } from "@/actions/actions";
 
 interface IProps {
   params: { hotelName: string };
@@ -18,97 +17,17 @@ interface IProps {
 }
 
 const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
-  const { minPrice, maxPrice, roomServices, breakfastIncluded } = searchParams;
-  const { adults, children, checkIn, checkOut } = searchParams;
-
-  await connectToDB();
-  const hotelNameSlug = params.hotelName.replaceAll("_", " ");
-
-  const roomQueryFilter: any = {};
-
-  if (minPrice && maxPrice) {
-    roomQueryFilter["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
-  }
-
-  if (roomServices) {
-    roomQueryFilter["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
-  }
-
-  if (breakfastIncluded) {
-    if (breakfastIncluded === "true") {
-      roomQueryFilter["breakfastIncluded"] = true;
-    }
-    if (breakfastIncluded === "false") {
-      roomQueryFilter["breakfastIncluded"] = false;
-    }
-  }
-
-  if (adults) {
-    roomQueryFilter["capacity.adults"] = { $gte: Number(adults) };
-  }
-  if (children) {
-    roomQueryFilter["capacity.children"] = { $gte: Number(children) };
-  }
-
-  const hotels: IHotelWithRoomsReviewsNearbyAttractions[] = await Hotel.aggregate([
-    {
-      $match: { name: hotelNameSlug },
-    },
-    {
-      $lookup: {
-        from: "rooms",
-        localField: "_id",
-        foreignField: "hotel",
-        as: "rooms",
-        pipeline: [
-          {
-            $match: roomQueryFilter,
-          },
-          {
-            $lookup: {
-              localField: "_id",
-              foreignField: "roomId",
-              from: "bookings",
-              as: "bookedRoom",
-              pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
-            },
-          },
-          { $match: { bookedRoom: { $eq: [] } } },
-          { $sort: { adults: 1, children: 1 } },
-          { $limit: 10 },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "nearbyattractions",
-        // localField: "_id",
-        // foreignField: "hotel",
-        as: "nearbyAttractions",
-        pipeline: [{ $limit: 80 }],
-      },
-    },
-    {
-      $lookup: {
-        from: "reviews",
-        // localField: "_id",
-        // foreignField: "hotel",
-        as: "reviews",
-        pipeline: [{ $limit: 10 }],
-      },
-    },
-  ]);
-
-  const hotel: IHotelWithRoomsReviewsNearbyAttractions = JSON.parse(JSON.stringify(hotels[0]));
-
-  if (!hotel) throw new Error("Hotel Not Found !");
+  const hotel = await getHotelDetails({ params, searchParams });
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-2">
+      <div className="mx-2 mb-4 hidden transition-all md:block">
+        <SearchBox />
+      </div>
       <div className="relative md:hidden">
         <ImageSlider images={hotel.images} />
       </div>
-      <div className="mx-2 my-2 space-y-2 rounded-ee-lg rounded-es-lg bg-white py-3">
+      <div className="mx-2 space-y-2 rounded-lg bg-white py-3">
         <div className="flex items-center justify-between gap-x-2 px-3">
           <div>
             <div className="flex flex-wrap items-center gap-x-2 truncate">

@@ -7,10 +7,10 @@ async function HotelsPage({ searchParams }: { searchParams: Record<string, strin
     getHotles(searchParams),
   ]);
   return (
-    <div className="space-y-2">
-      <div className="mb-2 flex items-center gap-2 text-sm font-medium md:text-base">
-        <span className="text-blue-700">{hotelsCount?.totalHotels}</span>
-        <span className="text-zinc-900/90">Hotels Match your Search critiria</span>
+    <div className="space-y-1 py-1 max-md:px-2">
+      <div className="flex items-center gap-2 rounded-sm bg-blue-500 px-2 py-1 text-sm font-medium md:text-base">
+        <span className="text-purple-50">{hotelsCount?.totalHotels}</span>
+        <span className="text-purple-200">Hotels Match your Search critiria</span>
       </div>
       <HotelList initialFirstPageHotels={initialFirstPage} />
     </div>

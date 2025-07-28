@@ -1,12 +1,7 @@
 "use client";
 
-interface IErrorPageProps {
-  error?: Error;
-  reset?: () => void;
+export default function error() {
+  return (
+    <div className="m-4 w-[95%] max-w-[1200px] self-center rounded-lg bg-white p-4">an error occured</div>
+  );
 }
-
-const error = (error: IErrorPageProps) => {
-  return <div>{error.error?.message} at Root Page</div>;
-};
-
-export default error;

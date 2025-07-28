@@ -1,7 +1,3 @@
-import React from "react";
-
-const loading = () => {
-  return <div>Loading Entire App</div>;
-};
-
-export default loading;
+export default function loading() {
+  return <div className="flex flex-1 items-center justify-center">Loading Home Page</div>;
+}

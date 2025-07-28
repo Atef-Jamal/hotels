@@ -27,9 +27,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <QueryProvider>
-            <main className="flex min-h-screen flex-col">
+            <main className="flex min-h-screen flex-col bg-purple-200">
               <Navbar />
-              <section className="flex-1">{children}</section>
+              <section className="flex flex-1 flex-col">{children}</section>
               <Footer />
             </main>
           </QueryProvider>

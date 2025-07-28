@@ -3,9 +3,9 @@ import SearchBox from "@/components/SearchBox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const Home = () => {
+export default function Home() {
   return (
-    <section className="relative bg-purple-200">
+    <section className="relative flex-1 bg-purple-200">
       <div className="absolute top-0 h-60 w-full bg-gradient-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
       <div className="relative mx-auto max-w-[1200px] space-y-12">
         <div className="mx-2 overflow-hidden py-3 md:py-7">
@@ -219,6 +219,4 @@ const Home = () => {
       </div>
     </section>
   );
-};
-
-export default Home;
+}

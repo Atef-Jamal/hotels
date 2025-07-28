@@ -1,13 +1,9 @@
-import HotelsLayoutHeader from "@/components/HotelsLayoutHeader";
-function HotelsListLayout({ children }: { children: React.ReactNode }) {
+export default async function HotelsListLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="bg-[#623af3] md:pt-10">
-      <div className="relative bg-purple-200 md:rounded-t-3xl">
-        <HotelsLayoutHeader />
-        <div className="mx-auto max-w-[1200px] md:-translate-y-5">{children}</div>
+    <section className="flex flex-1 flex-col bg-[#623af3] md:pt-10">
+      <div className="flex flex-1 flex-col items-center bg-purple-200 md:rounded-t-3xl">
+        <div className="flex w-full max-w-[1200px] flex-1 flex-col md:-translate-y-5">{children}</div>
       </div>
     </section>
   );
 }
-
-export default HotelsListLayout;

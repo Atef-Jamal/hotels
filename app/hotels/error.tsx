@@ -1,12 +1,6 @@
 "use client";
 import React from "react";
 
-interface IErrorPageProps {
-  error?: Error;
-  reset?: () => void;
+export default function error() {
+  return <div className="mx-2 rounded-lg bg-white p-4 max-md:my-2">an error occurred at Hotels</div>;
 }
-const error = (error: IErrorPageProps) => {
-  return <div>{error.error?.message} at Hotels List Page</div>;
-};
-
-export default error;

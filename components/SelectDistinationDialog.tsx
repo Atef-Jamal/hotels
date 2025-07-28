@@ -95,8 +95,6 @@ function SelectDistinationDialog({
     staleTime: 1000 * 60 * 60,
   });
 
-  console.log(data);
-
   return (
     <Dialog>
       {children}
