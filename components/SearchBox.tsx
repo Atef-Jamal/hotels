@@ -16,6 +16,7 @@ import { useState } from "react";
 const SearchBox = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  // const params = new URLSearchParams(searchParams.toString());
 
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
@@ -25,12 +26,13 @@ const SearchBox = () => {
   const [city, setCity] = useState(searchParams.get("city") || "");
   const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || today);
   const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || tomorrow);
-  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")));
-  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")));
+  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")) || 0);
+  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")) || 500);
   const [averageRating, setAverageRating] = useState(Number(searchParams.get("averageRating")));
 
   const handelSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
+    console.log(params);
     router.push(`/hotels?${params.toString()}`);
   };
 
@@ -81,8 +83,8 @@ const SearchBox = () => {
 
           <SelectPriceRatingDrawer
             minPrice={minPrice}
-            averageRating={averageRating}
             maxPrice={maxPrice}
+            averageRating={averageRating}
             setMinPrice={setMinPrice}
             setMaxPrice={setMaxPrice}
             setAverageRating={setAverageRating}

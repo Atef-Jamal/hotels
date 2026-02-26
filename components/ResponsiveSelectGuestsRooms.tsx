@@ -22,6 +22,7 @@ import {
 } from "./ui/dialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { updateURLSearchParams } from "@/lib/utils";
 
 function ResponsiveSelectGuestsRooms() {
   const router = useRouter();
@@ -31,20 +32,59 @@ function ResponsiveSelectGuestsRooms() {
   const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
   const [roomsCount, setRoomsCount] = useState(Number(searchParams.get("roomsCount")) || 1);
 
-  const updateSearchParam = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
-    router.push(`?${params.toString()}`);
+  const decreaseAdults = () => {
+    setAdults((prev) => prev - 1);
+    const newParams = updateURLSearchParams(searchParams, [
+      { actionType: "set", key: "adults", value: (adults - 1).toString() },
+    ]);
+    router.push(`?${newParams}`);
   };
 
-  const updateMoreSearchParams = (argu: { key: string; value: string }[]) => {
-    const params = new URLSearchParams(searchParams.toString());
-    argu.forEach((item) => {
-      params.set(item.key, item.value);
-    });
-    router.push(`?${params.toString()}`);
+  const increaseAdults = () => {
+    setAdults((prev) => prev + 1);
+    const newParams = updateURLSearchParams(searchParams, [
+      { actionType: "set", key: "adults", value: (adults + 1).toString() },
+    ]);
+    router.push(`?${newParams}`);
   };
 
+  const decreasChildren = () => {
+    setChildren((prev) => prev - 1);
+    const newParams = updateURLSearchParams(searchParams, [
+      { actionType: "set", key: "children", value: (children - 1).toString() },
+    ]);
+    router.push(`?${newParams}`);
+  };
+  const increaseChildren = () => {
+    setChildren((prev) => prev + 1);
+    const newParams = updateURLSearchParams(searchParams, [
+      { actionType: "set", key: "children", value: (children + 1).toString() },
+    ]);
+    router.push(`?${newParams}`);
+  };
+
+  const decreaseRoomCount = () => {
+    setRoomsCount((prev) => prev - 1);
+    const newParams = updateURLSearchParams(searchParams, [
+      { actionType: "set", key: "roomsCount", value: (roomsCount - 1).toString() },
+    ]);
+    router.push(`?${newParams}`);
+  };
+  const increaseRoomCount = () => {
+    let newParams;
+    if (adults <= roomsCount && roomsCount < 10) {
+      newParams = updateURLSearchParams(searchParams, [
+        { actionType: "set", key: "adults", value: (roomsCount + 1).toString() },
+        { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
+      ]);
+    } else {
+      newParams = updateURLSearchParams(searchParams, [
+        { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
+      ]);
+      setRoomsCount((prev) => prev + 1);
+    }
+    router.push(`?${newParams}`);
+  };
   return (
     <>
       <Drawer>
@@ -62,23 +102,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Adults</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={adults <= 1}
-                  onClick={() => {
-                    setAdults((prev) => prev - 1);
-                    updateSearchParam("adults", (adults - 1).toString());
-                  }}
-                >
+                <button disabled={adults <= 1} onClick={decreaseAdults}>
                   <MinusCircle size={17} />
                 </button>
                 <span> {adults} </span>
-                <button
-                  disabled={adults >= 30}
-                  onClick={() => {
-                    setAdults((prev) => prev + 1);
-                    updateSearchParam("adults", (adults + 1).toString());
-                  }}
-                >
+                <button disabled={adults >= 30} onClick={increaseAdults}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -86,23 +114,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Children</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={children <= 0}
-                  onClick={() => {
-                    setChildren((prev) => prev - 1);
-                    updateSearchParam("children", (children - 1).toString());
-                  }}
-                >
+                <button disabled={children <= 0} onClick={decreasChildren}>
                   <MinusCircle size={17} />
                 </button>
                 <span>{children}</span>
-                <button
-                  disabled={children >= 30}
-                  onClick={() => {
-                    setChildren((prev) => prev + 1);
-                    updateSearchParam("children", (children + 1).toString());
-                  }}
-                >
+                <button disabled={children >= 30} onClick={increaseChildren}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -110,30 +126,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Rooms</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={roomsCount <= 1}
-                  onClick={() => {
-                    setRoomsCount((prev) => prev - 1);
-                    updateSearchParam("roomsCount", (roomsCount - 1).toString());
-                  }}
-                >
+                <button disabled={roomsCount <= 1} onClick={decreaseRoomCount}>
                   <MinusCircle size={17} />
                 </button>
                 <span> {roomsCount} </span>
-                <button
-                  disabled={roomsCount >= 10}
-                  onClick={() => {
-                    if (adults <= roomsCount && roomsCount < 10) {
-                      updateMoreSearchParams([
-                        { key: "adults", value: (roomsCount + 1).toString() },
-                        { key: "roomsCount", value: (roomsCount + 1).toString() },
-                      ]);
-                    } else {
-                      setRoomsCount((prev) => prev + 1);
-                      updateSearchParam("roomsCount", (roomsCount + 1).toString());
-                    }
-                  }}
-                >
+                <button disabled={roomsCount >= 10} onClick={increaseRoomCount}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -163,23 +160,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Adults</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={adults <= 1}
-                  onClick={() => {
-                    setAdults((prev) => prev - 1);
-                    updateSearchParam("adults", (adults - 1).toString());
-                  }}
-                >
+                <button disabled={adults <= 1} onClick={decreaseAdults}>
                   <MinusCircle size={17} />
                 </button>
                 <span> {adults} </span>
-                <button
-                  disabled={adults >= 30}
-                  onClick={() => {
-                    setAdults((prev) => prev + 1);
-                    updateSearchParam("adults", (adults + 1).toString());
-                  }}
-                >
+                <button disabled={adults >= 30} onClick={increaseAdults}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -187,23 +172,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Children</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={children <= 0}
-                  onClick={() => {
-                    setChildren((prev) => prev - 1);
-                    updateSearchParam("children", (children - 1).toString());
-                  }}
-                >
+                <button disabled={children <= 0} onClick={decreasChildren}>
                   <MinusCircle size={17} />
                 </button>
                 <span>{children}</span>
-                <button
-                  disabled={children >= 30}
-                  onClick={() => {
-                    setChildren((prev) => prev + 1);
-                    updateSearchParam("children", (children + 1).toString());
-                  }}
-                >
+                <button disabled={children >= 30} onClick={increaseChildren}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -211,31 +184,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Rooms</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button
-                  disabled={roomsCount <= 1}
-                  onClick={() => {
-                    setRoomsCount((prev) => prev - 1);
-                    updateSearchParam("roomsCount", (roomsCount - 1).toString());
-                  }}
-                >
+                <button disabled={roomsCount <= 1} onClick={decreaseRoomCount}>
                   <MinusCircle size={17} />
                 </button>
                 <span> {roomsCount} </span>
-                <button
-                  disabled={roomsCount >= 10}
-                  onClick={() => {
-                    setRoomsCount((prev) => prev + 1);
-                    if (adults <= roomsCount && roomsCount < 10) {
-                      setAdults(roomsCount + 1);
-                      updateMoreSearchParams([
-                        { key: "adults", value: (roomsCount + 1).toString() },
-                        { key: "roomsCount", value: (roomsCount + 1).toString() },
-                      ]);
-                    } else {
-                      updateSearchParam("roomsCount", (roomsCount + 1).toString());
-                    }
-                  }}
-                >
+                <button disabled={roomsCount >= 10} onClick={increaseRoomCount}>
                   <PlusCircle size={17} />
                 </button>
               </div>

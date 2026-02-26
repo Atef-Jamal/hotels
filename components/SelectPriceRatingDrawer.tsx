@@ -8,11 +8,12 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "./ui/drawer";
-import { cn } from "@/lib/utils";
+import { cn, updateURLSearchParams } from "@/lib/utils";
 import { Star } from "lucide-react";
 import RcSlider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "./ui/button";
 
 function SelectPriceRatingDrawer({
   children,
@@ -31,16 +32,10 @@ function SelectPriceRatingDrawer({
   setMaxPrice: React.Dispatch<React.SetStateAction<number>>;
   setAverageRating: React.Dispatch<React.SetStateAction<number>>;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const breakfastIncluded = Boolean(searchParams.get("breakfastIncluded"));
-
-  const updateSearchParam = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value); // Update or add the param
-    router.push(`?${params.toString()}`); // Update URL without full reload
-  };
 
   return (
     <Drawer>
@@ -53,20 +48,28 @@ function SelectPriceRatingDrawer({
           </DrawerDescription>
         </DrawerHeader>
         <div className="mb-4 max-h-[60vh] space-y-4 overflow-y-auto text-sm font-[400] scrollbar-thin">
-          <div className="space-y-3 font-medium">
-            <span className="">SAR 140</span> -<span className="">SAR 340</span>
+          <div className="space-y-2 px-2">
+            <div className="flex items-center gap-5 text-blue-700">
+              <span className="font-medium">SAR {minPrice || 0}</span>
+              <span className="h-0.5 w-8 bg-blue-700"></span>
+              <span className="font-medium">SAR {maxPrice || 500}</span>
+            </div>
+
             <RcSlider
               range
               min={0}
               max={500}
               step={1}
-              value={[minPrice, maxPrice]}
+              value={[minPrice || 0, maxPrice || 500]}
               onChange={(value) => {
                 if (Array.isArray(value)) {
                   setMinPrice(value[0]);
                   setMaxPrice(value[1]);
-                  updateSearchParam("minPrice", value[0].toString());
-                  updateSearchParam("maxPrice", value[1].toString());
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: value[0].toString() },
+                    { actionType: "set", key: "maxPrice", value: value[1].toString() },
+                  ]);
+                  router.push(`?${newParams}`);
                 }
               }}
               styles={{
@@ -74,13 +77,104 @@ function SelectPriceRatingDrawer({
                 handle: { background: "blue" },
               }}
             />
-            <div className="grid grid-cols-2 gap-2">
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">Under SAR 60</button>
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">SAR 60 - SAR 150</button>
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">SAR 150 - SAR 200</button>
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">SAR 200 - SAR 300</button>
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">SAR 300 - SAR 400</button>
-              <button className="text-nowrap rounded-md bg-muted-foreground/10 p-2">SAR 400 - SAR 500</button>
+
+            <div className="grid grid-cols-2 gap-x-1 gap-y-2">
+              <Button
+                onClick={() => {
+                  setMinPrice(0);
+                  setMaxPrice(60);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "0" },
+                    { actionType: "set", key: "maxPrice", value: "60" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                Under 60
+              </Button>
+              <Button
+                onClick={() => {
+                  setMinPrice(60);
+                  setMaxPrice(150);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "60" },
+                    { actionType: "set", key: "maxPrice", value: "150" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                60 - 150
+              </Button>
+              <Button
+                onClick={() => {
+                  setMinPrice(150);
+                  setMaxPrice(200);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "150" },
+                    { actionType: "set", key: "maxPrice", value: "200" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                150 - 200
+              </Button>
+              <Button
+                onClick={() => {
+                  setMinPrice(200);
+                  setMaxPrice(300);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "200" },
+                    { actionType: "set", key: "maxPrice", value: "300" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                200 - 300
+              </Button>
+              <Button
+                onClick={() => {
+                  setMinPrice(300);
+                  setMaxPrice(400);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "300" },
+                    { actionType: "set", key: "maxPrice", value: "400" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                300 - 400
+              </Button>
+              <Button
+                onClick={() => {
+                  setMinPrice(400);
+                  setMaxPrice(500);
+                  const newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "minPrice", value: "400" },
+                    { actionType: "set", key: "maxPrice", value: "500" },
+                  ]);
+                  router.push(`?${newParams}`);
+                }}
+                size={"sm"}
+                className="text-blue-700"
+                variant={"secondary"}
+              >
+                400 - 500
+              </Button>
             </div>
           </div>
           <div>
@@ -103,8 +197,16 @@ function SelectPriceRatingDrawer({
           <div className="flex items-center justify-between">
             <p className="font-bold">Breakfast Included</p>
             <button
-              // onClick={() => setBreakfastIncluded((prev) => !prev)}
-              onClick={() => updateSearchParam("breakfastIncluded", breakfastIncluded ? "false" : "true")}
+              onClick={() => {
+                const newParams = updateURLSearchParams(searchParams, [
+                  {
+                    actionType: "set",
+                    key: "breakfastIncluded",
+                    value: breakfastIncluded ? "false" : "true",
+                  },
+                ]);
+                router.push(`?${newParams}`);
+              }}
               className={cn(
                 "flex h-7 w-12 items-center rounded-full px-0.5",
                 breakfastIncluded ? "bg-blue-700" : "bg-muted-foreground/30",
@@ -146,7 +248,9 @@ function SelectPriceRatingDrawer({
           </div>
         </div>
         <DrawerFooter className="p-0">
-          <DrawerClose className="rounded-md bg-blue-700 py-1 text-gray-200">Apply</DrawerClose>
+          <DrawerClose onClick={() => {}} className="rounded-md bg-blue-700 py-1 text-gray-200">
+            Apply
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

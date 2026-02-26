@@ -14,6 +14,17 @@ export interface IUser {
   updatedAt: Date;
 }
 
+export interface IDiscount {
+  _id: string;
+  hotel: IHotel;
+  type: "promo-code" | "first-deal";
+  code?: string;
+  expiredAt: Date;
+  amount: { type: "percentage" | "fixed"; amount: number };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IHotel {
   _id: string;
   name: string;
@@ -207,6 +218,15 @@ export interface IReviewDoc extends Document {
   amentities: number;
   service: number;
   comment: string;
+}
+export interface IDiscountDoc extends Document {
+  hotel: Types.ObjectId;
+  type: "promo-code" | "first-deal";
+  code?: string;
+  amount: { type: "percentage" | "fixed"; amount: number };
+  expiredAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const EnumAmenityName = [

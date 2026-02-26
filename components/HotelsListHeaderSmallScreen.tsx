@@ -21,8 +21,8 @@ const HotelsListHeaderSmallScreen = () => {
   const [city, setCity] = useState(searchParams.get("city") || "");
   const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || today);
   const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || tomorrow);
-  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")));
-  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")));
+  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")) || 0);
+  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")) || 500);
   const [averageRating, setAverageRating] = useState(Number(searchParams.get("averageRating")));
 
   return (

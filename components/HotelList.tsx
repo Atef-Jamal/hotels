@@ -34,7 +34,16 @@ function HotelList({
     <div className="space-y-2">
       {status === "error" && <p>{error.message}</p>}
 
-      {status === "success" && hotels.length === 0 && <p>no hotels was found</p>}
+      {status === "success" &&
+      hotels.length === 0 &&
+      !options.hotelName &&
+      !options.country &&
+      !options.city &&
+      !options.address ? (
+        <p>Pleas Enter a Distination or a property name !</p>
+      ) : (
+        status === "success" && hotels.length === 0 && <p>No Results Match your Search critiria</p>
+      )}
 
       {status === "success" &&
         hotels.map((hotel) => <HotelDetailCard key={hotel._id} hotel={hotel} options={options} />)}

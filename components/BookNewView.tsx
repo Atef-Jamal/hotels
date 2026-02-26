@@ -8,10 +8,42 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { BadgeCheck, BedDouble, BedSingle, Calendar, ChevronDown, InfoIcon } from "lucide-react";
 import { useState } from "react";
-import CheckOutForm from "./CheckOutForm";
+import Link from "next/link";
+import { IRoom } from "@/types/types";
+import { applyPromoCod } from "@/actions/actions";
 
-export default function BookNewView({ clientSecret }: { clientSecret: string }) {
+export default function BookNewView({ room, discountId }: { room: IRoom; discountId: string | null }) {
+  const [roomData, setRoomData] = useState(room);
   const [promoCode, setPromoCode] = useState("");
+  const [promoCodeLoading, setPromoCodeLoading] = useState(false);
+  const [promoCodeApplied, setPromoCodeApplied] = useState(false);
+  const [promoCodeError, setPromoCodeError] = useState("");
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setPromoCodeError("");
+    setPromoCodeLoading(true);
+    try {
+      const result = await applyPromoCod({ roomId: roomData._id, discountId, promoCode });
+
+      if (result.status === "error") {
+        setPromoCodeError(result.message);
+        setPromoCodeLoading(false);
+      }
+
+      if (result.status === "success") {
+        setRoomData((prev) => ({ ...prev, pricePerNight: result.newPrice }));
+        setPromoCodeLoading(false);
+        setPromoCodeApplied(true);
+      }
+    } catch (error) {
+      setPromoCodeError("an error occured");
+      setPromoCodeLoading(false);
+    }
+
+    return;
+  };
+  console.log(promoCodeLoading);
   const user = { name: "atef", email: "atefgmal778@gmail.com", phone: "01095938927", emailVerified: false };
 
   return (
@@ -72,34 +104,43 @@ export default function BookNewView({ clientSecret }: { clientSecret: string }) 
 
           <Textarea placeholder="Enter Your Requests" />
         </div>
-        <div className="rounded-md bg-white px-2 py-4 sm:px-4">
-          <h1 className="mb-5 text-lg font-semibold">Available For this Booking</h1>
-          <div className="grid items-center gap-2">
-            <Label htmlFor="promo-code" className="ml-1">
-              Promo code
-            </Label>
-            <div className="relative flex items-center justify-end">
-              <Input
-                type="text"
-                id="promo-code"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code"
-              />
-              <button
-                className={cn(
-                  "absolute mr-2 rounded-md px-3 py-1 text-sm text-white",
-                  promoCode ? "bg-blue-700" : "bg-blue-700/40",
-                )}
-              >
-                Use
-              </button>
-            </div>
+        {discountId && (
+          <div className="rounded-md bg-white px-2 py-4 sm:px-4">
+            <h1 className="mb-5 text-lg font-semibold">Available For this Booking</h1>
+            <form className="grid items-center gap-2">
+              <Label htmlFor="promo-code" className="ml-1">
+                Promo code
+              </Label>
+              <div className="relative flex items-center justify-end">
+                <Input
+                  type="text"
+                  id="promo-code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  disabled={promoCodeLoading || promoCodeApplied}
+                  placeholder="Enter promo code"
+                />
+                <button
+                  type="submit"
+                  onClick={handleSubmit}
+                  className={cn(
+                    "absolute mr-2 rounded-md px-3 py-1 text-sm text-white",
+                    promoCode ? "bg-blue-700" : "bg-blue-700/40",
+                  )}
+                >
+                  {promoCodeLoading ? "Loading" : "Use"}
+                </button>
+              </div>
+              {promoCodeError && <p>{promoCodeError}</p>}
+            </form>
           </div>
-        </div>
-        <div className="hidden rounded-lg bg-white p-4 lg:block">
-          <CheckOutForm clientSecret={clientSecret} />
-        </div>
+        )}
+        <Link
+          href={discountId && promoCodeApplied ? `info/payment?discountId=${discountId}` : `info/payment`}
+          className="hidden w-full rounded-lg bg-blue-700 text-lg lg:block"
+        >
+          Next Step
+        </Link>
       </div>
       <div className="flex w-full flex-col gap-4 lg:w-[33%]">
         <div className="space-y-1 rounded-md bg-white px-2 py-4 sm:px-4">
@@ -182,11 +223,16 @@ export default function BookNewView({ clientSecret }: { clientSecret: string }) 
           </div>
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold">Total</h1>
-            <span>SAR 420</span>
+            <span>SAR {roomData.pricePerNight}</span>
           </div>
         </div>
-        <div className="rounded-lg bg-white p-4 lg:hidden">
-          <CheckOutForm clientSecret={clientSecret} />
+        <div>
+          <Link
+            href={discountId && promoCodeApplied ? `info/payment?discountId=${discountId}` : `info/payment`}
+            className="w-full rounded-lg bg-blue-700 text-lg lg:hidden"
+          >
+            Next Step
+          </Link>
         </div>
       </div>
     </section>

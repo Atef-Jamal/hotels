@@ -7,12 +7,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import testImage from "@/public/gamePhoto-43.jpg";
 import RcSlider from "rc-slider";
-import "rc-slider/assets/index.css";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaces, GetPlacesParams } from "@/actions/actions";
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { updateURLSearchParams } from "@/lib/utils";
+import "rc-slider/assets/index.css";
 
 const FilterHotels = () => {
   const router = useRouter();
@@ -31,16 +32,19 @@ const FilterHotels = () => {
 
   const handleRoomServiceChange = (service: string) => {
     const exists = roomServices.includes(service);
+    let newParams;
     if (exists) {
       setRoomServices((prev) => prev.filter((i) => i !== service));
-      updateSearchParam([{ actionType: "delete", key: "roomServices", value: service }]);
-      return;
-    }
-    if (!exists) {
+      newParams = updateURLSearchParams(searchParams, [
+        { actionType: "delete", key: "roomServices", value: service },
+      ]);
+    } else {
       setRoomServices((prev) => [...prev, service]);
-      updateSearchParam([{ actionType: "append", key: "roomServices", value: service }]);
-      return;
+      newParams = updateURLSearchParams(searchParams, [
+        { actionType: "append", key: "roomServices", value: service },
+      ]);
     }
+    router.push(`?${newParams}`);
   };
 
   let placesTypeg: "cities" | "countries" | "addresses" = "countries";
@@ -56,28 +60,31 @@ const FilterHotels = () => {
   }
 
   const placesChangeHandler = (value: string) => {
+    let newParams;
     switch (placesTypeg) {
       case "countries":
-        updateSearchParam([
+        newParams = updateURLSearchParams(searchParams, [
           { actionType: "delete", key: "hotelName" },
           { actionType: "set", key: "country", value },
         ]);
 
         break;
       case "cities":
-        updateSearchParam([
+        newParams = updateURLSearchParams(searchParams, [
           { actionType: "delete", key: "hotelName" },
           { actionType: "set", key: "city", value },
         ]);
+
         break;
       case "addresses":
-        updateSearchParam([
+        newParams = updateURLSearchParams(searchParams, [
           { actionType: "delete", key: "hotelName" },
           { actionType: "set", key: "address", value },
         ]);
 
         break;
     }
+    router.push(`?${newParams}`);
   };
 
   const { data: places } = useQuery({
@@ -86,34 +93,16 @@ const FilterHotels = () => {
     staleTime: 1000 * 60 * 60,
   });
 
-  const updateSearchParam = (
-    argue: (
-      | { actionType: "set" | "append"; key: string; value: string }
-      | { actionType: "delete"; key: string; value?: string }
-    )[],
-  ) => {
-    const params = new URLSearchParams(searchParams.toString());
-    argue.forEach((item) => {
-      if (item.actionType === "set") {
-        params.set(item.key, item.value);
-      }
-      if (item.actionType === "append") {
-        params.append(item.key, item.value);
-      }
-      if (item.actionType === "delete") {
-        params.delete(item.key, item.value);
-      }
-    });
-    router.push(`?${params.toString()}`); // Update URL without full reload
-  };
-
   return (
     <div className="space-y-5">
       <div className="space-y-3 border-b pb-4">
         <p className="font-bold">Price Range</p>
         <div className="space-y-2">
-          <span className="text-sm font-medium">SAR {minPrice || 0}</span> -{" "}
-          <span className="text-sm font-medium">SAR {maxPrice || 500}</span>
+          <div className="flex items-center gap-5 text-blue-700">
+            <span className="font-medium">SAR {minPrice || 0}</span>
+            <span className="h-0.5 w-8 bg-blue-700"></span>
+            <span className="font-medium">SAR {maxPrice || 500}</span>
+          </div>
           <RcSlider
             range
             min={0}
@@ -124,10 +113,12 @@ const FilterHotels = () => {
               if (Array.isArray(value)) {
                 setMinPrice(value[0]);
                 setMaxPrice(value[1]);
-                updateSearchParam([
+
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: value[0].toString() },
                   { actionType: "set", key: "maxPrice", value: value[1].toString() },
                 ]);
+                router.push(`?${newParams}`);
               }
             }}
             styles={{
@@ -140,91 +131,97 @@ const FilterHotels = () => {
               onClick={() => {
                 setMinPrice(0);
                 setMaxPrice(60);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "0" },
                   { actionType: "set", key: "maxPrice", value: "60" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              Under SAR 60
+              Under 60
             </Button>
             <Button
               onClick={() => {
                 setMinPrice(60);
                 setMaxPrice(150);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "60" },
                   { actionType: "set", key: "maxPrice", value: "150" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              SAR 60 - SAR 150
+              60 - 150
             </Button>
             <Button
               onClick={() => {
                 setMinPrice(150);
                 setMaxPrice(200);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "150" },
                   { actionType: "set", key: "maxPrice", value: "200" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              SAR 150 - SAR 200
+              150 - 200
             </Button>
             <Button
               onClick={() => {
                 setMinPrice(200);
                 setMaxPrice(300);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "200" },
                   { actionType: "set", key: "maxPrice", value: "300" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              SAR 200 - SAR 300
+              200 - 300
             </Button>
             <Button
               onClick={() => {
                 setMinPrice(300);
                 setMaxPrice(400);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "300" },
                   { actionType: "set", key: "maxPrice", value: "400" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              SAR 300 - SAR 400
+              300 - 400
             </Button>
             <Button
               onClick={() => {
                 setMinPrice(400);
                 setMaxPrice(500);
-                updateSearchParam([
+                const newParams = updateURLSearchParams(searchParams, [
                   { actionType: "set", key: "minPrice", value: "400" },
                   { actionType: "set", key: "maxPrice", value: "500" },
                 ]);
+                router.push(`?${newParams}`);
               }}
               size={"sm"}
+              className="text-blue-700"
               variant={"secondary"}
-              className="h-7 w-[8.2rem] text-nowrap text-xs"
             >
-              SAR 400 - SAR 500
+              400 - 500
             </Button>
           </div>
         </div>
@@ -237,13 +234,19 @@ const FilterHotels = () => {
               id="Breakfast Included"
               checked={breakfastIncluded === "true"}
               onCheckedChange={(checked) => {
+                let newParams;
                 if (checked === true) {
                   setBreakfastIncluded("true");
-                  updateSearchParam([{ actionType: "set", key: "breakfastIncluded", value: "true" }]);
+                  newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "breakfastIncluded", value: "true" },
+                  ]);
                 } else {
-                  updateSearchParam([{ actionType: "delete", key: "breakfastIncluded" }]);
                   setBreakfastIncluded("false");
+                  newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "delete", key: "breakfastIncluded" },
+                  ]);
                 }
+                router.push(`?${newParams}`);
               }}
             />
             <label
@@ -258,13 +261,19 @@ const FilterHotels = () => {
               id="popular-filter-2"
               checked={cancellationPolicy === "true"}
               onCheckedChange={(checked) => {
+                let newParams;
                 if (checked === true) {
                   setCancellationPolicy("true");
-                  updateSearchParam([{ actionType: "set", key: "cancellationPolicy", value: "true" }]);
+                  newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "set", key: "cancellationPolicy", value: "true" },
+                  ]);
                 } else {
                   setCancellationPolicy("false");
-                  updateSearchParam([{ actionType: "delete", key: "cancellationPolicy" }]);
+                  newParams = updateURLSearchParams(searchParams, [
+                    { actionType: "delete", key: "cancellationPolicy" },
+                  ]);
                 }
+                router.push(`?${newParams}`);
               }}
             />
             <label
@@ -300,7 +309,10 @@ const FilterHotels = () => {
           <Badge
             onClick={() => {
               setAverageRating(2);
-              updateSearchParam([{ actionType: "set", key: "averageRating", value: "2" }]);
+              const newParams = updateURLSearchParams(searchParams, [
+                { actionType: "set", key: "averageRating", value: "2" },
+              ]);
+              router.push(`?${newParams}`);
             }}
             variant={"secondary"}
             className="flex items-center justify-center gap-x-2 px-2 py-1"
@@ -310,7 +322,10 @@ const FilterHotels = () => {
           <Badge
             onClick={() => {
               setAverageRating(3);
-              updateSearchParam([{ actionType: "set", key: "averageRating", value: "3" }]);
+              const newParams = updateURLSearchParams(searchParams, [
+                { actionType: "set", key: "averageRating", value: "3" },
+              ]);
+              router.push(`?${newParams}`);
             }}
             variant={"secondary"}
             className="flex items-center justify-center gap-x-2 px-2 py-1"
@@ -320,7 +335,10 @@ const FilterHotels = () => {
           <Badge
             onClick={() => {
               setAverageRating(4);
-              updateSearchParam([{ actionType: "set", key: "averageRating", value: "4" }]);
+              const newParams = updateURLSearchParams(searchParams, [
+                { actionType: "set", key: "averageRating", value: "4" },
+              ]);
+              router.push(`?${newParams}`);
             }}
             variant={"secondary"}
             className="flex items-center justify-center gap-x-2 px-2 py-1"
@@ -330,7 +348,10 @@ const FilterHotels = () => {
           <Badge
             onClick={() => {
               setAverageRating(5);
-              updateSearchParam([{ actionType: "set", key: "averageRating", value: "5" }]);
+              const newParams = updateURLSearchParams(searchParams, [
+                { actionType: "set", key: "averageRating", value: "5" },
+              ]);
+              router.push(`?${newParams}`);
             }}
             variant={"secondary"}
             className="flex items-center justify-center gap-x-2 px-2 py-1"
@@ -377,7 +398,10 @@ const FilterHotels = () => {
           defaultValue={paymentFacilities || undefined}
           onValueChange={(value: any) => {
             setPaymentFacilities(value);
-            updateSearchParam([{ actionType: "set", key: "paymentFacilities", value: value }]);
+            const newParams = updateURLSearchParams(searchParams, [
+              { actionType: "set", key: "paymentFacilities", value: value },
+            ]);
+            router.push(`?${newParams}`);
           }}
           className="pl-2"
         >

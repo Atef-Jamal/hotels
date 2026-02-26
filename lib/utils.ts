@@ -12,7 +12,6 @@ export function searchParamsToObject(searchParams: ReadonlyURLSearchParams) {
 
   for (const [key, value] of params.entries()) {
     if (result[key]) {
-      // If the key already exists, convert to array or push to existing array
       result[key] = Array.isArray(result[key]) ? [...result[key], value] : [result[key], value];
     } else {
       result[key] = value;
@@ -20,3 +19,25 @@ export function searchParamsToObject(searchParams: ReadonlyURLSearchParams) {
   }
   return result;
 }
+
+export const updateURLSearchParams = (
+  searchParams: ReadonlyURLSearchParams,
+  argue: (
+    | { actionType: "set" | "append"; key: string; value: string }
+    | { actionType: "delete"; key: string; value?: string }
+  )[],
+) => {
+  const params = new URLSearchParams(searchParams.toString());
+  argue.forEach((item) => {
+    if (item.actionType === "set") {
+      params.set(item.key, item.value);
+    }
+    if (item.actionType === "append") {
+      params.append(item.key, item.value);
+    }
+    if (item.actionType === "delete") {
+      params.delete(item.key, item.value);
+    }
+  });
+  return params.toString();
+};

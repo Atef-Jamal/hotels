@@ -9,6 +9,7 @@ import { getDistinations, ISearchItem } from "@/actions/actions";
 import testImage from "@/public/gamePhoto-43.jpg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { MdClose } from "react-icons/md";
+import { updateURLSearchParams } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function SelectDistinationDialog({
@@ -28,39 +29,21 @@ function SelectDistinationDialog({
   setCountry: React.Dispatch<React.SetStateAction<string>>;
   setCity: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  const [searchTerm, setSearchTerm] = useState(hotelName || country || city || "");
-
-  const updateSearchParam = (
-    argue: (
-      | { actionType: "set"; key: string; value: string }
-      | { actionType: "delete"; key: string; value?: string }
-    )[],
-  ) => {
-    const params = new URLSearchParams(searchParams.toString());
-    argue.forEach((item) => {
-      if (item.actionType === "set") {
-        params.set(item.key, item.value);
-      }
-      if (item.actionType === "delete") {
-        params.delete(item.key);
-      }
-    });
-    router.push(`?${params.toString()}`); // Update URL without full reload
-  };
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSelect = (distination: ISearchItem) => {
     if (distination.type === "property-name") {
       setHotelName(distination.name);
       setCity(distination.city);
       setCountry(distination.country);
-      updateSearchParam([
+      const newParams = updateURLSearchParams(searchParams, [
         { actionType: "set", key: "hotelName", value: distination.name },
         { actionType: "set", key: "city", value: distination.city },
         { actionType: "set", key: "country", value: distination.country },
       ]);
+      router.push(`?${newParams}`);
       return;
     }
 
@@ -68,11 +51,12 @@ function SelectDistinationDialog({
       setCity(distination.city);
       setCountry(distination.country);
       setHotelName("");
-      updateSearchParam([
+      const newParams = updateURLSearchParams(searchParams, [
         { actionType: "set", key: "city", value: distination.city },
         { actionType: "set", key: "country", value: distination.country },
         { actionType: "delete", key: "hotelName" },
       ]);
+      router.push(`?${newParams}`);
       return;
     }
 
@@ -80,11 +64,12 @@ function SelectDistinationDialog({
       setCountry(distination.country);
       setCity("");
       setHotelName("");
-      updateSearchParam([
+      const newParams = updateURLSearchParams(searchParams, [
         { actionType: "set", key: "country", value: distination.country },
         { actionType: "delete", key: "hotelName" },
         { actionType: "delete", key: "city" },
       ]);
+      router.push(`?${newParams}`);
       return;
     }
   };

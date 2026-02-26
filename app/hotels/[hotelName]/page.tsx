@@ -24,6 +24,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
       <div className="mx-2 mb-4 hidden transition-all md:block">
         <SearchBox />
       </div>
+
       <div className="relative md:hidden">
         <ImageSlider images={hotel.images} />
       </div>
@@ -176,7 +177,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                       Room Details
                     </Button>
                     <Button size={"sm"} className="px-8">
-                      <Link href={`${params.hotelName}/${room._id}/bookNew`}>Reserve</Link>
+                      <Link href={`${params.hotelName}/${room._id}/info`}>Reserve</Link>
                     </Button>
                   </div>
                 </div>

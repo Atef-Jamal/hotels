@@ -1,12 +1,14 @@
 "use server";
 import { FormSchemaField } from "@/app/auth/sign-up/page";
 import { connectToDB } from "@/lib/database";
+import Discount from "@/models/discount";
 import Hotel from "@/models/hotel";
+import Room from "@/models/room";
 import User from "@/models/user";
 import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 import bcrypt from "bcryptjs";
 
-type IProps = Record<string, string | string[]>;
+type IProps = Record<string, string | string[] | undefined>;
 
 export type ISearchItem =
   | {
@@ -121,9 +123,9 @@ export const getHotles = async ({
 
     const roomMatchStage: any = {};
 
-    // if(!hotelName && !country && !city && !address){
-    //   return {hotels: [], hasMore: false}
-    // }
+    if (!hotelName && !country && !city && !address) {
+      return { hotels: [], hasMore: false };
+    }
 
     if (hotelName) {
       hotelMatchStage["name"] = hotelName;
@@ -357,7 +359,7 @@ export const getHotelDetails = async ({ params, searchParams }: IParams) => {
 
   const hotel: IHotelWithRoomsReviewsNearbyAttractions = JSON.parse(JSON.stringify(hotels[0]));
 
-  if (!hotel) throw new Error("Hotel Not Found !");
+  if (!hotel) throw new Error("Hotel not Found");
   return hotel;
 };
 
@@ -384,6 +386,10 @@ export const getTotalHotelsCount = async ({
 
     const hotelMatchStage: any = {};
     const roomMatchStage: any = {};
+
+    if (!hotelName && !country && !city && !address) {
+      return { totalHotels: 0 };
+    }
 
     if (hotelName) {
       hotelMatchStage["name"] = hotelName;
@@ -464,7 +470,8 @@ export const getTotalHotelsCount = async ({
       { $match: { $expr: { $gte: [{ $size: "$rooms" }, Number(roomsCount)] } } },
       { $count: "total" },
     ]);
-    return { totalHotels: findHotels[0].total };
+
+    return { totalHotels: findHotels.length > 0 ? findHotels[0].total : 0 };
   } catch (error) {
     console.log(error);
     throw new Error("can't get hotels count");
@@ -571,5 +578,50 @@ export const getDistinations = async (searchTerm: string) => {
   } catch (error) {
     console.log(error);
     throw new Error("can not load distinations");
+  }
+};
+
+type IPromoCodeSuccess = { status: "success"; newPrice: number };
+type IPromoCodeFail = { status: "error"; message: string };
+type IPromoCodeResult = IPromoCodeSuccess | IPromoCodeFail;
+
+export const applyPromoCod = async ({
+  roomId,
+  discountId,
+  promoCode,
+}: {
+  roomId: string;
+  discountId: string | null;
+  promoCode: string;
+}): Promise<IPromoCodeResult> => {
+  try {
+    const discount = await Discount.findById(discountId);
+    if (!discount || discount.type !== "promo-code")
+      return { status: "error", message: "discount not found" };
+
+    const isExpired = new Date(discount.expiredAt) <= new Date();
+
+    if (isExpired) return { status: "error", message: "discount Expired" };
+
+    const correctPromoCode = discount.code === promoCode;
+
+    if (!correctPromoCode) return { status: "error", message: "Wrong promo code !" };
+
+    const room = await Room.findById(roomId);
+    if (!room) return { status: "error", message: "room not found" };
+
+    let newPrice = room.pricePerNight;
+
+    if (discount.amount.type === "percentage") {
+      newPrice = Math.max(0, newPrice - newPrice * (discount.amount.amount / 100));
+    }
+
+    if (discount.amount.type === "fixed") {
+      newPrice = Math.max(0, newPrice - discount.amount.amount);
+    }
+
+    return { status: "success", newPrice };
+  } catch (error) {
+    return { status: "error", message: "can not apply discount" };
   }
 };
