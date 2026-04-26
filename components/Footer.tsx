@@ -1,8 +1,6 @@
-import React from "react";
-
 const Footer = () => {
   return (
-    <section className="h-[46px] relative text-white flex items-center justify-center bg-[#353131] truncate">
+    <section className="relative flex h-[46px] items-center justify-center truncate bg-[#353131] text-white">
       @ Rights Reserved
     </section>
   );

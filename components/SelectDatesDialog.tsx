@@ -1,26 +1,25 @@
 "use client";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
-import { Calendar as CalenderDates } from "@/components/ui/calendar";
-import { updateURLSearchParams } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useSearchParams, useRouter } from "next/navigation";
+import { ISearchData } from "./SearchBox";
+import { addDays } from "date-fns";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 function SelectDatesDialog({
   children,
-  checkIn,
-  checkOut,
-  setCheckIn,
-  setCheckOut,
+  // searchData,
+  // setSearchData,
 }: {
   children: React.ReactNode;
-  checkIn: string;
-  checkOut: string;
-  setCheckIn: React.Dispatch<React.SetStateAction<string>>;
-  setCheckOut: React.Dispatch<React.SetStateAction<string>>;
+  searchData: ISearchData;
+  setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
 }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(new Date().getFullYear(), 0, 12),
+    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
+  });
   return (
     <Dialog>
       {children}
@@ -32,31 +31,25 @@ function SelectDatesDialog({
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
         </VisuallyHidden>
+        <Calendar
+          mode="range"
+          defaultMonth={dateRange?.from}
+          selected={dateRange}
+          onSelect={setDateRange}
+          numberOfMonths={2}
+          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+        />
 
-        <div>
-          <CalenderDates
+        {/* <Calendar
             mode="range"
-            selected={{
-              from: new Date(checkIn),
-              to: new Date(checkOut),
-            }}
-            onSelect={(value) => {
-              if (value?.from && value?.to) {
-                const checkInDate = value.from.toISOString().split("T")[0];
-                const checkOutDate = value.to.toISOString().split("T")[0];
-
-                setCheckIn(checkInDate);
-                setCheckOut(checkOutDate);
-                const newParams = updateURLSearchParams(searchParams, [
-                  { actionType: "set", key: "checkIn", value: checkInDate },
-                  { actionType: "set", key: "checkOut", value: checkOutDate },
-                ]);
-                router.push(`?${newParams}`);
+            selected={{ from: searchData.checkIn, to: searchData.checkOut }}
+            onSelect={(date) => {
+              if (Array.isArray(date)) {
+                setSearchData((prev) => ({ ...prev, checkIn: date[0], checkOut: date[1] }));
               }
             }}
             className="mx-auto w-fit rounded-md"
-          />
-        </div>
+          /> */}
       </DialogContent>
     </Dialog>
   );

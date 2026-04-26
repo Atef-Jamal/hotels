@@ -20,70 +20,85 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { updateURLSearchParams } from "@/lib/utils";
+// import { useState } from "react";
+import { ISearchData } from "./SearchBox";
+// import { updateURLSearchParams } from "@/lib/utils";
 
-function ResponsiveSelectGuestsRooms() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [adults, setAdults] = useState(Number(searchParams.get("adults")) || 1);
-  const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
-  const [roomsCount, setRoomsCount] = useState(Number(searchParams.get("roomsCount")) || 1);
+function ResponsiveSelectGuestsRooms({
+  searchData,
+  setSearchData,
+}: {
+  searchData: ISearchData;
+  setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
+}) {
+  // const [adults, setAdults] = useState(Number(searchParams.get("adults")) || 1);
+  // const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
+  // const [roomsCount, setRoomsCount] = useState(Number(searchParams.get("roomsCount")) || 1);
 
   const decreaseAdults = () => {
-    setAdults((prev) => prev - 1);
-    const newParams = updateURLSearchParams(searchParams, [
-      { actionType: "set", key: "adults", value: (adults - 1).toString() },
-    ]);
-    router.push(`?${newParams}`);
+    setSearchData((prev) => ({ ...prev, adults: prev.adults - 1 }));
+    // setAdults((prev) => prev - 1);
+    // const newParams = updateURLSearchParams(searchParams, [
+    //   { actionType: "set", key: "adults", value: (adults - 1).toString() },
+    // ]);
+    // router.push(`?${newParams}`);
   };
 
   const increaseAdults = () => {
-    setAdults((prev) => prev + 1);
-    const newParams = updateURLSearchParams(searchParams, [
-      { actionType: "set", key: "adults", value: (adults + 1).toString() },
-    ]);
-    router.push(`?${newParams}`);
+    setSearchData((prev) => ({ ...prev, adults: prev.adults + 1 }));
+    // setAdults((prev) => prev + 1);
+    // const newParams = updateURLSearchParams(searchParams, [
+    //   { actionType: "set", key: "adults", value: (adults + 1).toString() },
+    // ]);
+    // router.push(`?${newParams}`);
   };
 
   const decreasChildren = () => {
-    setChildren((prev) => prev - 1);
-    const newParams = updateURLSearchParams(searchParams, [
-      { actionType: "set", key: "children", value: (children - 1).toString() },
-    ]);
-    router.push(`?${newParams}`);
+    setSearchData((prev) => ({ ...prev, children: prev.children - 1 }));
+    // setChildren((prev) => prev - 1);
+    // const newParams = updateURLSearchParams(searchParams, [
+    //   { actionType: "set", key: "children", value: (children - 1).toString() },
+    // ]);
+    // router.push(`?${newParams}`);
   };
   const increaseChildren = () => {
-    setChildren((prev) => prev + 1);
-    const newParams = updateURLSearchParams(searchParams, [
-      { actionType: "set", key: "children", value: (children + 1).toString() },
-    ]);
-    router.push(`?${newParams}`);
+    setSearchData((prev) => ({ ...prev, children: prev.children + 1 }));
+    // setChildren((prev) => prev + 1);
+    // const newParams = updateURLSearchParams(searchParams, [
+    //   { actionType: "set", key: "children", value: (children + 1).toString() },
+    // ]);
+    // router.push(`?${newParams}`);
   };
 
   const decreaseRoomCount = () => {
-    setRoomsCount((prev) => prev - 1);
-    const newParams = updateURLSearchParams(searchParams, [
-      { actionType: "set", key: "roomsCount", value: (roomsCount - 1).toString() },
-    ]);
-    router.push(`?${newParams}`);
+    setSearchData((prev) => ({ ...prev, roomsCount: prev.roomsCount - 1 }));
+    // setRoomsCount((prev) => prev - 1);
+    // const newParams = updateURLSearchParams(searchParams, [
+    //   { actionType: "set", key: "roomsCount", value: (roomsCount - 1).toString() },
+    // ]);
+    // router.push(`?${newParams}`);
   };
+
   const increaseRoomCount = () => {
-    let newParams;
-    if (adults <= roomsCount && roomsCount < 10) {
-      newParams = updateURLSearchParams(searchParams, [
-        { actionType: "set", key: "adults", value: (roomsCount + 1).toString() },
-        { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
-      ]);
+    if (searchData.adults <= searchData.roomsCount && searchData.roomsCount < 10) {
+      setSearchData((prev) => ({ ...prev, adults: prev.adults + 1, roomsCount: prev.roomsCount + 1 }));
     } else {
-      newParams = updateURLSearchParams(searchParams, [
-        { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
-      ]);
-      setRoomsCount((prev) => prev + 1);
+      setSearchData((prev) => ({ ...prev, roomsCount: prev.roomsCount + 1 }));
     }
-    router.push(`?${newParams}`);
+
+    // let newParams;
+    // if (adults <= roomsCount && roomsCount < 10) {
+    //   newParams = updateURLSearchParams(searchParams, [
+    //     { actionType: "set", key: "adults", value: (roomsCount + 1).toString() },
+    //     { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
+    //   ]);
+    // } else {
+    //   newParams = updateURLSearchParams(searchParams, [
+    //     { actionType: "set", key: "roomsCount", value: (roomsCount + 1).toString() },
+    //   ]);
+    //   setRoomsCount((prev) => prev + 1);
+    // }
+    // router.push(`?${newParams}`);
   };
   return (
     <>
@@ -91,7 +106,7 @@ function ResponsiveSelectGuestsRooms() {
         <DrawerTrigger className="flex w-full items-center gap-x-2 truncate rounded-sm border p-2 md:hidden">
           <User size={16} />
           <span>
-            {roomsCount} Room, {adults} Adults, {children} Children
+            {searchData.roomsCount} Room, {searchData.adults} Adults, {searchData.children} Children
           </span>
         </DrawerTrigger>
         <DrawerContent className="px-3 py-0">
@@ -102,11 +117,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Adults</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={adults <= 1} onClick={decreaseAdults}>
+                <button disabled={searchData.adults <= 1} onClick={decreaseAdults}>
                   <MinusCircle size={17} />
                 </button>
-                <span> {adults} </span>
-                <button disabled={adults >= 30} onClick={increaseAdults}>
+                <span> {searchData.adults} </span>
+                <button disabled={searchData.adults >= 30} onClick={increaseAdults}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -114,11 +129,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Children</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={children <= 0} onClick={decreasChildren}>
+                <button disabled={searchData.children <= 0} onClick={decreasChildren}>
                   <MinusCircle size={17} />
                 </button>
-                <span>{children}</span>
-                <button disabled={children >= 30} onClick={increaseChildren}>
+                <span>{searchData.children}</span>
+                <button disabled={searchData.children >= 30} onClick={increaseChildren}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -126,11 +141,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Rooms</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={roomsCount <= 1} onClick={decreaseRoomCount}>
+                <button disabled={searchData.roomsCount <= 1} onClick={decreaseRoomCount}>
                   <MinusCircle size={17} />
                 </button>
-                <span> {roomsCount} </span>
-                <button disabled={roomsCount >= 10} onClick={increaseRoomCount}>
+                <span> {searchData.roomsCount} </span>
+                <button disabled={searchData.roomsCount >= 10} onClick={increaseRoomCount}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -149,7 +164,7 @@ function ResponsiveSelectGuestsRooms() {
         <DialogTrigger className="hidden items-center gap-x-2 truncate rounded-sm border p-2 md:flex">
           <User size={16} />
           <span>
-            {roomsCount} Room, {adults} Adults, {children} Children
+            {searchData.roomsCount} Room, {searchData.adults} Adults, {searchData.children} Children
           </span>
         </DialogTrigger>
         <DialogContent>
@@ -160,11 +175,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Adults</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={adults <= 1} onClick={decreaseAdults}>
+                <button disabled={searchData.adults <= 1} onClick={decreaseAdults}>
                   <MinusCircle size={17} />
                 </button>
-                <span> {adults} </span>
-                <button disabled={adults >= 30} onClick={increaseAdults}>
+                <span> {searchData.adults} </span>
+                <button disabled={searchData.adults >= 30} onClick={increaseAdults}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -172,11 +187,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Children</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={children <= 0} onClick={decreasChildren}>
+                <button disabled={searchData.children <= 0} onClick={decreasChildren}>
                   <MinusCircle size={17} />
                 </button>
-                <span>{children}</span>
-                <button disabled={children >= 30} onClick={increaseChildren}>
+                <span>{searchData.children}</span>
+                <button disabled={searchData.children >= 30} onClick={increaseChildren}>
                   <PlusCircle size={17} />
                 </button>
               </div>
@@ -184,11 +199,11 @@ function ResponsiveSelectGuestsRooms() {
             <div className="flex items-center justify-between">
               <span>Rooms</span>
               <div className="flex w-[80px] items-center justify-between">
-                <button disabled={roomsCount <= 1} onClick={decreaseRoomCount}>
+                <button disabled={searchData.roomsCount <= 1} onClick={decreaseRoomCount}>
                   <MinusCircle size={17} />
                 </button>
-                <span> {roomsCount} </span>
-                <button disabled={roomsCount >= 10} onClick={increaseRoomCount}>
+                <span> {searchData.roomsCount} </span>
+                <button disabled={searchData.roomsCount >= 10} onClick={increaseRoomCount}>
                   <PlusCircle size={17} />
                 </button>
               </div>

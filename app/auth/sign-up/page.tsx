@@ -11,9 +11,8 @@ import { MdEmail, MdPassword } from "react-icons/md";
 import { FaGithub, FaGoogle, FaUserEdit } from "react-icons/fa";
 import Link from "next/link";
 import { Phone } from "lucide-react";
-import { register } from "@/actions/actions";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -25,15 +24,17 @@ const formSchema = z.object({
   password: z.string().min(2, {
     message: "Password must be at least 2 characters.",
   }),
-  phone: z.string().min(2, {
-    message: "Phone must be at least 2 characters.",
-  }),
+  phone: z
+    .string()
+    .min(2, {
+      message: "Phone must be at least 2 characters.",
+    })
+    .optional(),
 });
 
 export type FormSchemaField = z.infer<typeof formSchema>;
-
 const SignUpPage = () => {
-  const session = useSession();
+  const session = authClient.useSession();
   const router = useRouter();
 
   const form = useForm({
@@ -48,22 +49,30 @@ const SignUpPage = () => {
   const { handleSubmit, control, formState } = form;
 
   const onSubmit = async (data: FormSchemaField) => {
-    const response = await register(data);
-
-    if (response.error) {
-      form.setError("root", { message: response.error.message });
-      return;
-    }
-    if (response.success) {
-      router.push("/");
-    }
+    await authClient.signUp.email(
+      {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        ...(data.phone ? { phone: data.phone } : {}),
+      },
+      {
+        onError(context) {
+          form.setError("root", { message: context.error.message });
+        },
+        onSuccess() {
+          router.push("/");
+        },
+      },
+    );
   };
 
-  if (session.status === "authenticated") {
-    router.push("/");
-  }
-  if (session.status === "loading") {
+  if (session.isPending) {
     return <div className="mt-20 text-center text-4xl font-medium">Loading</div>;
+  }
+
+  if (session.data) {
+    router.push("/");
   }
 
   return (

@@ -1,12 +1,12 @@
-import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 import { BedDouble, BedSingle, MapPin, PlusIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { MdBreakfastDining } from "react-icons/md";
 import { Button } from "./ui/button";
+import { IHotelListResponse } from "@/actions/actions";
 
 interface IProps {
-  hotel: IHotelWithRoomsReviewsNearbyAttractions;
+  hotel: IHotelListResponse["hotels"][0];
   options: Record<string, string | string[]>;
 }
 
@@ -51,7 +51,7 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
         <div className="flex w-full items-center">
           <p className="flex-1 truncate font-semibold">{hotel.name}</p>
           <span className="flex items-center gap-x-0.5">
-            {[...Array(Number(hotel.averageRating.toFixed())).keys()].map((item) => (
+            {[...Array(parseInt(hotel.averageRating)).keys()].map((item) => (
               <StarIcon size={15} key={item} fill="#4ce747" color="#57c953" />
             ))}
           </span>
@@ -61,11 +61,11 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
             {hotel.averageRating} / 5
           </span>
           <span className="leading-3 text-blue-800">
-            {hotel.averageRating >= 4.5
+            {Number(hotel.averageRating) >= 4.5
               ? "Excellent"
-              : hotel.averageRating >= 3.5
+              : Number(hotel.averageRating) >= 3.5
                 ? "Very Good"
-                : hotel.averageRating >= 2.5
+                : Number(hotel.averageRating) >= 2.5
                   ? "Good"
                   : "Intermediate"}
           </span>

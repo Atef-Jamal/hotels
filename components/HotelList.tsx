@@ -1,16 +1,11 @@
 "use client";
-import { getHotles } from "@/actions/actions";
+import { getHotles, IHotelListResponse } from "@/actions/actions";
 import { searchParamsToObject } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import HotelDetailCard from "./HotelDetailCard";
-import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
 
-function HotelList({
-  initialFirstPageHotels,
-}: {
-  initialFirstPageHotels: { hotels: IHotelWithRoomsReviewsNearbyAttractions[]; hasMore: boolean };
-}) {
+function HotelList({ initialFirstPageHotels }: { initialFirstPageHotels: IHotelListResponse }) {
   const searchParams = useSearchParams();
   const options = searchParamsToObject(searchParams);
 
@@ -29,7 +24,6 @@ function HotelList({
   });
 
   const hotels = data?.pages?.flatMap((page) => page.hotels) || [];
-
   return (
     <div className="space-y-2">
       {status === "error" && <p>{error.message}</p>}
@@ -46,7 +40,7 @@ function HotelList({
       )}
 
       {status === "success" &&
-        hotels.map((hotel) => <HotelDetailCard key={hotel._id} hotel={hotel} options={options} />)}
+        hotels.map((hotel) => <HotelDetailCard key={hotel.id} hotel={hotel} options={options} />)}
 
       {hasNextPage && !isFetchingNextPage && <button onClick={() => fetchNextPage()}>Load more</button>}
 

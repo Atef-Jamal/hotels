@@ -8,65 +8,55 @@ import ResponsiveSortHotels from "./ResponsiveSortHotels";
 import { DrawerTrigger } from "./ui/drawer";
 import { DialogTrigger } from "./ui/dialog";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { ISearchData } from "./SearchBox";
 
 const HotelsListHeaderSmallScreen = () => {
-  const searchParams = useSearchParams();
-
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
-
-  const [hotelName, setHotelName] = useState(searchParams.get("hotelName") || "");
-  const [country, setCountry] = useState(searchParams.get("country") || "");
-  const [city, setCity] = useState(searchParams.get("city") || "");
-  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || today);
-  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || tomorrow);
-  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")) || 0);
-  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")) || 500);
-  const [averageRating, setAverageRating] = useState(Number(searchParams.get("averageRating")));
+  const today = new Date();
+  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+  const [searchData, setSearchData] = useState<ISearchData>({
+    hotelName: "",
+    country: "",
+    city: "",
+    checkIn: today,
+    checkOut: tomorrow,
+    minPrice: 0,
+    maxPrice: 500,
+    averageRating: 0,
+    adults: 1,
+    children: 0,
+    roomsCount: 1,
+    breakfastIncluded: false,
+  });
 
   return (
     <header className="sticky top-0 z-[1] bg-[#623af3] py-2 md:hidden">
       <div className="mx-2 mb-2 rounded-sm bg-white px-2">
-        <SelectDistinationDialog
-          hotelName={hotelName}
-          country={country}
-          city={city}
-          setHotelName={setHotelName}
-          setCountry={setCountry}
-          setCity={setCity}
-        >
+        <SelectDistinationDialog searchData={searchData} setSearchData={setSearchData}>
           <DialogTrigger
             className={cn(
               "w-full border-b py-1 text-left text-sm font-medium",
-              hotelName && city && country && "text-muted-foreground",
+              !searchData.hotelName && !searchData.city && !searchData.country && "text-muted-foreground",
             )}
           >
-            {hotelName || country || city || "Enter destination"}
+            {searchData.hotelName
+              ? searchData.hotelName
+              : searchData.city
+                ? `${searchData.city} - ${searchData.country}`
+                : searchData.country
+                  ? searchData.country
+                  : "Enter destination"}
           </DialogTrigger>
         </SelectDistinationDialog>
-        <SelectDatesDialog
-          checkIn={checkIn}
-          checkOut={checkOut}
-          setCheckIn={setCheckIn}
-          setCheckOut={setCheckOut}
-        >
+        <SelectDatesDialog searchData={searchData} setSearchData={setSearchData}>
           <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-sm font-medium">
-            <p>{checkIn}</p>
+            <p>{searchData.checkIn.toISOString().split("T")[0]}</p>
             <small className="border-b-blue-800 font-semibold text-blue-600">To</small>
-            <p>{checkOut}</p>
+            <p>{searchData.checkOut.toISOString().split("T")[0]}</p>
           </DialogTrigger>
         </SelectDatesDialog>
       </div>
       <div className="flex flex-nowrap gap-x-2 overflow-auto px-3 scrollbar-thin">
-        <SelectPriceRatingDrawer
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          averageRating={averageRating}
-          setMinPrice={setMinPrice}
-          setMaxPrice={setMaxPrice}
-          setAverageRating={setAverageRating}
-        >
+        <SelectPriceRatingDrawer searchData={searchData} setSearchData={setSearchData}>
           <DrawerTrigger className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950">
             Filter
             <ArrowDown size={16} className="ml-1 min-w-fit" />

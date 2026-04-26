@@ -1,0 +1,483 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  phone         String?
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  reviews       Review[]
+  bookings      Booking[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Hotel {
+  id                String             @id @default(uuid())
+  name              String
+  description       String
+  images            String[]
+  amenities         String[]
+  location          HotelLocation?
+  policy            HotelPolicy?
+  rooms             Room[]
+  reviews           Review[]
+  nearbyAttractions NearbyAttraction[]
+  bookings          Booking[]
+  paymentFacilities PaymentFacilities
+  averageRating     String             @default("0")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("hotel")
+}
+
+model HotelLocation {
+  id          String   @id @default(uuid())
+  hotel       Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId     String   @unique
+  country     String
+  city        String
+  address     String
+  coordinates String[]
+  postalCode  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hotel_location")
+}
+
+model NearbyAttraction {
+  id           String             @id @default(uuid())
+  hotel        Hotel              @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId      String
+  name         String
+  description  String
+  category     AttractionCategory
+  coordinates  String[]
+  distance     Int
+  travelTime   String
+  rating       Float
+  images       String[]
+  website      String
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@map("nearby_attraction")
+}
+
+model HotelPolicy {
+  id                 String   @id @default(uuid())
+  hotel              Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId            String   @unique
+  checkIn            String
+  checkOut           String
+  cancellationPolicy Boolean
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("hotel_policy")
+}
+
+model Room {
+  id                String         @id @default(uuid())
+  hotel             Hotel          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId           String
+  description       String
+  images            String[]
+  roomServices      RoomServices[]
+  type              RoomType
+  pricePerNight     Int
+  adults            Int
+  children          Int            @default(0)
+  beds              BedType[]
+  booking           Booking[]
+  breakfastIncluded Boolean
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@map("room")
+}
+
+
+model BedType {
+  id        String   @id @default(uuid())
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    String
+  type      String
+  count     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bed_type")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  hotel      Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId    String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  cleanlness Int
+  location   Int
+  amentities Int
+  service    Int
+  comment    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("review")
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  hotel      Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId    String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String
+  checkIn    DateTime
+  checkOut   DateTime
+  totalPrice Int
+  payment    Payment?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("booking")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  booking       Booking       @relation(fields: [bookingId], references: [id])
+  bookingId     String        @unique
+  amount        Int
+  method        PaymentMethod
+  status        PaymentStatus
+  transactionId String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("payment")
+}
+
+enum PaymentFacilities {
+  Pay_At_Hotel
+  Prepay_Online
+}
+
+enum AttractionCategory {
+  Restaurant
+  Museum
+  Park
+  Shopping
+  Landmark
+  Beach
+  Theater
+  Transportation
+}
+
+enum RoomType {
+  Single
+  Standard
+  Penthouse_Suite
+  Double
+  Deluxe
+  Twin
+  Executive_Suite
+  Family_Room
+}
+
+enum PaymentMethod {
+  Credit_Card
+  Debit_Card
+  PayPal
+  Bank_Transfer
+  Cash
+  Mobile_Payment
+  Cryptocurrency
+}
+
+enum PaymentStatus {
+  Pending
+  Completed
+  Failed
+  Refunded
+  Cancelled
+}
+
+enum RoomServices {
+  Room_cleaning
+  Bed_making
+  Towel_replacement
+  Laundry_service
+  Ironing_service
+  Mini_bar_restocking
+  Room_service_menu
+  Washing_Machine
+  In_room_dining
+  Breakfast_in_bed
+  Wake_up_call
+  Concierge_service
+  Turndown_service
+  Pillow_menu
+  Extra_blanket
+  Extra_pillow
+  Shoe_shining
+  Sewing_kit
+  Bathrobe
+  Slippers
+  Toiletries
+  Hairdryer
+  Shaving_kit
+  Dental_ki_
+  Makeup_mirror
+  In_room_safe
+  Umbrella
+  Newspaper_delivery
+  Magazine_delivery
+  DVD_player
+  Blu_ray_player
+  Streaming_services
+  In_room_movies
+  Satellite_TV
+  Cable_TV
+  High_speed_internet
+  Wi_Fi_access
+  Business_center_services
+  Printer
+  Fax_machine
+  Scanner
+  Laptop_rental
+  Gaming_console
+  Board_games
+  Books
+  In_room_massage
+  In_room_spa_treatments
+  In_room_yoga
+  Personal_trainer
+  Fitness_equipment
+  Baby_cot
+  Baby_sitting
+  Kids_amenities
+  PlayStation
+  Xbox
+  Nintendo_Switch
+  Pet_bed
+  Pet_food
+  Pet_sitting
+  Pet_grooming
+  Wheelchair
+  Accessible_bathroom
+  Accessible_shower
+  Hearing_accessible_services
+  Visual_accessible_services
+  Air_conditioning
+  Heating
+  Soundproofing
+  Room_fragrance
+  Butler_service
+  Personal_shopper
+  Dry_cleaning
+  Suit_pressing
+  Dietary_meals
+  Allergy_free_room
+  Connecting_rooms
+  Balcony
+  Terrace
+  City_view
+  Ocean_view
+  Garden_view
+  Mountain_view
+  River_view
+  Luggage_storage
+  Late_checkout
+  Early_check_in
+  Currency_exchange
+  Mail_service
+  Courier_service
+  Medical_assistance
+  Doctor_on_call
+  Pharmacy_service
+  Car_rental
+  Airport_transfer
+  Shuttle_service
+  Parking_service
+  Valet_parking
+  Bicycle_rental
+  Private_chauffeur
+  Tour_booking
+  Event_tickets
+  Concert_tickets
+  Restaurant_reservations
+  Ticket_printing
+  Translation_services
+  Interpreter_services
+  Courier_delivery
+  Flower_arrangement
+  Gift_wrapping
+  Special_occasion_setup
+  Birthday_cake
+  Anniversary_setup
+  Honeymoon_setup
+  Business_amenities
+  Meeting_room_booking
+  Conference_setup
+  Video_conferencing
+  Projector_rental
+  Whiteboard_rental
+  Flipchart_rental
+  Notepads_and_pens
+  Photocopying_service
+  Secretarial_service
+  Tea_and_coffee_making
+  Espresso_machine
+  Kettle
+  Microwave
+  Refrigerator
+  Oven
+  Stovetop
+  Dishwasher
+  Kitchen_utensils
+  Cookware
+  Tableware
+  Glassware
+  Bottled_water
+  Welcome_drink
+  Fresh_fruit
+  Chocolate
+  Champagne
+  Wine
+  Beer
+  Snack_basket
+  Grocery_shopping_service
+  Barbecue_equipment
+  Outdoor_furniture
+  Private_pool
+  Jacuzzi
+  Sauna
+  Steam_room
+  Fitness_room
+  Private_garden
+  Private_beach
+  Beach_towels
+  Sun_loungers
+  Beach_umbrella
+  Beach_bag
+  Beach_toys
+  Snorkeling_gear
+  Kayak
+  Paddleboard
+  Water_sports_equipment
+  Bicycle_storage
+  Ski_storage
+  Ski_passes
+  Ski_equipment_rental
+  Golf_equipment_rental
+  Tennis_equipment_rental
+  Yoga_mat
+  Meditation_cushion
+  First_aid_kit
+  Emergency_contact_numbers
+  Local_maps
+  Guidebooks
+  Tourist_information
+  Souvenir_shop
+  Art_gallery_access
+  Museum_tickets
+  Theater_tickets
+  Dance_show_tickets
+  Music_performance_tickets
+  Exhibition_tickets
+  Cooking_class_booking
+  Wine_tasting_booking
+  Food_tour_booking
+  Cultural_tour_booking
+  City_tour_booking
+  Adventure_tour_booking
+  Hiking_guide
+  Nature_guide
+  Personal_photographer
+  Photo_printing_service
+  Photo_album
+  Video_recording_service
+  Streaming_equipment
+  Podcast_recording_equipment
+  Blogging_equipment
+  Social_media_setup
+  Live_streaming_setup
+  Digital_concierge
+  Virtual_assistant
+  Room_control_tablet
+  Smart_lighting
+  Smart_thermostat
+  Voice_assistant
+  Smart_lock
+  Keyless_entry
+}

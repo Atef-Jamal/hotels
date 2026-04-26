@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import SelectDistinationDialog from "./SelectDistinationDialog";
 import SelectDatesDialog from "./SelectDatesDialog";
 import SelectPriceRatingDrawer from "./SelectPriceRatingDrawer";
@@ -13,65 +13,82 @@ import { DrawerTrigger } from "./ui/drawer";
 import { DialogTrigger } from "./ui/dialog";
 import { useState } from "react";
 
+export type ISearchData = {
+  hotelName: string;
+  country: string;
+  city: string;
+  checkIn: Date;
+  checkOut: Date;
+  minPrice: number;
+  maxPrice: number;
+  averageRating: number;
+  adults: number;
+  children: number;
+  roomsCount: number;
+  breakfastIncluded: boolean;
+};
+
 const SearchBox = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  // const params = new URLSearchParams(searchParams.toString());
 
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
-
-  const [hotelName, setHotelName] = useState(searchParams.get("hotelName") || "");
-  const [country, setCountry] = useState(searchParams.get("country") || "");
-  const [city, setCity] = useState(searchParams.get("city") || "");
-  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || today);
-  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || tomorrow);
-  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")) || 0);
-  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")) || 500);
-  const [averageRating, setAverageRating] = useState(Number(searchParams.get("averageRating")));
+  const [searchData, setSearchData] = useState<ISearchData>({
+    hotelName: "",
+    country: "",
+    city: "",
+    checkIn: new Date(),
+    checkOut: new Date(new Date().setDate(new Date().getDate() + 1)),
+    minPrice: 0,
+    maxPrice: 500,
+    averageRating: 0,
+    adults: 1,
+    children: 0,
+    roomsCount: 1,
+    breakfastIncluded: false,
+  });
 
   const handelSearch = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    console.log(params);
-    router.push(`/hotels?${params.toString()}`);
+    let newSearchParams = "";
+
+    for (const key in searchData) {
+      newSearchParams += `${key}=${searchData[key as keyof ISearchData]}&`;
+    }
+
+    return router.push(`/hotels${newSearchParams}`);
   };
 
   return (
     <Card className="shadow-xl">
       <CardContent className="flex flex-col items-center gap-2 p-2 md:flex-row">
         <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-          <SelectDistinationDialog
-            hotelName={hotelName}
-            country={country}
-            city={city}
-            setHotelName={setHotelName}
-            setCountry={setCountry}
-            setCity={setCity}
-          >
+          <SelectDistinationDialog searchData={searchData} setSearchData={setSearchData}>
             <DialogTrigger
               className={cn(
                 "flex items-center justify-between truncate rounded-sm border p-2",
-                !hotelName && !city && !country && "text-muted-foreground",
+                !searchData.hotelName && !searchData.city && !searchData.country && "text-muted-foreground",
               )}
             >
               <SearchIcon size={16} />
-              <span className="ml-2">{hotelName || country || city || "Enter destination"}</span>
+              <span className="ml-2">
+                {searchData.hotelName
+                  ? searchData.hotelName
+                  : searchData.city
+                    ? `${searchData.city} - ${searchData.country}`
+                    : searchData.country
+                      ? searchData.country
+                      : "Enter destination"}
+                {/* {searchData.hotelName || searchData.country || searchData.city || "Enter destination"} */}
+              </span>
               <SendIcon size={20} className="ml-auto" />
             </DialogTrigger>
           </SelectDistinationDialog>
 
-          <SelectDatesDialog
-            checkIn={checkIn}
-            checkOut={checkOut}
-            setCheckIn={setCheckIn}
-            setCheckOut={setCheckOut}
-          >
+          <SelectDatesDialog searchData={searchData} setSearchData={setSearchData}>
             <DialogTrigger className="flex items-center justify-between gap-x-2 truncate rounded-sm border p-2">
               <Calendar size={15} />
               <div className="flex flex-1 items-center justify-between">
-                <p>{checkIn}</p>
+                <p>{searchData.checkIn.toISOString().split("T")[0]}</p>
                 <small className="h-5 w-5 border-b border-b-blue-800 font-semibold text-blue-600">To</small>
-                <p>{checkOut}</p>
+                <p>{searchData.checkOut.toISOString().split("T")[0]}</p>
               </div>
               <Badge variant={"secondary"} className="ml-auto px-2 py-0 text-[10px]">
                 1 night
@@ -79,26 +96,22 @@ const SearchBox = () => {
             </DialogTrigger>
           </SelectDatesDialog>
 
-          <ResponsiveSelectGuestsRooms />
+          <ResponsiveSelectGuestsRooms searchData={searchData} setSearchData={setSearchData} />
 
-          <SelectPriceRatingDrawer
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            averageRating={averageRating}
-            setMinPrice={setMinPrice}
-            setMaxPrice={setMaxPrice}
-            setAverageRating={setAverageRating}
-          >
+          <SelectPriceRatingDrawer searchData={searchData} setSearchData={setSearchData}>
             <DrawerTrigger
               className={cn(
                 "flex w-full items-center gap-x-2 truncate rounded-sm border p-2 md:hidden",
-                !minPrice && !maxPrice && !averageRating && "text-muted-foreground",
+                !searchData.minPrice &&
+                  !searchData.maxPrice &&
+                  !searchData.averageRating &&
+                  "text-muted-foreground",
               )}
             >
               <User size={15} />
               <span>
-                {minPrice && maxPrice && averageRating
-                  ? `${minPrice} SAR - ${maxPrice} SAR, ${averageRating} stars`
+                {searchData.minPrice && searchData.maxPrice && searchData.averageRating
+                  ? `${searchData.minPrice} SAR - ${searchData.maxPrice} SAR, ${searchData.averageRating} stars`
                   : "Enter Price, average rating"}
               </span>
             </DrawerTrigger>

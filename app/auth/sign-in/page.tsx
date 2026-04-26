@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MdEmail, MdPassword } from "react-icons/md";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -33,14 +33,15 @@ const SignInPage = () => {
   const { handleSubmit, control, formState } = form;
 
   const onSubmit = async (data: FormSchemaField) => {
-    await signIn("credentials", {
-      ...data,
-      callbackUrl: "/",
+    await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+      callbackURL: "/",
     });
   };
 
   const handleSignInWithProvider = async (provider: "google" | "github") => {
-    await signIn(provider, { callbackUrl: "/" });
+    await authClient.signIn.social({ provider, callbackURL: "/" });
   };
 
   return (
