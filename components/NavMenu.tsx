@@ -51,7 +51,7 @@ const NavMenu = () => {
       <DialogTrigger className="md:hidden">
         <Menu className="text-white" size={25} />
       </DialogTrigger>
-      <DialogContent className="max-w-screen h-full border-none bg-purple-200 p-0 md:hidden">
+      <DialogContent className="h-full max-w-screen border-none bg-purple-200 p-0 md:hidden">
         <VisuallyHidden>
           <DialogHeader>
             <DialogTitle>Nav Menu</DialogTitle>
@@ -60,7 +60,7 @@ const NavMenu = () => {
         </VisuallyHidden>
 
         <div className="flex flex-col overflow-y-auto">
-          <div className="z-[1] flex h-[46px] items-center justify-between bg-white px-2 sm:px-4 md:h-[66px] md:px-7">
+          <div className="z-1 flex h-11.5 items-center justify-between bg-white px-2 sm:px-4 md:h-16.5 md:px-7">
             <Link href={"/"} className="text-xl font-bold text-blue-700 md:text-2xl">
               Hotels.com
             </Link>
@@ -72,16 +72,16 @@ const NavMenu = () => {
           <div
             className={cn(
               "m-2 flex-1 overflow-y-auto bg-white p-2 transition-all duration-300 ease-out",
-              scrollMenu ? "translate-y-0" : "-translate-y-[100%]",
+              scrollMenu ? "translate-y-0" : "-translate-y-full",
             )}
           >
             <div className="space-y-2 rounded-lg bg-[#7fabe428] px-2 py-3">
               <h1 className="text-center font-medium">Access saving just for you - in only one step</h1>
-              <div className="mx-auto grid max-w-[400px] grid-cols-2 gap-1">
+              <div className="mx-auto grid max-w-100 grid-cols-2 gap-1">
                 <button className="rounded-sm border border-gray-400 bg-[#ffffff] py-1 text-sm font-medium">
                   Search Hotels
                 </button>
-                <button className="flex items-center justify-center gap-x-1 text-nowrap rounded-sm bg-[#2747ff] py-1 text-sm font-medium text-white">
+                <button className="flex items-center justify-center gap-x-1 rounded-sm bg-[#2747ff] py-1 text-sm font-medium text-nowrap text-white">
                   <Link href={"/auth/sign-in"}>Sign in</Link>
                   <span className="mx-1">/</span>
                   <Link href={"/auth/sign-up"}>Register</Link>

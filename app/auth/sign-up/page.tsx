@@ -80,10 +80,10 @@ const SignUpPage = () => {
       style={{
         minHeight: `calc(100dvh - 66px)`,
       }}
-      className="flex items-center justify-center bg-gradient-to-b from-[#78c5f8] to-[#fffe]"
+      className="flex items-center justify-center bg-linear-to-b from-[#78c5f8] to-[#fffe]"
     >
-      <Card className="my-5 w-[90%] rounded-3xl bg-gradient-to-b from-[#cadff3] to-[#ffffff] shadow-xl sm:w-[80%] md:w-[30rem]">
-        <CardHeader className="pb-2 pt-4">
+      <Card className="my-5 w-[90%] rounded-3xl bg-linear-to-b from-[#cadff3] to-[#ffffff] shadow-xl sm:w-[80%] md:w-120">
+        <CardHeader className="pt-4 pb-2">
           <CardTitle className="mx-auto">Sign Up</CardTitle>
           <CardDescription className="mx-auto text-center">
             Sign Up to Hotels and get the most of our services in our platform
@@ -102,7 +102,7 @@ const SignUpPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <FaUserEdit className="absolute left-2 top-2" size={22} />
+                    <FaUserEdit className="absolute top-2 left-2" size={22} />
                     <FormControl>
                       <Input placeholder="Name" {...field} className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
@@ -115,7 +115,7 @@ const SignUpPage = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdEmail className="absolute left-1 top-2" size={23} />
+                    <MdEmail className="absolute top-2 left-1" size={23} />
                     <FormControl>
                       <Input placeholder="Email" {...field} className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
@@ -128,7 +128,7 @@ const SignUpPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdPassword className="absolute left-1 top-2" size={23} />
+                    <MdPassword className="absolute top-2 left-1" size={23} />
                     <FormControl>
                       <Input placeholder="Password" {...field} className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
@@ -141,7 +141,7 @@ const SignUpPage = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <Phone className="absolute left-1 top-2" size={23} />
+                    <Phone className="absolute top-2 left-1" size={23} />
                     <FormControl>
                       <Input placeholder="Phone" {...field} className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>

@@ -9,7 +9,7 @@ import MenuBarHotelDetailsPage from "@/components/MenuBarHotelDetailsPage";
 import Link from "next/link";
 import NearbyAttractionSection from "@/components/NearbyAttractionSection";
 import SearchBox from "@/components/SearchBox";
-import { getHotelDetails } from "@/actions/actions";
+// import { getHotelDetails } from "@/actions/actions";
 
 interface IProps {
   params: { hotelName: string };
@@ -40,7 +40,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 <Star size={13} className="text-[#f75858]" />
               </div>
             </div>
-            <p className="mt-1 text-sm leading-4 text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm leading-4">
               5.4 Kilometer from Metro station. approximatily 30 min by car
             </p>
           </div>
@@ -129,7 +129,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
           {hotel.rooms.slice(0, 3).map((room) => (
             <>
               <div key={room._id} className="flex flex-col gap-4 px-2 md:flex-row md:px-4">
-                <div className="relative h-[9rem] w-full md:h-[16rem] md:w-[23rem]">
+                <div className="relative h-36 w-full md:h-64 md:w-92">
                   <Image src={room.images[0]} alt="test" className="h-full w-full" width={200} height={200} />
                   <div className="absolute bottom-0 flex w-full items-center justify-center gap-2 bg-black/10 py-2 backdrop-blur-lg">
                     {room.images.slice(1).map((img, indx) => (
@@ -139,7 +139,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                         alt=""
                         width={80}
                         height={80}
-                        className="h-[30px] w-[55px] rounded-md border border-white object-fill md:h-[40px] md:w-[75px]"
+                        className="h-7.5 w-13.75 rounded-md border border-white object-fill md:h-10 md:w-18.75"
                       />
                     ))}
                   </div>
@@ -206,7 +206,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 <div className="">
                   <p className="text-sm font-medium">Cleanliness</p>
                   <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
-                    <div className="h-[5px] w-full overflow-hidden rounded-lg bg-slate-300">
+                    <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
                       <div className="h-full w-[80%] bg-blue-900"></div>
                     </div>
                     3.8
@@ -215,7 +215,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 <div className="">
                   <p className="text-sm font-medium">Amentities</p>
                   <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
-                    <div className="h-[5px] w-full overflow-hidden rounded-lg bg-slate-300">
+                    <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
                       <div className="h-full w-[80%] bg-blue-900"></div>
                     </div>
                     3.8
@@ -224,7 +224,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 <div className="">
                   <p className="text-sm font-medium">Location</p>
                   <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
-                    <div className="h-[5px] w-full overflow-hidden rounded-lg bg-slate-300">
+                    <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
                       <div className="h-full w-[80%] bg-blue-900"></div>
                     </div>
                     3.8
@@ -233,7 +233,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 <div className="">
                   <p className="text-sm font-medium">Service</p>
                   <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
-                    <div className="h-[5px] w-full overflow-hidden rounded-lg bg-slate-300">
+                    <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
                       <div className="h-full w-[80%] bg-blue-900"></div>
                     </div>
                     3.8
@@ -241,7 +241,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-x-2 overflow-x-auto whitespace-nowrap p-3 scrollbar-none">
+            <div className="scrollbar-none flex items-center gap-x-2 overflow-x-auto p-3 whitespace-nowrap">
               {hotel.reviews.map((review) => (
                 <div key={review._id} className="min-w-64 rounded-md border border-zinc-500/55 p-3">
                   <div className="mb-2 flex items-center gap-x-3">
@@ -256,11 +256,11 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                       className="h-8 w-8 rounded-full object-cover"
                     />
                     <p className="text-sm font-bold">Anonymous</p>
-                    <span className="ml-auto rounded-b-lg rounded-s-lg bg-blue-900 px-1 py-0.5 text-xs font-medium text-white">
+                    <span className="ml-auto rounded-s-lg rounded-b-lg bg-blue-900 px-1 py-0.5 text-xs font-medium text-white">
                       4.2 / 5
                     </span>
                   </div>
-                  <p className="h-24 truncate whitespace-normal text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground h-24 truncate text-sm font-medium whitespace-normal">
                     {review.comment}
                   </p>
                 </div>
@@ -270,7 +270,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
         </div>
         <div id="hotels-nearby" className="mb-6 space-y-1 overflow-hidden rounded-lg bg-white">
           <h1 className="bg-slate-100 p-2 text-lg font-extrabold">Hotels Nearby</h1>
-          <div className="space-x-2 overflow-auto whitespace-nowrap py-2 pl-3 scrollbar-none md:space-x-4">
+          <div className="scrollbar-none space-x-2 overflow-auto py-2 pl-3 whitespace-nowrap md:space-x-4">
             <div className="inline-block w-48 overflow-hidden rounded-md bg-[#c9c3c35d]">
               <Image src={testImage} priority={true} alt="" className="h-32 object-cover" />
               <div className="space-y-1 p-2">
@@ -281,7 +281,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -302,7 +302,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -324,7 +324,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -345,7 +345,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -366,7 +366,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -387,7 +387,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -408,7 +408,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -429,7 +429,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -450,7 +450,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -471,7 +471,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -492,7 +492,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -513,7 +513,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -534,7 +534,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)
@@ -555,7 +555,7 @@ const HotelDetailsPage = async ({ params, searchParams }: IProps) => {
                   <Star size={15} />
                   <Star size={15} />
                 </div>
-                <p className="h-20 truncate whitespace-normal text-xs text-muted-foreground">
+                <p className="text-muted-foreground h-20 truncate text-xs whitespace-normal">
                   25 km from your search (distance) 25 km from your search (distance) 25 km from your search
                   (distance) 25 km from your search (distance) 25 km from your search (distance) 25 km from
                   your search (distance) 25 km from your search (distance) 25 km from your search (distance)

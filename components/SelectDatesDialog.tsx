@@ -1,55 +1,47 @@
 "use client";
+import { useSearchContext } from "@/context/searchProvider";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { ISearchData } from "./SearchBox";
-import { addDays } from "date-fns";
-import { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { useEffect, useState } from "react";
 
-function SelectDatesDialog({
-  children,
-  // searchData,
-  // setSearchData,
-}: {
-  children: React.ReactNode;
-  searchData: ISearchData;
-  setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
-}) {
+function SelectDatesDialog({ children }: { children: React.ReactNode }) {
+  const { searchData, setSearchData } = useSearchContext();
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(new Date().getFullYear(), 0, 12),
-    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
+    from: searchData.checkIn,
+    to: searchData.checkOut,
   });
+
+  useEffect(() => {
+    if (dateRange?.from && dateRange.to) {
+      setSearchData((prev) => ({ ...prev, checkIn: dateRange.from!, checkOut: dateRange.to! }));
+    }
+  }, [dateRange, setSearchData]);
+
   return (
     <Dialog>
       {children}
       <DialogContent
         aria-describedby={undefined}
-        className="h-[350px] w-[90%] max-w-[25rem] overflow-y-auto rounded-lg p-0 scrollbar-none md:scrollbar-thin"
+        className="scrollbar-none md:scrollbar-thin h-auto w-[90%] max-w-100 overflow-y-auto rounded-lg p-0"
       >
         <VisuallyHidden>
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
         </VisuallyHidden>
-        <Calendar
-          mode="range"
-          defaultMonth={dateRange?.from}
-          selected={dateRange}
-          onSelect={setDateRange}
-          numberOfMonths={2}
-          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-        />
-
-        {/* <Calendar
+        <div>
+          <Calendar
+            className="h-full w-full"
             mode="range"
+            defaultMonth={searchData.checkIn}
             selected={{ from: searchData.checkIn, to: searchData.checkOut }}
-            onSelect={(date) => {
-              if (Array.isArray(date)) {
-                setSearchData((prev) => ({ ...prev, checkIn: date[0], checkOut: date[1] }));
-              }
-            }}
-            className="mx-auto w-fit rounded-md"
-          /> */}
+            onSelect={setDateRange}
+            numberOfMonths={1}
+            disabled={(date) => date < searchData.checkIn || date < new Date("1900-01-01")}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -6,8 +6,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export default function Home() {
   return (
     <section className="relative flex-1 bg-purple-200">
-      <div className="absolute top-0 h-60 w-full bg-gradient-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
-      <div className="relative mx-auto max-w-[1200px] space-y-12">
+      <div className="absolute top-0 h-60 w-full bg-linear-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
+      <div className="relative mx-auto max-w-300 space-y-12">
         <div className="mx-2 overflow-hidden py-3 md:py-7">
           <h1 className="mx-auto mb-5 max-w-xl text-center text-lg font-medium text-[#f5efef]">
             Effortlessly book your perfect stay with our intuitive hotel booking platform.{" "}
@@ -19,7 +19,7 @@ export default function Home() {
         </div>
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-semibold">Popular 5-Star Hotels</h1>
-          <div className="space-x-2 overflow-x-auto whitespace-nowrap rounded-s-xl bg-white px-2 pb-1 pt-2 scrollbar-none">
+          <div className="scrollbar-none space-x-2 overflow-x-auto rounded-s-xl bg-white px-2 pt-2 pb-1 whitespace-nowrap">
             <HotelSliderCard />
             <HotelSliderCard />
             <HotelSliderCard />
@@ -74,7 +74,7 @@ export default function Home() {
         </div>
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-semibold">Popular 5-Star Hotels</h1>
-          <div className="space-x-2 overflow-x-auto whitespace-nowrap rounded-s-xl bg-white px-2 pb-1 pt-2 scrollbar-none">
+          <div className="scrollbar-none space-x-2 overflow-x-auto rounded-s-xl bg-white px-2 pt-2 pb-1 whitespace-nowrap">
             <HotelSliderCard />
             <HotelSliderCard />
             <HotelSliderCard />

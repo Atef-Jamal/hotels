@@ -5,7 +5,7 @@ import SearchBox from "@/components/SearchBox";
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col md:gap-4">
-      <div className="sticky top-5 z-[2] mx-2 hidden transition-all md:block">
+      <div className="sticky top-5 z-2 mx-2 hidden transition-all md:block">
         <SearchBox />
       </div>
       <div className="md:hidden">
@@ -17,7 +17,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
           style={{
             height: `calc(100dvh - 70px)`,
           }}
-          className="sticky top-[5.5rem] hidden w-[280px] overflow-y-auto overflow-x-hidden rounded-lg bg-white p-4 scrollbar-thin md:block"
+          className="scrollbar-thin sticky top-22 hidden w-70 overflow-x-hidden overflow-y-auto rounded-lg bg-white p-4 md:block"
         >
           <FilterHotels />
         </div>

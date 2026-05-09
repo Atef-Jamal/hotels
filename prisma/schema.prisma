@@ -79,21 +79,21 @@ model Verification {
 }
 
 model Hotel {
-  id                String             @id @default(uuid())
-  name              String
-  description       String
-  images            String[]
-  amenities         String[]
-  location          HotelLocation?
-  policy            HotelPolicy?
-  rooms             Room[]
-  reviews           Review[]
-  nearbyAttractions NearbyAttraction[]
-  bookings          Booking[]
-  paymentFacilities PaymentFacilities
-  averageRating     String             @default("0")
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id                 String             @id @default(uuid())
+  name               String
+  description        String
+  images             String[]
+  amenities          String[]
+  location           HotelLocation?
+  policy             HotelPolicy?
+  rooms              Room[]
+  reviews            Review[]
+  nearbyAttractions  NearbyAttraction[]
+  bookings           Booking[]
+  paymentFacilities  PaymentFacilities
+  averageRating      Float              @default(0)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 
   @@map("hotel")
 }
@@ -114,20 +114,20 @@ model HotelLocation {
 }
 
 model NearbyAttraction {
-  id           String             @id @default(uuid())
-  hotel        Hotel              @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  hotelId      String
-  name         String
-  description  String
-  category     AttractionCategory
-  coordinates  String[]
-  distance     Int
-  travelTime   String
-  rating       Float
-  images       String[]
-  website      String
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id          String             @id @default(uuid())
+  hotel       Hotel              @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId     String
+  name        String
+  description String
+  category    AttractionCategory
+  coordinates String[]
+  distance    Int
+  travelTime  String
+  rating      Float
+  images      String[]
+  website     String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@map("nearby_attraction")
 }
@@ -165,15 +165,14 @@ model Room {
   @@map("room")
 }
 
-
 model BedType {
-  id        String   @id @default(uuid())
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id        String      @id @default(uuid())
+  room      Room        @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId    String
-  type      String
+  type      BedTypeEnum
   count     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@map("bed_type")
 }
@@ -252,6 +251,14 @@ enum RoomType {
   Twin
   Executive_Suite
   Family_Room
+}
+
+enum BedTypeEnum {
+  Single
+  Double
+  Queen
+  King
+  Twin
 }
 
 enum PaymentMethod {

@@ -4,7 +4,7 @@ import LoginRegisterButton from "./LoginRegisterButton";
 
 const Navbar = () => {
   return (
-    <div className="flex h-[46px] items-center justify-between bg-[#623af3] px-2 sm:px-4 md:h-[66px] md:px-7">
+    <div className="flex h-11.5 items-center justify-between bg-[#623af3] px-2 sm:px-4 md:h-16.5 md:px-7">
       <Link href={"/"} className="text-xl font-bold text-white md:text-2xl">
         Hotels.com
       </Link>

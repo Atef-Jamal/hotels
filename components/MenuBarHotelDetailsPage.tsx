@@ -28,8 +28,6 @@ const MenuBarHotelDetailsPage = () => {
           const id = entry.target.getAttribute("id");
           const tabElement = document.getElementById(`${id}-tab`);
           if (id && tabElement) {
-            // clearTimeout(timeOutId);
-            // timeOutId = setTimeout(() => {
             if (tabsContainer.current) {
               const containerWidth = tabsContainer.current.offsetWidth;
               const tabLeft = tabElement.offsetLeft;
@@ -41,8 +39,6 @@ const MenuBarHotelDetailsPage = () => {
                 behavior: "smooth",
               });
             }
-            // tabElement.scrollIntoView({ block: "start" });
-            // }, 500);
             setActiveTab(id);
           }
         }
@@ -61,14 +57,13 @@ const MenuBarHotelDetailsPage = () => {
       if (section) observer.observe(section);
     });
     return () => {
-      // clearTimeout(timeOutId);
       observer.disconnect();
     };
   }, []);
   return (
     <div
       ref={tabsContainer}
-      className="sticky top-0 z-10 flex w-full flex-nowrap overflow-x-auto bg-white scrollbar-none md:top-5"
+      className="scrollbar-none sticky top-0 z-10 flex w-full flex-nowrap overflow-x-auto bg-white md:top-5"
     >
       <span
         id="overview-tab"
@@ -94,7 +89,7 @@ const MenuBarHotelDetailsPage = () => {
         id="nearby-attractions-tab"
         onClick={() => handleClick("nearby-attractions")}
         className={cn(
-          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          "cursor-pointer px-5 py-2 font-semibold text-nowrap md:text-lg",
           activeTab === "nearby-attractions" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
@@ -104,7 +99,7 @@ const MenuBarHotelDetailsPage = () => {
         id="reviews-tab"
         onClick={() => handleClick("reviews")}
         className={cn(
-          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          "cursor-pointer px-5 py-2 font-semibold text-nowrap md:text-lg",
           activeTab === "reviews" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >
@@ -114,7 +109,7 @@ const MenuBarHotelDetailsPage = () => {
         id="hotels-nearby-tab"
         onClick={() => handleClick("hotels-nearby")}
         className={cn(
-          "cursor-pointer text-nowrap px-5 py-2 font-semibold md:text-lg",
+          "cursor-pointer px-5 py-2 font-semibold text-nowrap md:text-lg",
           activeTab === "hotels-nearby" && "border-b-2 border-b-black md:border-b-[3px]",
         )}
       >

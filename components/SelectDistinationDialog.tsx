@@ -9,18 +9,21 @@ import { getDistinations, ISearchItem } from "@/actions/actions";
 import testImage from "@/public/gamePhoto-43.jpg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { MdClose } from "react-icons/md";
-import { ISearchData } from "./SearchBox";
+// import { ISearchData } from "./SearchBox";
+import { useSearchContext } from "@/context/searchProvider";
 
 function SelectDistinationDialog({
   children,
-  searchData,
-  setSearchData,
+  // searchData,
+  // setSearchData,
 }: {
   children: React.ReactNode;
-  searchData: ISearchData;
-  setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
+  // searchData: ISearchData;
+  // setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { searchData, setSearchData } = useSearchContext();
 
   const handleSelect = (distination: ISearchItem) => {
     if (distination.type === "property-name") {
@@ -84,8 +87,8 @@ function SelectDistinationDialog({
             <Navigation color="blue" size={18} />
             <span className="text-black/70">Current Location</span>
           </button>
-          <div className="relative flex-1 overflow-auto scrollbar-thin">
-            <div className="sticky left-0 top-0 mb-1 flex w-full items-center gap-3 bg-white py-1">
+          <div className="scrollbar-thin relative flex-1 overflow-auto">
+            <div className="sticky top-0 left-0 mb-1 flex w-full items-center gap-3 bg-white py-1">
               <Blinds size={18} color="blue" />
               <span>Popular Distinations</span>
             </div>
@@ -105,17 +108,17 @@ function SelectDistinationDialog({
                         <MapPin size={18} />
                       )}
                       {result.type === "property-name" && <p>{result.name}</p>}
+                      {result.type === "address" && <p>{result.address}</p>}
                       {result.type === "city" && <p>{result.city}</p>}
                       {result.type === "country" && <p> {result.country}</p>}
                     </div>
-                    <span className="rounded-sm px-2 text-[12px] font-normal text-zinc-900/60">
-                      {result.type === "property-name" && (
-                        <p>
-                          {result.city} - {result.country}
-                        </p>
-                      )}
+                    <span className="rounded-sm px-2 text-[12px] font-normal text-red-700">
+                      {result.type === "property-name" || result.type === "address"
+                        ? `${result.city} - ${result.country}`
+                        : ""}
+
                       {result.type === "city" && <p>{result.country}</p>}
-                      {result.type === "country" && <p> country</p>}
+                      {result.type === "country" && <p>country</p>}
                     </span>
                   </div>
                 </DialogClose>

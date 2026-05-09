@@ -1,4 +1,3 @@
-import React from "react";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
 import { ArrowDown, ArrowDownWideNarrow, CheckIcon } from "lucide-react";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -8,7 +7,7 @@ function ResponsiveSortHotels() {
     <>
       <Drawer>
         <DrawerTrigger>
-          <div className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950 md:hidden">
+          <div className="flex items-center justify-center rounded-sm bg-white px-1.5 py-0.75 text-[13px] font-medium text-blue-950 md:hidden">
             Sort
             <ArrowDown size={16} className="ml-1 min-w-fit" />
           </div>

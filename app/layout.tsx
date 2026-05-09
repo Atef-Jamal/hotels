@@ -5,8 +5,9 @@ import Footer from "@/components/Footer";
 import QueryProvider from "@/context/reactQuery";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import SearchProvider from "@/context/searchProvider";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Signika_Negative({
   weight: ["300", "400", "500", "700"],
@@ -28,11 +29,13 @@ export default async function RootLayout({
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={inter.className}>
         <QueryProvider>
-          <main className="flex min-h-screen flex-col bg-purple-200">
-            <Navbar />
-            <section className="flex flex-1 flex-col">{children}</section>
-            <Footer />
-          </main>
+          <SearchProvider>
+            <main className="flex min-h-screen flex-col bg-purple-200">
+              <Navbar />
+              <section className="flex flex-1 flex-col">{children}</section>
+              <Footer />
+            </main>
+          </SearchProvider>
         </QueryProvider>
       </body>
     </html>

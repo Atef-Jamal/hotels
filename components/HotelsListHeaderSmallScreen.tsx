@@ -7,31 +7,16 @@ import SelectDatesDialog from "./SelectDatesDialog";
 import ResponsiveSortHotels from "./ResponsiveSortHotels";
 import { DrawerTrigger } from "./ui/drawer";
 import { DialogTrigger } from "./ui/dialog";
-import { useState } from "react";
-import { ISearchData } from "./SearchBox";
+import { useSearchContext } from "@/context/searchProvider";
+import ResponsiveSelectGuestsRooms from "./ResponsiveSelectGuestsRooms";
 
 const HotelsListHeaderSmallScreen = () => {
-  const today = new Date();
-  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
-  const [searchData, setSearchData] = useState<ISearchData>({
-    hotelName: "",
-    country: "",
-    city: "",
-    checkIn: today,
-    checkOut: tomorrow,
-    minPrice: 0,
-    maxPrice: 500,
-    averageRating: 0,
-    adults: 1,
-    children: 0,
-    roomsCount: 1,
-    breakfastIncluded: false,
-  });
+  const { searchData } = useSearchContext();
 
   return (
-    <header className="sticky top-0 z-[1] bg-[#623af3] py-2 md:hidden">
+    <header className="sticky top-0 z-1 bg-[#623af3] py-2 md:hidden">
       <div className="mx-2 mb-2 rounded-sm bg-white px-2">
-        <SelectDistinationDialog searchData={searchData} setSearchData={setSearchData}>
+        <SelectDistinationDialog>
           <DialogTrigger
             className={cn(
               "w-full border-b py-1 text-left text-sm font-medium",
@@ -47,7 +32,7 @@ const HotelsListHeaderSmallScreen = () => {
                   : "Enter destination"}
           </DialogTrigger>
         </SelectDistinationDialog>
-        <SelectDatesDialog searchData={searchData} setSearchData={setSearchData}>
+        <SelectDatesDialog>
           <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-sm font-medium">
             <p>{searchData.checkIn.toISOString().split("T")[0]}</p>
             <small className="border-b-blue-800 font-semibold text-blue-600">To</small>
@@ -55,23 +40,27 @@ const HotelsListHeaderSmallScreen = () => {
           </DialogTrigger>
         </SelectDatesDialog>
       </div>
-      <div className="flex flex-nowrap gap-x-2 overflow-auto px-3 scrollbar-thin">
-        <SelectPriceRatingDrawer searchData={searchData} setSearchData={setSearchData}>
-          <DrawerTrigger className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950">
+      <div className="scrollbar-thin flex flex-nowrap gap-x-2 overflow-auto px-3">
+        <SelectPriceRatingDrawer>
+          <DrawerTrigger className="flex items-center justify-center rounded-sm bg-white px-1.5 py-0.75 text-[13px] font-medium text-blue-950">
             Filter
             <ArrowDown size={16} className="ml-1 min-w-fit" />
           </DrawerTrigger>
         </SelectPriceRatingDrawer>
 
-        <button className="flex items-center justify-center rounded-sm bg-white px-[6px] py-[3px] text-[13px] font-medium text-blue-950">
-          Location
-          <ArrowDown size={16} className="ml-1 min-w-fit" />
-        </button>
+        <ResponsiveSelectGuestsRooms>
+          <DrawerTrigger className="flex min-w-fit items-center justify-center rounded-sm bg-white px-1.5 py-0.75 text-[13px] font-medium">
+            <span>
+              {searchData.roomsCount} Rooms, {searchData.adults} Guests
+            </span>
+            <ArrowDown size={16} className="ml-1 min-w-fit" />
+          </DrawerTrigger>
+        </ResponsiveSelectGuestsRooms>
         <ResponsiveSortHotels />
-        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-[6px] py-[3px] text-[13px] text-white">
+        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-1.5 py-0.75 text-[13px] text-white">
           Breakfast Included
         </span>
-        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-[6px] py-[3px] text-sm text-white">
+        <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-1.5 py-0.75 text-[13px] text-white">
           Free Cancellation
         </span>
       </div>

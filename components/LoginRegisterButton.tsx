@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "./ui/button";
 
 const LoginRegisterButton = () => {
   const auth = authClient.useSession();
@@ -12,16 +13,16 @@ const LoginRegisterButton = () => {
 
   if (auth.isPending) {
     return (
-      <button className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base">
+      <Button className="hidden rounded-sm bg-white text-sm leading-4 font-semibold tracking-wide text-blue-900 md:flex">
         Loading
-      </button>
+      </Button>
     );
   }
   if (auth.data) {
     return (
       <button
         onClick={handleSignOut}
-        className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base"
+        className="hidden rounded-sm bg-white text-sm leading-4 font-semibold tracking-wide text-blue-900 md:flex"
       >
         <LogOut size={18} />
         Signout
@@ -30,9 +31,9 @@ const LoginRegisterButton = () => {
   }
   if (!auth.data) {
     return (
-      <button className="hidden gap-x-1 rounded-sm bg-white px-4 py-2 text-sm font-semibold leading-4 tracking-wide text-blue-900 md:flex lg:py-1.5 lg:text-base">
+      <Button className="hidden rounded-sm bg-white text-sm leading-4 font-semibold tracking-wide text-blue-900 md:flex">
         <Link href={"/auth/sign-in"}>Sign in</Link> /<Link href={"/auth/sign-up"}>Register</Link>
-      </button>
+      </Button>
     );
   }
 };

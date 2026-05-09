@@ -49,10 +49,10 @@ const SignInPage = () => {
       style={{
         minHeight: `calc(100dvh - 66px)`,
       }}
-      className="flex items-center justify-center bg-gradient-to-b from-[#78c5f8] to-[#fffe]"
+      className="flex items-center justify-center bg-linear-to-b from-[#78c5f8] to-[#fffe]"
     >
-      <Card className="w-[90%] rounded-3xl bg-gradient-to-b from-[#cadff3] to-[#ffffff] shadow-xl sm:w-[80%] md:w-[30rem]">
-        <CardHeader className="pb-2 pt-4">
+      <Card className="w-[90%] rounded-3xl bg-linear-to-b from-[#cadff3] to-[#ffffff] shadow-xl sm:w-[80%] md:w-120">
+        <CardHeader className="pt-4 pb-2">
           <CardTitle className="mx-auto">Sign In</CardTitle>
           <CardDescription className="mx-auto">
             Sign in to Hotels and get the most of our services in our platform
@@ -71,7 +71,7 @@ const SignInPage = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdEmail className="absolute left-1 top-2" size={23} />
+                    <MdEmail className="absolute top-2 left-1" size={23} />
                     <FormControl>
                       <Input {...field} placeholder="Email" className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>
@@ -84,7 +84,7 @@ const SignInPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <MdPassword className="absolute left-1 top-2" size={23} />
+                    <MdPassword className="absolute top-2 left-1" size={23} />
                     <FormControl>
                       <Input {...field} placeholder="Password" className="bg-[#d8cfcf] pl-10 font-bold" />
                     </FormControl>

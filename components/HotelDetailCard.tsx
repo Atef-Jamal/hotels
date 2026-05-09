@@ -7,18 +7,17 @@ import { IHotelListResponse } from "@/actions/actions";
 
 interface IProps {
   hotel: IHotelListResponse["hotels"][0];
-  options: Record<string, string | string[]>;
 }
 
-const HotelDetailCard = ({ hotel, options }: IProps) => {
+const HotelDetailCard = ({ hotel }: IProps) => {
   const nameSlug = hotel.name.replaceAll(" ", "_");
 
   return (
     <Link
-      href={{ pathname: `/hotels/${nameSlug}`, query: options }}
-      className="grid grid-cols-1 gap-2 overflow-hidden rounded-md bg-[#fff] p-2 lg:h-64 lg:grid-cols-4"
+      href={{ pathname: `/hotels/${nameSlug}` }}
+      className="grid grid-cols-1 gap-2 overflow-hidden rounded-md bg-white p-2 lg:h-64 lg:grid-cols-4"
     >
-      <div className="grid h-28 auto-cols-[100%] grid-flow-col gap-x-2 overflow-hidden min-[380px]:auto-cols-[50%] sm:auto-cols-[33.3%] md:auto-cols-[50%] min-[900px]:auto-cols-[33.3%] lg:h-full lg:auto-cols-[100%]">
+      <div className="grid h-28 auto-cols-[100%] grid-flow-col gap-x-2 overflow-hidden min-[380px]:auto-cols-[50%] min-[900px]:auto-cols-[33.3%] sm:auto-cols-[33.3%] md:auto-cols-[50%] lg:h-full lg:auto-cols-[100%]">
         <div className="relative bg-gray-500">
           <Image
             src={hotel.images[0]}
@@ -51,26 +50,26 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
         <div className="flex w-full items-center">
           <p className="flex-1 truncate font-semibold">{hotel.name}</p>
           <span className="flex items-center gap-x-0.5">
-            {[...Array(parseInt(hotel.averageRating)).keys()].map((item) => (
-              <StarIcon size={15} key={item} fill="#4ce747" color="#57c953" />
-            ))}
+            {[...Array(Math.floor(hotel.averageRating)).keys()].map((item) => {
+              return <StarIcon size={15} key={item} fill="#4ce747" color="#57c953" />;
+            })}
           </span>
         </div>
         <div className="flex items-center gap-x-3 text-sm font-medium sm:text-base">
-          <span className="rounded-b-lg rounded-s-lg bg-blue-800 px-1 py-0.5 text-xs font-semibold text-white">
+          <span className="rounded-s-lg rounded-b-lg bg-blue-800 px-1 py-0.5 text-xs font-semibold text-white">
             {hotel.averageRating} / 5
           </span>
           <span className="leading-3 text-blue-800">
-            {Number(hotel.averageRating) >= 4.5
+            {hotel.averageRating >= 4.5
               ? "Excellent"
-              : Number(hotel.averageRating) >= 3.5
+              : hotel.averageRating >= 3.5
                 ? "Very Good"
-                : Number(hotel.averageRating) >= 2.5
+                : hotel.averageRating >= 2.5
                   ? "Good"
                   : "Intermediate"}
           </span>
           <span className="text-muted-foreground"> {hotel.reviews.length} Review</span>
-          <button className="ml-auto flex items-center gap-2 rounded-sm bg-[#6a5d99] pl-1 pr-2 text-sm text-white">
+          <button className="ml-auto flex items-center gap-2 rounded-sm bg-[#6a5d99] pr-2 pl-1 text-sm text-white">
             <PlusIcon size={18} className="" /> WhitList
           </button>
         </div>
@@ -78,7 +77,7 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
           {hotel.nearbyAttractions.map((item, indx) => (
             <div key={indx} className="flex items-center gap-1">
               <MapPin size={14} />
-              <p className="flex-1 truncate text-sm font-thin leading-tight text-black/80 md:text-base">
+              <p className="flex-1 truncate text-sm leading-tight font-thin text-black/80 md:text-base">
                 {`Near ${item.name} - (${item.distance} meter) - (${item.travelTime})`}
               </p>
               <button className="rounded-sm bg-green-200 px-2 text-xs font-medium sm:px-4 md:py-0.5">
@@ -88,9 +87,9 @@ const HotelDetailCard = ({ hotel, options }: IProps) => {
           ))}
         </div>
         <div className="relative mx-2 mt-3 rounded-md bg-purple-200 px-3 py-1 md:mt-auto">
-          <div className="absolute -top-2 right-3 flex items-center gap-1 text-xs font-thin text-primary-foreground text-white">
-            <p className="rounded-[2px] bg-[#63c24be3] px-1 py-0.5">First Booking Deal</p>
-            <p className="rounded-[2px] bg-[#ee3f3ff8] px-1 py-0.5">40% Off</p>
+          <div className="absolute -top-2 right-3 flex items-center gap-1 text-xs font-thin text-white">
+            <p className="rounded-xs bg-[#63c24be3] px-1 py-0.5">First Booking Deal</p>
+            <p className="rounded-xs bg-[#ee3f3ff8] px-1 py-0.5">40% Off</p>
           </div>
           <p className="font-medium">{hotel.rooms[0].type} Room</p>
           <div className="flex flex-wrap items-center gap-x-4">

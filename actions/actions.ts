@@ -1,17 +1,22 @@
 "use server";
-import { HotelWhereInput, RoomWhereInput } from "@/app/generated/prisma/internal/prismaNamespaceBrowser";
+import {
+  HotelLocationFindManyArgs,
+  HotelWhereInput,
+  RoomWhereInput,
+} from "@/app/generated/prisma/internal/prismaNamespaceBrowser";
+import { ISearchData } from "@/context/searchProvider";
 import prisma from "@/lib/prisma";
-// import Discount from "@/models/discount";
-// import Hotel from "@/models/hotel";
-// import Room from "@/models/room";
-// import { IHotelWithRoomsReviewsNearbyAttractions } from "@/types/types";
-
-type IProps = Record<string, string | string[] | undefined>;
 
 export type ISearchItem =
   | {
       type: "property-name";
       name: string;
+      country: string;
+      city: string;
+    }
+  | {
+      type: "address";
+      address: string;
       country: string;
       city: string;
     }
@@ -26,7 +31,7 @@ type ISearchResult = ISearchItem[];
 
 export type GetPlacesParams = { city?: string; country?: string };
 
-type GetPlacesFn = (argu: GetPlacesParams) => Promise<string[]>;
+// type GetPlacesFn = (argu: GetPlacesParams) => Promise<string[]>;
 
 export type IHotelListResponse = Awaited<ReturnType<typeof getHotles>>;
 
@@ -35,20 +40,21 @@ export const getHotles = async ({
   maxPrice,
   hotelName,
   breakfastIncluded,
-  roomsCount = "1",
+  roomsCount,
   roomServices,
-  checkIn = new Date().toISOString().split("T")[0],
-  checkOut = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0],
+  checkIn,
+  checkOut,
   averageRating,
   cancellationPolicy,
   paymentFacilities,
   country,
   city,
   address,
-  adults = "1",
-  children = "0",
-  page = "1",
-}: IProps) => {
+  adults,
+  children,
+  page,
+  bedType,
+}: ISearchData) => {
   try {
     const pageParam = Number(page) || 1;
     const limitPerPage = 10;
@@ -61,27 +67,27 @@ export const getHotles = async ({
     const hotelWhereInput: HotelWhereInput = {};
     const roomWhereInput: RoomWhereInput = {};
 
-    if (hotelName && typeof hotelName === "string") {
+    if (hotelName) {
       hotelWhereInput.name = { equals: hotelName };
     } else {
       hotelWhereInput.location = {
-        ...(country && typeof country === "string" ? { country: { equals: country } } : {}),
-        ...(city && typeof city === "string" ? { city: { equals: city } } : {}),
-        ...(address && typeof address === "string" ? { address: { equals: address } } : {}),
+        ...(country ? { country: { equals: country } } : {}),
+        ...(city ? { city: { equals: city } } : {}),
+        ...(address ? { address: { equals: address } } : {}),
       };
     }
-    if (averageRating && typeof averageRating === "string") {
-      hotelWhereInput.averageRating = { equals: averageRating };
+    if (averageRating) {
+      hotelWhereInput.averageRating = { lte: averageRating };
     }
-    if (cancellationPolicy && typeof cancellationPolicy === "string") {
-      if (cancellationPolicy === "true") {
+    if (cancellationPolicy) {
+      if (cancellationPolicy) {
         hotelWhereInput.policy = { cancellationPolicy: { equals: true } };
       }
-      if (cancellationPolicy === "false") {
+      if (!cancellationPolicy) {
         hotelWhereInput.policy = { cancellationPolicy: { equals: false } };
       }
     }
-    if (paymentFacilities && typeof paymentFacilities === "string") {
+    if (paymentFacilities) {
       if (paymentFacilities === "Pay_At_Hotel") {
         hotelWhereInput.paymentFacilities = { equals: "Pay_At_Hotel" };
       }
@@ -90,41 +96,35 @@ export const getHotles = async ({
       }
     }
 
-    if (typeof checkIn === "string" && typeof checkOut === "string") {
-      roomWhereInput.booking = {
-        none: { checkIn: { lt: new Date(checkOut) }, checkOut: { gt: new Date(checkIn) } },
-      };
-    }
+    roomWhereInput.booking = {
+      none: { checkIn: { lt: checkOut }, checkOut: { gt: checkIn } },
+    };
 
-    if (minPrice && maxPrice) {
-      roomWhereInput.pricePerNight = { gte: Number(minPrice), lte: Number(maxPrice) };
-    } else if (minPrice) {
-      roomWhereInput.pricePerNight = { gte: Number(minPrice) };
-    } else if (maxPrice) {
-      roomWhereInput.pricePerNight = { lte: Number(maxPrice) };
-    }
+    roomWhereInput.pricePerNight = { gte: minPrice, lte: maxPrice };
+    roomWhereInput.adults = { gte: adults };
+    roomWhereInput.children = { gte: children };
 
     if (roomServices) {
       roomWhereInput.roomServices = {
-        hasSome: Array.isArray(roomServices) ? roomServices : [roomServices],
-      } as any;
+        hasEvery: roomServices,
+      };
     }
 
-    if (breakfastIncluded && typeof breakfastIncluded === "string") {
-      if (breakfastIncluded === "true") {
+    if (bedType) {
+      roomWhereInput.beds = {
+        some: {
+          type: bedType,
+        },
+      };
+    }
+
+    if (breakfastIncluded) {
+      if (breakfastIncluded) {
         roomWhereInput.breakfastIncluded = { equals: true };
       }
-      if (breakfastIncluded === "false") {
+      if (!breakfastIncluded) {
         roomWhereInput.breakfastIncluded = { equals: false };
       }
-    }
-
-    if (adults && typeof adults === "string") {
-      roomWhereInput.adults = { gte: Number(adults) };
-    }
-
-    if (children && typeof children === "string") {
-      roomWhereInput.children = { gte: Number(children) };
     }
 
     const hotels = await prisma.hotel.findMany({
@@ -148,7 +148,7 @@ export const getHotles = async ({
             beds: true,
             pricePerNight: true,
           },
-          ...(roomsCount && typeof roomsCount === "string" ? { take: Number(roomsCount) } : {}),
+          take: roomsCount,
         },
         nearbyAttractions: {
           take: 80,
@@ -165,149 +165,6 @@ export const getHotles = async ({
       where: { ...hotelWhereInput, rooms: { some: roomWhereInput } },
     });
 
-    // const hotelMatchStage: any = {};
-
-    // const roomMatchStage: any = {};
-
-    // if (!hotelName && !country && !city && !address) {
-    //   return { hotels: [], hasMore: false };
-    // }
-
-    // if (hotelName) {
-    //   hotelMatchStage["name"] = hotelName;
-    // } else {
-    //   if (country) {
-    //     hotelMatchStage["location.country"] = country;
-    //   }
-    //   if (city) {
-    //     hotelMatchStage["location.city"] = city;
-    //   }
-    //   if (address) {
-    //     hotelMatchStage["location.address"] = address;
-    //   }
-    // }
-
-    // if (averageRating) {
-    //   hotelMatchStage["averageRating"] = Number(averageRating);
-    // }
-
-    // if (cancellationPolicy) {
-    //   if (cancellationPolicy === "true") {
-    //     hotelMatchStage["policies.cancellationPolicy"] = true;
-    //   }
-    //   if (cancellationPolicy === "false") {
-    //     hotelMatchStage["policies.cancellationPolicy"] = false;
-    //   }
-    // }
-
-    // if (paymentFacilities) {
-    //   hotelMatchStage["paymentFacilities"] = paymentFacilities;
-    // }
-
-    // if (minPrice && maxPrice) {
-    //   roomMatchStage["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
-    // }
-
-    // if (roomServices) {
-    //   roomMatchStage["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
-    // }
-
-    // if (breakfastIncluded) {
-    //   if (breakfastIncluded === "true") {
-    //     roomMatchStage["breakfastIncluded"] = true;
-    //   }
-    //   if (breakfastIncluded === "false") {
-    //     roomMatchStage["breakfastIncluded"] = false;
-    //   }
-    // }
-
-    // if (adults) {
-    //   roomMatchStage["capacity.adults"] = { $gte: Number(adults) };
-    // }
-    // if (children) {
-    //   roomMatchStage["capacity.children"] = { $gte: Number(children) };
-    // }
-
-    // const findHotels = await Hotel.aggregate([
-    //   { $match: hotelMatchStage },
-    //   {
-    //     $lookup: {
-    //       from: "rooms",
-    //       localField: "_id",
-    //       foreignField: "hotel",
-    //       as: "rooms",
-    //       pipeline: [
-    //         { $match: roomMatchStage },
-    //         {
-    //           $lookup: {
-    //             from: "bookings",
-    //             localField: "_id",
-    //             foreignField: "roomId",
-    //             as: "bookedRoom",
-    //             pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
-    //           },
-    //         },
-    //         { $match: { bookedRoom: { $eq: [] } } },
-    //         { $sort: { "capacity.adults": 1, pricePerNight: 1 } },
-    //         { $limit: Number(roomsCount) },
-    //       ],
-    //     },
-    //   },
-    //   { $match: { $expr: { $gte: [{ $size: "$rooms" }, Number(roomsCount)] } } },
-
-    //   {
-    //     $lookup: {
-    //       from: "nearbyattractions",
-    //       // localField: "_id",
-    //       // foreignField: "hotel",
-    //       as: "nearbyAttractionsData",
-    //       pipeline: [
-    //         { $limit: 2 },
-    //         {
-    //           $project: {
-    //             category: 1,
-    //             name: 1,
-    //             distance: 1,
-    //             travelTime: 1,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "reviews",
-    //       // localField: "_id",
-    //       // foreignField: "hotel",
-    //       as: "reviews",
-    //       pipeline: [
-    //         {
-    //           $limit: 10,
-    //         },
-    //       ],
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       name: 1,
-    //       description: 1,
-    //       images: 1,
-    //       location: 1,
-    //       amenities: 1,
-    //       averageRating: 1,
-    //       paymentFacilities: 1,
-    //       policies: 1,
-    //       rooms: 1,
-    //       nearbyAttractions: "$nearbyAttractionsData",
-    //       reviews: 1,
-    //       createdAt: 1,
-    //     },
-    //   },
-    //   { $skip: skip },
-    //   { $limit: limitPerPage },
-    // ]);
-    // const hotels = JSON.parse(JSON.stringify(findHotels));
-
     const hasMore = limitPerPage === hotels.length;
 
     return { matchedHotelsCount, hotels, hasMore };
@@ -317,245 +174,27 @@ export const getHotles = async ({
   }
 };
 
-// interface IParams {
-//   params: { hotelName: string };
-//   searchParams: Record<string, string | string[]>;
-// }
+export const getPlaces = async ({
+  city,
+  country,
+}: {
+  city: ISearchData["city"];
+  country: ISearchData["country"];
+}) => {
+  let query: HotelLocationFindManyArgs = {};
 
-// export const getHotelDetails = async ({ params, searchParams }: IParams) => {
-//   const { minPrice, maxPrice, roomServices, breakfastIncluded } = searchParams;
-//   const { adults, children, checkIn, checkOut } = searchParams;
-
-//   await connectToDB();
-//   const hotelNameSlug = params.hotelName.replaceAll("_", " ");
-
-//   const roomQueryFilter: any = {};
-
-//   if (minPrice && maxPrice) {
-//     roomQueryFilter["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
-//   }
-
-//   if (roomServices) {
-//     roomQueryFilter["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
-//   }
-
-//   if (breakfastIncluded) {
-//     if (breakfastIncluded === "true") {
-//       roomQueryFilter["breakfastIncluded"] = true;
-//     }
-//     if (breakfastIncluded === "false") {
-//       roomQueryFilter["breakfastIncluded"] = false;
-//     }
-//   }
-
-//   if (adults) {
-//     roomQueryFilter["capacity.adults"] = { $gte: Number(adults) };
-//   }
-//   if (children) {
-//     roomQueryFilter["capacity.children"] = { $gte: Number(children) };
-//   }
-
-//   const hotels: IHotelWithRoomsReviewsNearbyAttractions[] = await Hotel.aggregate([
-//     {
-//       $match: { name: hotelNameSlug },
-//     },
-//     {
-//       $lookup: {
-//         from: "rooms",
-//         localField: "_id",
-//         foreignField: "hotel",
-//         as: "rooms",
-//         pipeline: [
-//           {
-//             $match: roomQueryFilter,
-//           },
-//           {
-//             $lookup: {
-//               localField: "_id",
-//               foreignField: "roomId",
-//               from: "bookings",
-//               as: "bookedRoom",
-//               pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
-//             },
-//           },
-//           { $match: { bookedRoom: { $eq: [] } } },
-//           { $sort: { adults: 1, children: 1 } },
-//           { $limit: 10 },
-//         ],
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: "nearbyattractions",
-//         // localField: "_id",
-//         // foreignField: "hotel",
-//         as: "nearbyAttractions",
-//         pipeline: [{ $limit: 80 }],
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: "reviews",
-//         // localField: "_id",
-//         // foreignField: "hotel",
-//         as: "reviews",
-//         pipeline: [{ $limit: 10 }],
-//       },
-//     },
-//   ]);
-
-//   const hotel: IHotelWithRoomsReviewsNearbyAttractions = JSON.parse(JSON.stringify(hotels[0]));
-
-//   if (!hotel) throw new Error("Hotel not Found");
-//   return hotel;
-// };
-
-// export const getTotalHotelsCount = async ({
-//   minPrice,
-//   maxPrice,
-//   hotelName,
-//   breakfastIncluded,
-//   roomsCount = "1",
-//   roomServices,
-//   checkIn = new Date().toISOString().split("T")[0],
-//   checkOut = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0],
-//   averageRating,
-//   cancellationPolicy,
-//   paymentFacilities,
-//   country,
-//   city,
-//   address,
-//   adults = "1",
-//   children = "0",
-// }: IProps): Promise<{ totalHotels: number }> => {
-//   try {
-//     await connectToDB();
-
-//     const hotelMatchStage: any = {};
-//     const roomMatchStage: any = {};
-
-//     if (!hotelName && !country && !city && !address) {
-//       return { totalHotels: 0 };
-//     }
-
-//     if (hotelName) {
-//       hotelMatchStage["name"] = hotelName;
-//     } else {
-//       if (country) {
-//         hotelMatchStage["location.country"] = country;
-//       }
-//       if (city) {
-//         hotelMatchStage["location.city"] = city;
-//       }
-//       if (address) {
-//         hotelMatchStage["location.address"] = address;
-//       }
-//     }
-//     if (averageRating) {
-//       hotelMatchStage["averageRating"] = Number(averageRating);
-//     }
-
-//     if (cancellationPolicy) {
-//       if (cancellationPolicy === "true") {
-//         hotelMatchStage["policies.cancellationPolicy"] = true;
-//       }
-//       if (cancellationPolicy === "false") {
-//         hotelMatchStage["policies.cancellationPolicy"] = false;
-//       }
-//     }
-
-//     if (paymentFacilities) {
-//       hotelMatchStage["paymentFacilities"] = paymentFacilities;
-//     }
-
-//     if (minPrice && maxPrice) {
-//       roomMatchStage["pricePerNight"] = { $gte: Number(minPrice), $lte: Number(maxPrice) };
-//     }
-
-//     if (roomServices) {
-//       roomMatchStage["roomServices"] = { $all: Array.isArray(roomServices) ? roomServices : [roomServices] };
-//     }
-
-//     if (breakfastIncluded) {
-//       if (breakfastIncluded === "true") {
-//         roomMatchStage["breakfastIncluded"] = true;
-//       }
-//       if (breakfastIncluded === "false") {
-//         roomMatchStage["breakfastIncluded"] = false;
-//       }
-//     }
-
-//     if (adults) {
-//       roomMatchStage["capacity.adults"] = { $gte: Number(adults) };
-//     }
-//     if (children) {
-//       roomMatchStage["capacity.children"] = { $gte: Number(children) };
-//     }
-//     const findHotels = await Hotel.aggregate([
-//       { $match: hotelMatchStage },
-//       {
-//         $lookup: {
-//           from: "rooms",
-//           localField: "_id",
-//           foreignField: "hotel",
-//           as: "rooms",
-//           pipeline: [
-//             { $match: roomMatchStage },
-//             {
-//               $lookup: {
-//                 from: "bookings",
-//                 localField: "_id",
-//                 foreignField: "roomId",
-//                 as: "bookedRoom",
-//                 pipeline: [{ $match: { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } } }],
-//               },
-//             },
-//             { $match: { bookedRoom: { $eq: [] } } },
-//           ],
-//         },
-//       },
-//       { $match: { $expr: { $gte: [{ $size: "$rooms" }, Number(roomsCount)] } } },
-//       { $count: "total" },
-//     ]);
-
-//     return { totalHotels: findHotels.length > 0 ? findHotels[0].total : 0 };
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("can't get hotels count");
-//   }
-// };
-
-export const getPlaces: GetPlacesFn = async ({ city, country }) => {
-  // await connectToDB();
-  let distinations: any[] = [];
-  if (!country && !city) {
-    // distinations = await Hotel.find({}).select("location.country");
-    distinations = await prisma.hotelLocation.findMany({
-      select: {
-        country: true,
-      },
-      distinct: ["country"],
-    });
-    distinations = distinations.map((i) => i.country);
-  }
-  if (country && city) {
-    // distinations = await Hotel.find({ "location.country": country, "location.city": city }).select(
-    //   "location.address",
-    // );
-    distinations = await prisma.hotelLocation.findMany({
+  if (city) {
+    query = {
       where: {
-        country,
         city,
       },
       select: {
         address: true,
       },
-    });
-    distinations = distinations.map((i) => i.address);
-  }
-  if (country) {
-    // distinations = await Hotel.find({ "location.country": country }).select("location.city");
-    distinations = await prisma.hotelLocation.findMany({
+      distinct: ["country", "city", "address"],
+    };
+  } else if (country) {
+    query = {
       where: {
         country,
       },
@@ -563,11 +202,28 @@ export const getPlaces: GetPlacesFn = async ({ city, country }) => {
       select: {
         city: true,
       },
-    });
-    distinations = distinations.map((i) => i.city);
+    };
+  } else {
+    query = {
+      distinct: ["country"],
+      select: {
+        country: true,
+      },
+    };
   }
 
-  return distinations;
+  const distinations = await prisma.hotelLocation.findMany(query);
+
+  const places = distinations.map((item) => {
+    if (city) {
+      return item.address;
+    }
+    if (country) {
+      return item.city;
+    }
+    return item.country;
+  });
+  return places;
 };
 
 export const getDistinations = async (searchTerm: string): Promise<ISearchResult> => {
@@ -576,26 +232,42 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
     const safeInput = escapeRegex(searchTerm);
 
     if (safeInput.trim() === "") {
-      const countries = await prisma.hotelLocation.findMany({
-        distinct: ["country"],
-        select: {
-          country: true,
-        },
-      });
-      const cities = await prisma.hotelLocation.findMany({
+      const distinations = await prisma.hotelLocation.findMany({
         distinct: ["country", "city"],
         select: {
           country: true,
           city: true,
         },
-        take: 10,
+        take: 20,
       });
-      const result = [
-        ...countries.map((i) => ({ type: "country", country: i.country })),
-        ...cities.map((i) => ({ type: "city", country: i.country, city: i.city })),
-      ];
 
-      return result as ISearchResult;
+      const countries = [...new Set(distinations.map((i) => i.country))].map((country) => ({
+        type: "country",
+        country,
+      }));
+      const cities = distinations.map((i) => ({
+        type: "city",
+        country: i.country,
+        city: i.city,
+      }));
+
+      // const countries = await prisma.hotelLocation.findMany({
+      //   distinct: ["country"],
+      //   select: {
+      //     country: true,
+      //   },
+      // });
+      // const cities = await prisma.hotelLocation.findMany({
+      //   distinct: ["country", "city"],
+      //   select: {
+      //     country: true,
+      //     city: true,
+      //   },
+      //   take: 10,
+      // });
+      const result = [...countries, ...cities] as ISearchResult;
+
+      return result;
     }
 
     const searchHotelsByCountry = prisma.hotelLocation.findMany({
@@ -627,6 +299,22 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
       take: 2,
     });
 
+    const searchHotelsByAdress = prisma.hotelLocation.findMany({
+      where: {
+        address: {
+          startsWith: safeInput,
+          mode: "insensitive",
+        },
+      },
+      distinct: ["address"],
+      select: {
+        city: true,
+        country: true,
+        address: true,
+      },
+      take: 2,
+    });
+
     const searchHotelsByName = prisma.hotel.findMany({
       where: {
         name: {
@@ -646,9 +334,10 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
       take: 5,
     });
 
-    const [byCountry, byCity, byName] = await Promise.all([
+    const [byCountry, byCity, byByAdress, byName] = await Promise.all([
       searchHotelsByCountry,
       searchHotelsByCity,
+      searchHotelsByAdress,
       searchHotelsByName,
     ]);
 
@@ -663,13 +352,25 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
       country: hotel.country,
     }));
 
+    const transformByAdress: ISearchResult = byByAdress.map((hotel) => ({
+      type: "address",
+      address: hotel.address,
+      city: hotel.city,
+      country: hotel.country,
+    }));
+
     const transformByHotelName: ISearchResult = byName.map((hotel) => ({
       type: "property-name",
       name: hotel.name,
       city: hotel.location?.city || "",
       country: hotel.location?.country || "",
     }));
-    const results: ISearchResult = [...transformByHotelName, ...transformByCity, ...transformByCountry];
+    const results: ISearchResult = [
+      ...transformByHotelName,
+      ...transformByCity,
+      ...transformByCountry,
+      ...transformByAdress,
+    ];
 
     return results;
   } catch (error) {
