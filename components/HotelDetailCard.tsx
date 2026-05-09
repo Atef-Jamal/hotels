@@ -1,20 +1,22 @@
+"use client";
 import { BedDouble, BedSingle, MapPin, PlusIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { MdBreakfastDining } from "react-icons/md";
 import { Button } from "./ui/button";
 import { IHotelListResponse } from "@/actions/actions";
+import { useSearchParams } from "next/navigation";
 
 interface IProps {
   hotel: IHotelListResponse["hotels"][0];
 }
 
 const HotelDetailCard = ({ hotel }: IProps) => {
-  const nameSlug = hotel.name.replaceAll(" ", "_");
+  const searchParams = useSearchParams();
 
   return (
     <Link
-      href={{ pathname: `/hotels/${nameSlug}` }}
+      href={`/hotels/${hotel.slug}?${searchParams.toString()}`}
       className="grid grid-cols-1 gap-2 overflow-hidden rounded-md bg-white p-2 lg:h-64 lg:grid-cols-4"
     >
       <div className="grid h-28 auto-cols-[100%] grid-flow-col gap-x-2 overflow-hidden min-[380px]:auto-cols-[50%] min-[900px]:auto-cols-[33.3%] sm:auto-cols-[33.3%] md:auto-cols-[50%] lg:h-full lg:auto-cols-[100%]">
@@ -73,6 +75,12 @@ const HotelDetailCard = ({ hotel }: IProps) => {
             <PlusIcon size={18} className="" /> WhitList
           </button>
         </div>
+
+        <div>
+          {hotel.paymentFacilities} -{hotel.location?.country} -{hotel.location?.city} - cancellation =
+          {String(hotel.policy?.cancellationPolicy)}
+        </div>
+
         <div>
           {hotel.nearbyAttractions.map((item, indx) => (
             <div key={indx} className="flex items-center gap-1">

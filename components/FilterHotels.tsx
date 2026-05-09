@@ -10,9 +10,10 @@ import RcSlider from "rc-slider";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaces } from "@/actions/actions";
 import { Button } from "./ui/button";
-import { useSearchContext } from "@/context/searchProvider";
 import { BedTypeEnum, PaymentFacilities, RoomServices } from "@/app/generated/prisma/enums";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { bedTypesList, paymentFacilitiesList, priceRanges, roomServicesList } from "@/constants/constants";
+import { useQueryParams } from "@/hooks/useQueryParams";
 import "rc-slider/assets/index.css";
 
 type IResetFiltersTypes =
@@ -23,260 +24,40 @@ type IResetFiltersTypes =
   | "Room_Facilities_Services"
   | "Bed_Types";
 
-const roomServicesList: RoomServices[] = [
-  "Room_cleaning",
-  "Bed_making",
-  "Towel_replacement",
-  "Laundry_service",
-  "Ironing_service",
-  "Mini_bar_restocking",
-  "Room_service_menu",
-  "Washing_Machine",
-  "In_room_dining",
-  "Breakfast_in_bed",
-  "Wake_up_call",
-  "Concierge_service",
-  "Turndown_service",
-  "Pillow_menu",
-  "Extra_blanket",
-  "Extra_pillow",
-  "Shoe_shining",
-  "Sewing_kit",
-  "Bathrobe",
-  "Slippers",
-  "Toiletries",
-  "Hairdryer",
-  "Shaving_kit",
-  "Dental_ki_",
-  "Makeup_mirror",
-  "In_room_safe",
-  "Umbrella",
-  "Newspaper_delivery",
-  "Magazine_delivery",
-  "DVD_player",
-  "Blu_ray_player",
-  "Streaming_services",
-  "In_room_movies",
-  "Satellite_TV",
-  "Cable_TV",
-  "High_speed_internet",
-  "Wi_Fi_access",
-  "Business_center_services",
-  "Printer",
-  "Fax_machine",
-  "Scanner",
-  "Laptop_rental",
-  "Gaming_console",
-  "Board_games",
-  "Books",
-  "In_room_massage",
-  "In_room_spa_treatments",
-  "In_room_yoga",
-  "Personal_trainer",
-  "Fitness_equipment",
-  "Baby_cot",
-  "Baby_sitting",
-  "Kids_amenities",
-  "PlayStation",
-  "Xbox",
-  "Nintendo_Switch",
-  "Pet_bed",
-  "Pet_food",
-  "Pet_sitting",
-  "Pet_grooming",
-  "Wheelchair",
-  "Accessible_bathroom",
-  "Accessible_shower",
-  "Hearing_accessible_services",
-  "Visual_accessible_services",
-  "Air_conditioning",
-  "Heating",
-  "Soundproofing",
-  "Room_fragrance",
-  "Butler_service",
-  "Personal_shopper",
-  "Dry_cleaning",
-  "Suit_pressing",
-  "Dietary_meals",
-  "Allergy_free_room",
-  "Connecting_rooms",
-  "Balcony",
-  "Terrace",
-  "City_view",
-  "Ocean_view",
-  "Garden_view",
-  "Mountain_view",
-  "River_view",
-  "Luggage_storage",
-  "Late_checkout",
-  "Early_check_in",
-  "Currency_exchange",
-  "Mail_service",
-  "Courier_service",
-  "Medical_assistance",
-  "Doctor_on_call",
-  "Pharmacy_service",
-  "Car_rental",
-  "Airport_transfer",
-  "Shuttle_service",
-  "Parking_service",
-  "Valet_parking",
-  "Bicycle_rental",
-  "Private_chauffeur",
-  "Tour_booking",
-  "Event_tickets",
-  "Concert_tickets",
-  "Restaurant_reservations",
-  "Ticket_printing",
-  "Translation_services",
-  "Interpreter_services",
-  "Courier_delivery",
-  "Flower_arrangement",
-  "Gift_wrapping",
-  "Special_occasion_setup",
-  "Birthday_cake",
-  "Anniversary_setup",
-  "Honeymoon_setup",
-  "Business_amenities",
-  "Meeting_room_booking",
-  "Conference_setup",
-  "Video_conferencing",
-  "Projector_rental",
-  "Whiteboard_rental",
-  "Flipchart_rental",
-  "Notepads_and_pens",
-  "Photocopying_service",
-  "Secretarial_service",
-  "Tea_and_coffee_making",
-  "Espresso_machine",
-  "Kettle",
-  "Microwave",
-  "Refrigerator",
-  "Oven",
-  "Stovetop",
-  "Dishwasher",
-  "Kitchen_utensils",
-  "Cookware",
-  "Tableware",
-  "Glassware",
-  "Bottled_water",
-  "Welcome_drink",
-  "Fresh_fruit",
-  "Chocolate",
-  "Champagne",
-  "Wine",
-  "Beer",
-  "Snack_basket",
-  "Grocery_shopping_service",
-  "Barbecue_equipment",
-  "Outdoor_furniture",
-  "Private_pool",
-  "Jacuzzi",
-  "Sauna",
-  "Steam_room",
-  "Fitness_room",
-  "Private_garden",
-  "Private_beach",
-  "Beach_towels",
-  "Sun_loungers",
-  "Beach_umbrella",
-  "Beach_bag",
-  "Beach_toys",
-  "Snorkeling_gear",
-  "Kayak",
-  "Paddleboard",
-  "Water_sports_equipment",
-  "Bicycle_storage",
-  "Ski_storage",
-  "Ski_passes",
-  "Ski_equipment_rental",
-  "Golf_equipment_rental",
-  "Tennis_equipment_rental",
-  "Yoga_mat",
-  "Meditation_cushion",
-  "First_aid_kit",
-  "Emergency_contact_numbers",
-  "Local_maps",
-  "Guidebooks",
-  "Tourist_information",
-  "Souvenir_shop",
-  "Art_gallery_access",
-  "Museum_tickets",
-  "Theater_tickets",
-  "Dance_show_tickets",
-  "Music_performance_tickets",
-  "Exhibition_tickets",
-  "Cooking_class_booking",
-  "Wine_tasting_booking",
-  "Food_tour_booking",
-  "Cultural_tour_booking",
-  "City_tour_booking",
-  "Adventure_tour_booking",
-  "Hiking_guide",
-  "Nature_guide",
-  "Personal_photographer",
-  "Photo_printing_service",
-  "Photo_album",
-  "Video_recording_service",
-  "Streaming_equipment",
-  "Podcast_recording_equipment",
-  "Blogging_equipment",
-  "Social_media_setup",
-  "Live_streaming_setup",
-  "Digital_concierge",
-  "Virtual_assistant",
-  "Room_control_tablet",
-  "Smart_lighting",
-  "Smart_thermostat",
-  "Voice_assistant",
-  "Smart_lock",
-  "Keyless_entry",
-];
-
 const FilterHotels = () => {
-  const { searchData, setSearchData } = useSearchContext();
-
+  const { queryParams, updateQueryParams } = useQueryParams();
   const [roomServicesPage, setRoomServicesPage] = useState(1);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
   const roomServicesPerPage = 10;
+
   const skipRoomServices = (roomServicesPage - 1) * roomServicesPerPage;
 
-  const priceRanges = [
-    { label: "Under 60", min: 0, max: 60 },
-    { label: "60 - 150", min: 60, max: 150 },
-    { label: "150 - 200", min: 150, max: 200 },
-    { label: "200 - 300", min: 200, max: 300 },
-    { label: "300 - 400", min: 300, max: 400 },
-    { label: "400 - 500", min: 400, max: 500 },
-  ];
-
   const placesChangeHandler = (value: string) => {
-    if (searchData.city) {
-      return setSearchData((prev) => ({ ...prev, address: value }));
+    if (queryParams.city) {
+      return updateQueryParams([{ method: "set", key: "address", value }]);
     }
-    if (searchData.country) {
-      return setSearchData((prev) => ({ ...prev, city: value, address: "" }));
+    if (queryParams.country) {
+      return updateQueryParams([
+        { method: "delete", key: "address" },
+        { method: "set", key: "city", value },
+      ]);
     }
-    return setSearchData((prev) => ({ ...prev, country: value, city: "", address: "" }));
+    return updateQueryParams([
+      { method: "delete", key: "address" },
+      { method: "delete", key: "city" },
+      { method: "set", key: "country", value },
+    ]);
   };
 
   const handleRoomServiceChange = (service: RoomServices) => {
-    return setSearchData((prev) => {
-      const exists = prev.roomServices?.includes(service);
-      if (exists) {
-        let filteredServices = prev.roomServices?.filter((i) => i !== service) || null;
-        if (filteredServices?.length === 0) {
-          filteredServices = null;
-        }
-        return {
-          ...prev,
-          roomServices: filteredServices,
-        };
-      }
-      return {
-        ...prev,
-        roomServices: [...(prev.roomServices || []), service],
-      };
-    });
+    return updateQueryParams([
+      {
+        method: "toggle",
+        key: "roomServices",
+        value: service,
+      },
+    ]);
   };
 
   const {
@@ -284,35 +65,67 @@ const FilterHotels = () => {
     status,
     error,
   } = useQuery({
-    queryKey: ["hotels-list-filters-places", { city: searchData.city, country: searchData.country }],
-    queryFn: () => getPlaces({ city: searchData.city, country: searchData.country }),
+    queryKey: ["hotels-list-filters-places", queryParams.city, queryParams.country],
+    queryFn: () => getPlaces({ city: queryParams.city, country: queryParams.country }),
     staleTime: 1000 * 60 * 60,
   });
 
   const resetFilters = (type: IResetFiltersTypes) => {
     switch (type) {
       case "Price":
-        setSearchData((prev) => ({ ...prev, minPrice: 0, maxPrice: 700 }));
+        updateQueryParams([
+          { method: "delete", key: "minPrice" },
+          { method: "delete", key: "maxPrice" },
+        ]);
         break;
       case "Bed_Types":
-        setSearchData((prev) => ({ ...prev, bedType: null }));
+        updateQueryParams([{ method: "delete", key: "bedType" }]);
+
         break;
       case "Popular_Filters":
-        setSearchData((prev) => ({ ...prev, breakfastIncluded: null, cancellationPolicy: null }));
+        updateQueryParams([
+          { method: "delete", key: "breakfastIncluded" },
+          { method: "delete", key: "cancellationPolicy" },
+        ]);
+
         break;
       case "Room_Facilities_Services":
-        setSearchData((prev) => ({ ...prev, roomServices: null }));
+        updateQueryParams([{ method: "delete", key: "roomServices" }]);
+
         break;
       case "Average_Rating":
-        setSearchData((prev) => ({ ...prev, averageRating: null }));
+        updateQueryParams([{ method: "delete", key: "averageRating" }]);
         break;
       case "Payment_Facilities":
-        setSearchData((prev) => ({ ...prev, paymentFacilities: null }));
+        updateQueryParams([{ method: "delete", key: "paymentFacilities" }]);
+
         break;
       default:
         break;
     }
   };
+
+  const handlePriceChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        updateQueryParams([
+          { method: "set", key: "minPrice", value: value[0].toString() },
+          { method: "set", key: "maxPrice", value: value[1].toString() },
+        ]);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-5 max-sm:px-2">
@@ -330,21 +143,21 @@ const FilterHotels = () => {
         </div>
         <div className="space-y-2">
           <div className="flex items-center gap-5 text-blue-700">
-            <span className="font-medium">SAR {searchData.minPrice}</span>
+            <span className="font-medium">SAR {queryParams.minPrice}</span>
             <span className="h-0.5 w-8 bg-blue-700"></span>
-            <span className="font-medium">SAR {searchData.maxPrice}</span>
+            <span className="font-medium">SAR {queryParams.maxPrice}</span>
           </div>
           <RcSlider
             range
             min={0}
-            max={500}
+            max={700}
             step={1}
-            value={[searchData.minPrice, searchData.maxPrice]}
-            onChange={(value) => {
-              if (Array.isArray(value)) {
-                setSearchData((prev) => ({ ...prev, minPrice: value[0], maxPrice: value[1] }));
-              }
-            }}
+            value={
+              queryParams.minPrice && queryParams.maxPrice
+                ? [queryParams.minPrice, queryParams.maxPrice]
+                : undefined
+            }
+            onChange={handlePriceChange}
             styles={{
               track: { background: "blue" },
               handle: { background: "blue" },
@@ -355,7 +168,10 @@ const FilterHotels = () => {
               <Button
                 key={range.max}
                 onClick={() => {
-                  setSearchData((prev) => ({ ...prev, minPrice: range.min, maxPrice: range.max }));
+                  updateQueryParams([
+                    { method: "set", key: "minPrice", value: range.min.toString() },
+                    { method: "set", key: "maxPrice", value: range.max.toString() },
+                  ]);
                 }}
                 size={"sm"}
                 className="text-blue-700"
@@ -383,12 +199,12 @@ const FilterHotels = () => {
           <div className="flex items-center space-x-2 p-2">
             <Checkbox
               id="Breakfast_Included"
-              checked={searchData.breakfastIncluded === true}
+              checked={queryParams.breakfastIncluded === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
-                  setSearchData((prev) => ({ ...prev, breakfastIncluded: true }));
+                  updateQueryParams([{ method: "set", key: "breakfastIncluded", value: "true" }]);
                 } else {
-                  setSearchData((prev) => ({ ...prev, breakfastIncluded: false }));
+                  updateQueryParams([{ method: "delete", key: "breakfastIncluded" }]);
                 }
               }}
             />
@@ -402,12 +218,12 @@ const FilterHotels = () => {
           <div className="flex items-center space-x-2 p-2">
             <Checkbox
               id="Free_Cancellation"
-              checked={searchData.cancellationPolicy === true}
+              checked={queryParams.cancellationPolicy === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
-                  setSearchData((prev) => ({ ...prev, cancellationPolicy: true }));
+                  updateQueryParams([{ method: "set", key: "cancellationPolicy", value: "true" }]);
                 } else {
-                  setSearchData((prev) => ({ ...prev, cancellationPolicy: false }));
+                  updateQueryParams([{ method: "delete", key: "cancellationPolicy" }]);
                 }
               }}
             />
@@ -456,17 +272,19 @@ const FilterHotels = () => {
             <Badge
               key={i}
               onClick={() => {
-                if (searchData.averageRating === i + 2) {
-                  return setSearchData((prev) => ({ ...prev, averageRating: null }));
+                if (queryParams.averageRating === i + 2) {
+                  return updateQueryParams([{ method: "delete", key: "averageRating" }]);
                 }
-                setSearchData((prev) => ({ ...prev, averageRating: i + 2 }));
+                return updateQueryParams([
+                  { method: "set", key: "averageRating", value: (i + 2).toString() },
+                ]);
               }}
               variant={"secondary"}
               className="flex items-center justify-center gap-x-2 px-2 py-1"
             >
               {i + 2}
               <Star
-                fill={searchData.averageRating && searchData.averageRating >= i + 2 ? "blue" : "white"}
+                fill={queryParams.averageRating && queryParams.averageRating >= i + 2 ? "blue" : "white"}
                 size={18}
               />
             </Badge>
@@ -487,33 +305,18 @@ const FilterHotels = () => {
         </div>
 
         <RadioGroup
-          value={searchData.bedType}
+          value={queryParams.bedType || ""}
           onValueChange={(value: BedTypeEnum) => {
-            console.log(value);
-            setSearchData((prev) => ({ ...prev, bedType: value }));
+            return updateQueryParams([{ method: "set", key: "bedType", value }]);
           }}
           className="pl-2"
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Single" id="Single" />
-            <Label htmlFor="Single"> Single Bed</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Double" id="Double" />
-            <Label htmlFor="Double"> Double Bed</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Twin" id="Twin" />
-            <Label htmlFor="Twin"> Twin Bed</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Queen" id="Queen" />
-            <Label htmlFor="Queen"> Queen Bed</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="King" id="King" />
-            <Label htmlFor="King"> King Bed</Label>
-          </div>
+          {bedTypesList.map(({ label, value }) => (
+            <div key={value} className="flex items-center space-x-2">
+              <RadioGroupItem value={value} id={value} />
+              <Label htmlFor={value}>{label}</Label>
+            </div>
+          ))}
         </RadioGroup>
       </div>
       <div className="space-y-3 border-b pb-4">
@@ -529,7 +332,9 @@ const FilterHotels = () => {
               <div key={i} className="flex space-x-2">
                 <RadioGroupItem
                   checked={
-                    searchData.city === place || searchData.country === place || searchData.address === place
+                    queryParams.city === place ||
+                    queryParams.country === place ||
+                    queryParams.address === place
                   }
                   value={place}
                   id={place}
@@ -554,20 +359,18 @@ const FilterHotels = () => {
         </div>
 
         <RadioGroup
-          defaultValue={searchData.paymentFacilities || undefined}
+          value={queryParams.paymentFacilities || ""}
           onValueChange={(value: PaymentFacilities) => {
-            setSearchData((prev) => ({ ...prev, paymentFacilities: value }));
+            return updateQueryParams([{ method: "set", key: "paymentFacilities", value }]);
           }}
           className="pl-2"
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Prepay_Online" id="Prepay_Online" />
-            <Label htmlFor="Prepay_Online">Prepay Online</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Pay_At_Hotel" id="Pay_At_Hotel" />
-            <Label htmlFor="Pay_At_Hotel">Pay at Hotel</Label>
-          </div>
+          {paymentFacilitiesList.map(({ lable, value }) => (
+            <div key={value} className="flex items-center space-x-2">
+              <RadioGroupItem value={value} id={value} />
+              <Label htmlFor={value}>{lable}</Label>
+            </div>
+          ))}
         </RadioGroup>
       </div>
       <div className="space-y-3 pb-4 sm:border-b">
@@ -588,8 +391,7 @@ const FilterHotels = () => {
             .map((service) => (
               <div key={service} className="flex items-center space-x-2 p-2">
                 <Checkbox
-                  // checked={searchData.roomServices?.includes(service)}
-                  checked={(searchData.roomServices ?? []).includes(service)}
+                  checked={queryParams.roomServices.includes(service)}
                   onCheckedChange={() => handleRoomServiceChange(service)}
                   id={service}
                 />

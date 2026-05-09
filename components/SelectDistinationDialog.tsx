@@ -9,43 +9,38 @@ import { getDistinations, ISearchItem } from "@/actions/actions";
 import testImage from "@/public/gamePhoto-43.jpg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { MdClose } from "react-icons/md";
-// import { ISearchData } from "./SearchBox";
-import { useSearchContext } from "@/context/searchProvider";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
-function SelectDistinationDialog({
-  children,
-  // searchData,
-  // setSearchData,
-}: {
-  children: React.ReactNode;
-  // searchData: ISearchData;
-  // setSearchData: React.Dispatch<React.SetStateAction<ISearchData>>;
-}) {
+function SelectDistinationDialog({ children }: { children: React.ReactNode }) {
   const [searchTerm, setSearchTerm] = useState("");
-
-  const { searchData, setSearchData } = useSearchContext();
+  const { queryParams, updateQueryParams } = useQueryParams();
 
   const handleSelect = (distination: ISearchItem) => {
     if (distination.type === "property-name") {
-      return setSearchData((prev) => ({
-        ...prev,
-        hotelName: distination.name,
-        city: distination.city,
-        country: distination.country,
-      }));
+      return updateQueryParams([
+        { method: "set", key: "hotelName", value: distination.name },
+        { method: "set", key: "city", value: distination.city },
+        { method: "set", key: "country", value: distination.country },
+        { method: "delete", key: "address" },
+      ]);
     }
 
     if (distination.type === "city") {
-      return setSearchData((prev) => ({
-        ...prev,
-        city: distination.city,
-        country: distination.country,
-        hotelName: "",
-      }));
+      return updateQueryParams([
+        { method: "set", key: "city", value: distination.city },
+        { method: "set", key: "country", value: distination.country },
+        { method: "delete", key: "hotelName" },
+        { method: "delete", key: "address" },
+      ]);
     }
 
     if (distination.type === "country") {
-      return setSearchData((prev) => ({ ...prev, country: distination.country, city: "", hotelName: "" }));
+      return updateQueryParams([
+        { method: "set", key: "country", value: distination.country },
+        { method: "delete", key: "hotelName" },
+        { method: "delete", key: "city" },
+        { method: "delete", key: "address" },
+      ]);
     }
   };
 
@@ -58,7 +53,10 @@ function SelectDistinationDialog({
   return (
     <Dialog>
       {children}
-      <DialogContent className="flex h-full max-w-full flex-col gap-1 px-2 py-4 md:h-[80%] md:max-w-3xl md:px-4">
+      <DialogContent
+        showCloseButton={false}
+        className="flex h-full max-w-full flex-col gap-1 px-2 py-4 md:h-[80%] md:max-w-3xl md:px-4"
+      >
         <VisuallyHidden>
           <DialogTitle></DialogTitle>
           <DialogDescription></DialogDescription>
@@ -69,12 +67,12 @@ function SelectDistinationDialog({
             <Input
               onChange={(e) => setSearchTerm(e.target.value)}
               defaultValue={
-                searchData.hotelName
-                  ? searchData.hotelName
-                  : searchData.city
-                    ? `${searchData.city} - ${searchData.country}`
-                    : searchData.country
-                      ? searchData.country
+                queryParams.hotelName
+                  ? queryParams.hotelName
+                  : queryParams.city
+                    ? `${queryParams.city} - ${queryParams.country}`
+                    : queryParams.country
+                      ? queryParams.country
                       : ""
               }
               placeholder={"Enter a Distination"}

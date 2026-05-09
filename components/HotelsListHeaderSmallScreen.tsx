@@ -7,12 +7,11 @@ import SelectDatesDialog from "./SelectDatesDialog";
 import ResponsiveSortHotels from "./ResponsiveSortHotels";
 import { DrawerTrigger } from "./ui/drawer";
 import { DialogTrigger } from "./ui/dialog";
-import { useSearchContext } from "@/context/searchProvider";
 import ResponsiveSelectGuestsRooms from "./ResponsiveSelectGuestsRooms";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 const HotelsListHeaderSmallScreen = () => {
-  const { searchData } = useSearchContext();
-
+  const { queryParams } = useQueryParams();
   return (
     <header className="sticky top-0 z-1 bg-[#623af3] py-2 md:hidden">
       <div className="mx-2 mb-2 rounded-sm bg-white px-2">
@@ -20,23 +19,23 @@ const HotelsListHeaderSmallScreen = () => {
           <DialogTrigger
             className={cn(
               "w-full border-b py-1 text-left text-sm font-medium",
-              !searchData.hotelName && !searchData.city && !searchData.country && "text-muted-foreground",
+              !queryParams.hotelName && !queryParams.city && !queryParams.country && "text-muted-foreground",
             )}
           >
-            {searchData.hotelName
-              ? searchData.hotelName
-              : searchData.city
-                ? `${searchData.city} - ${searchData.country}`
-                : searchData.country
-                  ? searchData.country
+            {queryParams.hotelName
+              ? queryParams.hotelName
+              : queryParams.city
+                ? `${queryParams.city} - ${queryParams.country}`
+                : queryParams.country
+                  ? queryParams.country
                   : "Enter destination"}
           </DialogTrigger>
         </SelectDistinationDialog>
         <SelectDatesDialog>
           <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-sm font-medium">
-            <p>{searchData.checkIn.toISOString().split("T")[0]}</p>
+            <p>{queryParams.checkIn.toISOString().split("T")[0]}</p>
             <small className="border-b-blue-800 font-semibold text-blue-600">To</small>
-            <p>{searchData.checkOut.toISOString().split("T")[0]}</p>
+            <p>{queryParams.checkOut.toISOString().split("T")[0]}</p>
           </DialogTrigger>
         </SelectDatesDialog>
       </div>
@@ -51,7 +50,7 @@ const HotelsListHeaderSmallScreen = () => {
         <ResponsiveSelectGuestsRooms>
           <DrawerTrigger className="flex min-w-fit items-center justify-center rounded-sm bg-white px-1.5 py-0.75 text-[13px] font-medium">
             <span>
-              {searchData.roomsCount} Rooms, {searchData.adults} Guests
+              {queryParams.roomsCount} Rooms, {queryParams.adults} Guests
             </span>
             <ArrowDown size={16} className="ml-1 min-w-fit" />
           </DrawerTrigger>

@@ -1,12 +1,12 @@
 "use client";
+import { AttractionCategory, NearbyAttraction } from "@/app/generated/prisma/client";
 import { cn } from "@/lib/utils";
-import { INearbyAttraction, INearbyAttractionCategory } from "@/types/types";
 import { useState } from "react";
 import { MdAttractions } from "react-icons/md";
 
-function NearbyAttractionSection({ attractions }: { attractions: INearbyAttraction[] }) {
+function NearbyAttractionSection({ attractions }: { attractions: NearbyAttraction[] }) {
   const tabs = [...new Set([...attractions.map((item) => item.category)])];
-  const [activeTab, setActiveTab] = useState<INearbyAttractionCategory>(tabs[0]);
+  const [activeTab, setActiveTab] = useState<AttractionCategory>(tabs[0]);
   const activeAttractionsList = attractions.filter((attraction) => attraction.category === activeTab);
 
   return (

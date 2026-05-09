@@ -1,3 +1,3 @@
-export default function loading() {
-  return <div className="rounded-lg"></div>;
+export default function Loading() {
+  return <div className="rounded-lg">Loading hotels Layout....</div>;
 }

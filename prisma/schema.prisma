@@ -80,7 +80,8 @@ model Verification {
 
 model Hotel {
   id                 String             @id @default(uuid())
-  name               String
+  name               String             
+  slug               String             @unique
   description        String
   images             String[]
   amenities          String[]

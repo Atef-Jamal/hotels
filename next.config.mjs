@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["plus.unsplash.com", "ak-d.tripcdn.com", "img.freepik.com"],
+    remotePatterns: [
+      new URL(
+        "https://ak-d.tripcdn.com/images/**?proc=watermark/image_trip1,l_ne,x_16,y_16,w_67,h_16;digimark/t_image,logo_tripbinary;ignoredefaultwm,1A8F",
+      ),
+    ],
   },
 };
 

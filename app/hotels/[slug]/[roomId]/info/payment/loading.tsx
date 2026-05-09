@@ -1,4 +1,4 @@
-export default function loading() {
+export default function Loading() {
   return (
     <div className="mx-2 flex flex-col gap-4 max-md:my-4 md:flex-row">
       <div className="md:order-2 md:w-[30%]">

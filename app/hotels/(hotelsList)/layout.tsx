@@ -17,7 +17,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
           style={{
             height: `calc(100dvh - 70px)`,
           }}
-          className="scrollbar-thin sticky top-22 hidden w-70 overflow-x-hidden overflow-y-auto rounded-lg bg-white p-4 md:block"
+          className="scrollbar-thin sticky top-22 hidden w-70 overflow-x-hidden overflow-y-auto rounded-lg bg-white p-2 md:block"
         >
           <FilterHotels />
         </div>

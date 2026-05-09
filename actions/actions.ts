@@ -4,8 +4,9 @@ import {
   HotelWhereInput,
   RoomWhereInput,
 } from "@/app/generated/prisma/internal/prismaNamespaceBrowser";
-import { ISearchData } from "@/context/searchProvider";
+
 import prisma from "@/lib/prisma";
+import { IFilterHotelsSchema, IFilterRoomsSchema } from "@/validation";
 
 export type ISearchItem =
   | {
@@ -31,155 +32,186 @@ type ISearchResult = ISearchItem[];
 
 export type GetPlacesParams = { city?: string; country?: string };
 
-// type GetPlacesFn = (argu: GetPlacesParams) => Promise<string[]>;
+export const getHotles = async (args: IFilterHotelsSchema) => {
+  const {
+    minPrice,
+    maxPrice,
+    hotelName,
+    breakfastIncluded,
+    roomServices,
+    checkIn,
+    checkOut,
+    averageRating,
+    cancellationPolicy,
+    paymentFacilities,
+    country,
+    city,
+    address,
+    adults,
+    children,
+    page,
+    bedType,
+  } = args;
 
-export type IHotelListResponse = Awaited<ReturnType<typeof getHotles>>;
+  const limitPerPage = 5;
+  const skip = (page - 1) * limitPerPage;
 
-export const getHotles = async ({
-  minPrice,
-  maxPrice,
-  hotelName,
-  breakfastIncluded,
-  roomsCount,
-  roomServices,
-  checkIn,
-  checkOut,
-  averageRating,
-  cancellationPolicy,
-  paymentFacilities,
-  country,
-  city,
-  address,
-  adults,
-  children,
-  page,
-  bedType,
-}: ISearchData) => {
-  try {
-    const pageParam = Number(page) || 1;
-    const limitPerPage = 10;
-    const skip = (pageParam - 1) * limitPerPage;
-
-    if (!hotelName && !country && !city && !address) {
-      return { matchedHotelsCount: 0, hotels: [], hasMore: false };
-    }
-
-    const hotelWhereInput: HotelWhereInput = {};
-    const roomWhereInput: RoomWhereInput = {};
-
-    if (hotelName) {
-      hotelWhereInput.name = { equals: hotelName };
-    } else {
-      hotelWhereInput.location = {
-        ...(country ? { country: { equals: country } } : {}),
-        ...(city ? { city: { equals: city } } : {}),
-        ...(address ? { address: { equals: address } } : {}),
-      };
-    }
-    if (averageRating) {
-      hotelWhereInput.averageRating = { lte: averageRating };
-    }
-    if (cancellationPolicy) {
-      if (cancellationPolicy) {
-        hotelWhereInput.policy = { cancellationPolicy: { equals: true } };
-      }
-      if (!cancellationPolicy) {
-        hotelWhereInput.policy = { cancellationPolicy: { equals: false } };
-      }
-    }
-    if (paymentFacilities) {
-      if (paymentFacilities === "Pay_At_Hotel") {
-        hotelWhereInput.paymentFacilities = { equals: "Pay_At_Hotel" };
-      }
-      if (paymentFacilities === "Prepay_Online") {
-        hotelWhereInput.paymentFacilities = { equals: "Prepay_Online" };
-      }
-    }
-
-    roomWhereInput.booking = {
-      none: { checkIn: { lt: checkOut }, checkOut: { gt: checkIn } },
-    };
-
-    roomWhereInput.pricePerNight = { gte: minPrice, lte: maxPrice };
-    roomWhereInput.adults = { gte: adults };
-    roomWhereInput.children = { gte: children };
-
-    if (roomServices) {
-      roomWhereInput.roomServices = {
-        hasEvery: roomServices,
-      };
-    }
-
-    if (bedType) {
-      roomWhereInput.beds = {
-        some: {
-          type: bedType,
-        },
-      };
-    }
-
-    if (breakfastIncluded) {
-      if (breakfastIncluded) {
-        roomWhereInput.breakfastIncluded = { equals: true };
-      }
-      if (!breakfastIncluded) {
-        roomWhereInput.breakfastIncluded = { equals: false };
-      }
-    }
-
-    const hotels = await prisma.hotel.findMany({
-      where: { ...hotelWhereInput, rooms: { some: roomWhereInput } },
-      skip: skip,
-      take: limitPerPage,
-      include: {
-        rooms: {
-          where: roomWhereInput,
-          orderBy: [
-            {
-              adults: "asc",
-            },
-            {
-              pricePerNight: "asc",
-            },
-          ],
-          select: {
-            type: true,
-            breakfastIncluded: true,
-            beds: true,
-            pricePerNight: true,
-          },
-          take: roomsCount,
-        },
-        nearbyAttractions: {
-          take: 80,
-          select: { category: true, name: true, distance: true, travelTime: true },
-        },
-        reviews: {
-          take: 10,
-        },
-        location: true,
-      },
-    });
-
-    const matchedHotelsCount = await prisma.hotel.count({
-      where: { ...hotelWhereInput, rooms: { some: roomWhereInput } },
-    });
-
-    const hasMore = limitPerPage === hotels.length;
-
-    return { matchedHotelsCount, hotels, hasMore };
-  } catch (error) {
-    console.log(error);
-    throw new Error("can't load hotels list");
+  if (!hotelName && !country && !city && !address) {
+    return { hasMore: false, hotels: [] };
   }
+
+  const roomWhereInput: RoomWhereInput = {
+    ...(roomServices ? { roomServices: { hasEvery: roomServices } } : {}),
+    ...(bedType ? { beds: { some: { type: bedType } } } : {}),
+    ...(adults ? { adults: { gte: adults } } : {}),
+    ...(children ? { children: { gte: children } } : {}),
+    ...(breakfastIncluded ? { breakfastIncluded: breakfastIncluded } : {}),
+    ...(minPrice != null && maxPrice != null ? { pricePerNight: { gte: minPrice, lte: maxPrice } } : {}),
+    ...(checkIn && checkOut
+      ? { booking: { none: { checkIn: { lt: checkIn }, checkOut: { gt: checkOut } } } }
+      : {}),
+  };
+
+  const hotelWhereInput: HotelWhereInput = {
+    ...(hotelName ? { name: { equals: hotelName } } : {}),
+    ...(averageRating ? { averageRating: { gte: averageRating } } : {}),
+    ...(cancellationPolicy ? { policy: { cancellationPolicy: cancellationPolicy } } : {}),
+    ...(paymentFacilities ? { paymentFacilities: paymentFacilities } : {}),
+    ...(country || city || address
+      ? {
+          location: {
+            ...(country ? { country: { equals: country } } : {}),
+            ...(city ? { city: { equals: city } } : {}),
+            ...(address ? { address: { equals: address } } : {}),
+          },
+        }
+      : {}),
+    rooms: {
+      some: roomWhereInput,
+    },
+  };
+
+  const hotels = await prisma.hotel.findMany({
+    where: hotelWhereInput,
+    skip: skip,
+    take: limitPerPage,
+    include: {
+      rooms: {
+        where: roomWhereInput,
+        orderBy: [
+          {
+            adults: "asc",
+          },
+          {
+            pricePerNight: "asc",
+          },
+        ],
+        select: {
+          type: true,
+          breakfastIncluded: true,
+          beds: true,
+          pricePerNight: true,
+        },
+        take: 1,
+      },
+      policy: true,
+      nearbyAttractions: {
+        take: 80,
+        select: { category: true, name: true, distance: true, travelTime: true },
+      },
+      reviews: {
+        take: 10,
+      },
+      location: true,
+    },
+  });
+
+  const hasMore = limitPerPage === hotels.length;
+
+  return { hotels, hasMore };
+};
+
+export const getTotalHotelsCount = async (args: IFilterHotelsSchema) => {
+  const {
+    address,
+    adults,
+    averageRating,
+    bedType,
+    breakfastIncluded,
+    cancellationPolicy,
+    checkIn,
+    checkOut,
+    children,
+    city,
+    country,
+    hotelName,
+    maxPrice,
+    minPrice,
+    paymentFacilities,
+    roomServices,
+  } = args;
+
+  if (!hotelName && !country && !city && !address) {
+    return 0;
+  }
+
+  const roomWhereInput: RoomWhereInput = {
+    ...(roomServices ? { roomServices: { hasEvery: roomServices } } : {}),
+    ...(bedType ? { beds: { some: { type: bedType } } } : {}),
+    ...(adults ? { adults: { gte: adults } } : {}),
+    ...(children ? { children: { gte: children } } : {}),
+    ...(breakfastIncluded ? { breakfastIncluded: breakfastIncluded } : {}),
+    ...(minPrice != null && maxPrice != null ? { pricePerNight: { gte: minPrice, lte: maxPrice } } : {}),
+    ...(checkIn && checkOut
+      ? { booking: { none: { checkIn: { lt: checkIn }, checkOut: { gt: checkOut } } } }
+      : {}),
+  };
+  const hotelWhereInput: HotelWhereInput = {
+    ...(hotelName ? { name: { equals: hotelName } } : {}),
+    ...(averageRating ? { averageRating: { gte: averageRating } } : {}),
+    ...(cancellationPolicy ? { policy: { cancellationPolicy: cancellationPolicy } } : {}),
+    ...(paymentFacilities ? { paymentFacilities: paymentFacilities } : {}),
+    ...(country || city || address
+      ? {
+          location: {
+            ...(country ? { country: { equals: country } } : {}),
+            ...(city ? { city: { equals: city } } : {}),
+            ...(address ? { address: { equals: address } } : {}),
+          },
+        }
+      : {}),
+    rooms: {
+      some: roomWhereInput,
+    },
+  };
+
+  const matchedHotelsCount = await prisma.hotel.count({
+    where: hotelWhereInput,
+  });
+
+  return matchedHotelsCount;
+};
+
+export const getHotelDetails = async (slug: string) => {
+  const hotel = await prisma.hotel.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      nearbyAttractions: true,
+      reviews: true,
+    },
+  });
+
+  return hotel;
 };
 
 export const getPlaces = async ({
   city,
   country,
 }: {
-  city: ISearchData["city"];
-  country: ISearchData["country"];
+  city: IFilterHotelsSchema["city"];
+  country: IFilterHotelsSchema["country"];
 }) => {
   let query: HotelLocationFindManyArgs = {};
 
@@ -251,20 +283,6 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
         city: i.city,
       }));
 
-      // const countries = await prisma.hotelLocation.findMany({
-      //   distinct: ["country"],
-      //   select: {
-      //     country: true,
-      //   },
-      // });
-      // const cities = await prisma.hotelLocation.findMany({
-      //   distinct: ["country", "city"],
-      //   select: {
-      //     country: true,
-      //     city: true,
-      //   },
-      //   take: 10,
-      // });
       const result = [...countries, ...cities] as ISearchResult;
 
       return result;
@@ -374,11 +392,69 @@ export const getDistinations = async (searchTerm: string): Promise<ISearchResult
 
     return results;
   } catch (error) {
-    console.log(error);
-    throw new Error("can not load distinations");
+    throw new Error(JSON.stringify(error));
   }
 };
 
+export const getHotelRooms = async ({
+  slug,
+  filterRooms,
+}: {
+  slug: string;
+  filterRooms: IFilterRoomsSchema;
+}) => {
+  const {
+    adults,
+    checkIn,
+    checkOut,
+    children,
+    page,
+    roomServices,
+    bedType,
+    breakfastIncluded,
+    maxPrice,
+    minPrice,
+  } = filterRooms;
+
+  const limitPerPage = 10;
+  const skip = (page - 1) * limitPerPage;
+
+  const roomWhereInput: RoomWhereInput = {
+    hotel: {
+      slug,
+    },
+    ...(roomServices ? { roomServices: { hasEvery: roomServices } } : {}),
+    ...(bedType ? { beds: { some: { type: bedType } } } : {}),
+    ...(adults ? { adults: { gte: adults } } : {}),
+    ...(children ? { children: { gte: children } } : {}),
+    ...(breakfastIncluded ? { breakfastIncluded: breakfastIncluded } : {}),
+    ...(minPrice != null && maxPrice != null ? { pricePerNight: { gte: minPrice, lte: maxPrice } } : {}),
+    ...(checkIn && checkOut
+      ? { booking: { none: { checkIn: { lt: checkIn }, checkOut: { gt: checkOut } } } }
+      : {}),
+  };
+
+  const rooms = await prisma.room.findMany({
+    where: roomWhereInput,
+    include: {
+      beds: true,
+    },
+    take: limitPerPage,
+    skip,
+    orderBy: {
+      id: "asc",
+    },
+  });
+
+  const hasMore = limitPerPage === rooms.length;
+
+  return { rooms, hasMore };
+};
+
+export type IHotelListResponse = Awaited<ReturnType<typeof getHotles>>;
+
+export type IHotelDetailResponse = Awaited<ReturnType<typeof getHotelDetails>>;
+export type IHotelRoomsListResponse = Awaited<ReturnType<typeof getHotelRooms>>;
 // type IPromoCodeSuccess = { status: "success"; newPrice: number };
 // type IPromoCodeFail = { status: "error"; message: string };
 // type IPromoCodeResult = IPromoCodeSuccess | IPromoCodeFail;
