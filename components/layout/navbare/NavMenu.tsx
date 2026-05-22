@@ -25,6 +25,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Link from "next/link";
 import { MdAccountBox, MdClose } from "react-icons/md";
 import { Button } from "../../ui/button";
+import { Separator } from "../../ui/separator";
 
 export default function NavMenu() {
   const [scrollMenu, setScrollMenu] = useState(false);
@@ -70,77 +71,95 @@ export default function NavMenu() {
 
           <div
             className={cn(
-              "m-2 flex-1 overflow-y-auto bg-white p-2 transition-all duration-300 ease-out",
+              "m-2 flex-1 space-y-2 overflow-y-auto bg-white p-2 transition-all duration-300 ease-out",
               scrollMenu ? "translate-y-0" : "-translate-y-full",
             )}
           >
             <div className="space-y-2 rounded-lg bg-[#7fabe428] px-2 py-3">
               <h1 className="text-center font-medium">Access saving just for you - in only one step</h1>
-              <DialogClose className={"mx-auto grid w-full max-w-100 grid-cols-2 gap-1"}>
-                <Button variant={"outline"} size={"sm"} className={"rounded-sm"}>
+              <div className={"mx-auto grid w-full max-w-100 grid-cols-2 gap-1"}>
+                <Button variant={"outline"} className={"rounded-sm"}>
                   Search Hotels
                 </Button>
-                <Button variant={"outline"} size={"sm"} className={"rounded-sm bg-blue-700 text-gray-100"}>
+                <Button variant={"outline"} className={"rounded-sm bg-blue-700 text-gray-100"}>
                   <Link href={"/auth/sign-in"}>Sign in</Link>
                   <span className="mx-1">/</span>
                   <Link href={"/auth/sign-up"}>Register</Link>
                 </Button>
-              </DialogClose>
+              </div>
             </div>
-            <div className="mt-3">
-              <DialogClose className={"w-full"}>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center gap-x-2 text-blue-700">
+            <div>
+              <ul className="space-y-2">
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <Hotel size={18} />
                     <Link href={"/hotels"}>Hotels</Link>
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <Hotel size={18} />
                     <Link href={"/hotels/Details"}>Hotel Details</Link>
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <Hotel size={18} /> <Link href={"/bookNew"}>BookNew</Link>
-                  </li>
-                </ul>
-              </DialogClose>
+                  </DialogClose>
+                </li>
+              </ul>
             </div>
-            <div className="space-y-3 border-b-2 py-5 text-sm">
-              <span className="text-muted-foreground">Setting</span>
-              <DialogClose className={"w-full"}>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-x-2 text-blue-700">
+            <Separator />
+            <div className="space-y-2">
+              <h1 className="text-muted-foreground">Setting </h1>
+              <ul className="space-y-2">
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <Languages size={18} /> English ( US )
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <CurrencyIcon size={18} /> Currency ( SAR )
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <MdAccountBox size={18} /> My Bookings
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <View size={18} /> Recently Viewed
-                  </li>
-                </ul>
-              </DialogClose>
+                  </DialogClose>
+                </li>
+              </ul>
             </div>
-            <div className="space-y-3 border-b-2 py-5 text-sm">
-              <span className="text-muted-foreground">More</span>
-              <DialogClose className={"w-full"}>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-x-2 text-blue-700">
+            <Separator />
+            <div className="space-y-2">
+              <h1 className="text-muted-foreground">More </h1>
+              <ul className="space-y-2">
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <HelpCircle size={18} /> Help
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <MessageSquare size={18} /> Notifications
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <AppWindow size={18} /> Download the App
-                  </li>
-                  <li className="flex items-center gap-x-2 text-blue-700">
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <LogOut size={18} /> Sign out
-                  </li>
-                </ul>
-              </DialogClose>
+                  </DialogClose>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

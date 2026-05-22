@@ -1,6 +1,6 @@
 import { getDestinations, suggestedLocations } from "@/actions";
 import FilterHotels from "@/components/hotels/FilterHotels";
-import HotelsListHeaderSmallScreen from "@/components/hotels/HotelsListHeaderSmallScreen";
+import HotelsListHeaderMobile from "@/components/hotels/HotelsListHeaderMobile";
 import SearchBox from "@/components/shared/SearchBox";
 
 export default async function HotelsListingLayout({ children }: { children: React.ReactNode }) {
@@ -14,7 +14,7 @@ export default async function HotelsListingLayout({ children }: { children: Reac
         <SearchBox initialDestinations={initialDestinations} />
       </div>
       <div className="md:hidden">
-        <HotelsListHeaderSmallScreen
+        <HotelsListHeaderMobile
           initialDestinations={initialDestinations}
           initialSuggestedLocations={initialSuggestedLocations}
         />

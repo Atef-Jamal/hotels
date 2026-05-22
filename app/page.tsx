@@ -12,7 +12,7 @@ export default async function Page() {
       <div className="absolute top-0 h-60 w-full bg-linear-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
       <div className="relative mx-auto max-w-300 space-y-12">
         <div className="mx-2 overflow-hidden py-3 md:py-7">
-          <h1 className="mx-auto mb-5 max-w-xl text-center text-lg font-medium text-[#f5efef]">
+          <h1 className="mx-auto mb-5 max-w-xl text-center text-lg text-gray-100 max-md:font-medium">
             Effortlessly book your perfect stay with our intuitive hotel booking platform.{" "}
             <span className="hidden sm:inline">
               offering seamless access to the best accommodations worldwide
@@ -21,7 +21,7 @@ export default async function Page() {
           <SearchBox initialDestinations={initialDestinations} />
         </div>
         <div className="ml-4 lg:ml-8">
-          <h1 className="my-2 text-xl font-semibold">Popular 5-Star Hotels</h1>
+          <h1 className="my-2 text-xl font-medium">Popular 5-Star Hotels</h1>
           <div className="scrollbar-none space-x-2 overflow-x-auto rounded-s-xl bg-white px-2 pt-2 pb-1 whitespace-nowrap">
             <HotelSliderCard />
             <HotelSliderCard />
@@ -132,12 +132,12 @@ export default async function Page() {
         </div>
         <Card className="mx-2">
           <CardHeader className="p-2 sm:p-4">
-            <CardTitle>FAQ</CardTitle>
+            <CardTitle className="text-lg font-bold">FAQ</CardTitle>
           </CardHeader>
           <CardContent className="p-2 sm:p-4">
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   How do I book a hotel on Trip.com?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -149,7 +149,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   How to get cheap hotels on Trip.com?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -161,7 +161,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   Where can I find hotel deals on Trip.com?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -174,7 +174,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   What is the way to get lower prices at hotels?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -184,7 +184,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   How many hotels are listed in Hotels com?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -195,7 +195,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   Can I cancel or change my hotel reservation on Trip.com?
                 </AccordionTrigger>
                 <AccordionContent>
@@ -207,7 +207,7 @@ export default async function Page() {
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger className="py-2 font-medium sm:py-4">
+                <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
                   How do I contact trip.com customer service?
                 </AccordionTrigger>
                 <AccordionContent>

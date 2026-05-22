@@ -17,10 +17,7 @@ interface IProps {
   initialSuggestedLocations: string[];
 }
 
-export default function HotelsListHeaderSmallScreen({
-  initialDestinations,
-  initialSuggestedLocations,
-}: IProps) {
+export default function HotelsListHeaderMobile({ initialDestinations, initialSuggestedLocations }: IProps) {
   const { queryParams } = useQueryParams();
 
   return (
@@ -29,7 +26,7 @@ export default function HotelsListHeaderSmallScreen({
         <SelectDistinationDialog initialDestinations={initialDestinations}>
           <DialogTrigger
             className={cn(
-              "w-full border-b py-1 text-left text-sm",
+              "w-full border-b py-2 text-left text-sm",
               !queryParams.hotelName && !queryParams.city && !queryParams.country && "text-muted-foreground",
             )}
           >
@@ -43,9 +40,9 @@ export default function HotelsListHeaderSmallScreen({
           </DialogTrigger>
         </SelectDistinationDialog>
         <SelectDatesDialog>
-          <DialogTrigger className="flex w-full items-center gap-x-4 py-1 text-sm">
+          <DialogTrigger className="flex w-full items-center justify-around p-2 text-sm">
             <p>{queryParams.checkIn.toLocaleDateString("en-CA")}</p>
-            <small className="border-b-blue-800 font-semibold text-blue-600">To</small>
+            <span className="border-b-blue-800 font-medium text-blue-600">To</span>
             <p>{queryParams.checkOut.toLocaleDateString("en-CA")}</p>
           </DialogTrigger>
         </SelectDatesDialog>

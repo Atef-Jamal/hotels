@@ -39,9 +39,9 @@ export default function HotelsList({ initialHotels, matchedHotelsCount }: IProps
 
   return (
     <div className="h-full space-y-1 py-1 max-md:px-2">
-      <div className="flex items-center gap-2 rounded-sm bg-blue-500 px-2 py-1 text-sm font-medium md:text-base">
-        <span className="text-purple-50">{matchedHotelsCount}</span>
-        <span className="text-purple-200">Hotels Match your Search critiria</span>
+      <div className="flex items-center gap-2 rounded-sm bg-blue-500 px-2 py-1 text-sm md:text-base">
+        <span className="text-gray-100">{matchedHotelsCount}</span>
+        <span className="text-gray-100">Hotels Match your Search critiria</span>
       </div>
 
       <div className="h-full space-y-2">
