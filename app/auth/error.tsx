@@ -1,11 +1,6 @@
 "use client";
+import { IErrorPageProps } from "@/types";
 
-interface IErrorPageProps {
-  error?: Error;
-  reset?: () => void;
+export default function ErrorPage(props: IErrorPageProps) {
+  return <p>{props.error.message}</p>;
 }
-const error = (error: IErrorPageProps) => {
-  return <div>{error.error?.message} there was an error in auth</div>;
-};
-
-export default error;

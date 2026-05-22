@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
-import { Signika_Negative, Geist } from "next/font/google";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { Roboto } from "next/font/google";
+import Footer from "@/components/layout/Footer";
 import QueryProvider from "@/context/reactQuery";
-import { cn } from "@/lib/utils";
 import "./globals.css";
+import Navbare from "@/components/layout/navbare/Navbare";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-
-const inter = Signika_Negative({
-  weight: ["300", "400", "500", "700"],
-  // weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+const inter = Roboto({
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,14 +23,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className={inter.className}>
+    <html lang="en" className={`${inter.variable}`}>
+      <body className="antialiased">
         <QueryProvider>
           <main className="flex min-h-screen flex-col bg-purple-200">
-            <Navbar />
+            <Navbare />
             <section className="flex flex-1 flex-col">{children}</section>
             <Footer />
-          </main>{" "}
+          </main>
         </QueryProvider>
       </body>
     </html>

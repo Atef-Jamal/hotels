@@ -1,4 +1,4 @@
-export default function HotelsListLayout({ children }: { children: React.ReactNode }) {
+export default function HotelsLayout({ children }: { children: React.ReactNode }) {
   return (
     <section className="flex flex-1 flex-col bg-[#623af3] md:pt-10">
       <div className="flex flex-1 flex-col items-center bg-purple-200 md:rounded-t-3xl">

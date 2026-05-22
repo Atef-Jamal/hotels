@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -13,32 +12,15 @@ import Link from "next/link";
 import { Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { signUpSchema } from "@/lib/validation";
+import type { ISignUp } from "@/types";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
-  }),
-  password: z.string().min(2, {
-    message: "Password must be at least 2 characters.",
-  }),
-  phone: z
-    .string()
-    .min(2, {
-      message: "Phone must be at least 2 characters.",
-    })
-    .optional(),
-});
-
-export type FormSchemaField = z.infer<typeof formSchema>;
-const SignUpPage = () => {
+export default function SignUpPage() {
   const session = authClient.useSession();
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -48,7 +30,7 @@ const SignUpPage = () => {
   });
   const { handleSubmit, control, formState } = form;
 
-  const onSubmit = async (data: FormSchemaField) => {
+  const onSubmit = async (data: ISignUp) => {
     await authClient.signUp.email(
       {
         email: data.email,
@@ -172,6 +154,4 @@ const SignUpPage = () => {
       </Card>
     </section>
   );
-};
-
-export default SignUpPage;
+}

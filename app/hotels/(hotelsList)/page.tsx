@@ -1,24 +1,26 @@
-import { getHotles, getTotalHotelsCount } from "@/actions/actions";
-import HotelsList from "@/components/HotelsList";
-import { FilterHotelsSchema } from "@/validation";
+import { getHotelsList, getTotalHotelsCount } from "@/actions";
+import HotelsList from "@/components/hotels/HotelsList";
+import ErrorComponent from "@/components/shared/ErrorComponent";
+import { hotelsFilterSchema } from "@/lib/validation";
 
-async function HotelsPage({
-  searchParams,
-}: {
+interface IProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const getSearchParams = await searchParams;
-  console.log("getSearchParams", getSearchParams);
-  const validationResult = FilterHotelsSchema.safeParse(getSearchParams);
-  if (!validationResult.success)
-    throw new Error(`server validation error - ${validationResult.error.message}`);
-
-  const hotelsPromise = getHotles(validationResult.data);
-  const matchedHotelsCountPromise = getTotalHotelsCount(validationResult.data);
-
-  const [hotels, matchedHotelsCount] = await Promise.all([hotelsPromise, matchedHotelsCountPromise]);
-
-  return <HotelsList initialHotels={hotels} matchedHotelsCount={matchedHotelsCount} />;
 }
 
-export default HotelsPage;
+export default async function HotelListingPage({ searchParams }: IProps) {
+  try {
+    const getSearchParams = await searchParams;
+
+    const validationResult = hotelsFilterSchema.safeParse(getSearchParams);
+    if (!validationResult.success) {
+      throw new Error(validationResult.error.message);
+    }
+
+    const hotelsPromise = getHotelsList(validationResult.data);
+    const matchedHotelsCountPromise = getTotalHotelsCount(validationResult.data);
+    const [hotels, matchedHotelsCount] = await Promise.all([hotelsPromise, matchedHotelsCountPromise]);
+    return <HotelsList initialHotels={hotels} matchedHotelsCount={matchedHotelsCount} />;
+  } catch (error: any) {
+    return <ErrorComponent errorMessage={error.message} />;
+  }
+}

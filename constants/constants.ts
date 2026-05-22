@@ -1,4 +1,77 @@
-import { RoomServices } from "@/app/generated/prisma/enums";
+import { PaymentFacilities, RoomServices } from "@/app/generated/prisma/enums";
+import { ISortType } from "@/types";
+
+export const limitedHotelsPerPage = 10;
+export const limitedRoomsPerPage = 10;
+
+export const hotelDetailsCacheTag = "hotel-details";
+export const suggestedLocationCacheTag = "suggested-locations";
+export const discountsCacheTag = "discounts";
+
+export const navLinks = [
+  {
+    href: "/",
+    title: "Home",
+  },
+  {
+    href: "/hotels",
+    title: "Hotels",
+  },
+  {
+    href: "/hotels/details",
+    title: "Hotel Details",
+  },
+  {
+    href: "/bookNew",
+    title: "Book New",
+  },
+  {
+    href: "/services",
+    title: "Services",
+  },
+  {
+    href: "/about",
+    title: "About",
+  },
+];
+
+export const hotelDetailTabs = [
+  { id: "overview_tab", label: "Overview" },
+  { id: "rooms_tab", label: "Rooms" },
+  { id: "nearby_attractions_tab", label: "Nearby Attractions" },
+  { id: "reviews_tab", label: "Reviews" },
+  { id: "hotels_nearby_tab", label: "Hotels Nearby" },
+  { id: "policies_tab", label: "Policies" },
+];
+
+export const priceRanges = [
+  { label: "Under 60", min: 0, max: 60 },
+  { label: "60 - 150", min: 60, max: 150 },
+  { label: "150 - 200", min: 150, max: 200 },
+  { label: "200 - 300", min: 200, max: 300 },
+  { label: "300 - 400", min: 300, max: 400 },
+  { label: "400 - 500", min: 400, max: 500 },
+];
+
+export const paymentFacilitiesList: { label: string; value: PaymentFacilities }[] = [
+  { label: "Prepay Online", value: "Prepay_Online" },
+  { label: "Pay at Hotel", value: "Pay_At_Hotel" },
+];
+
+export const sortOptions: { label: string; value: ISortType }[] = [
+  { label: "Average Rating ( High to Low )", value: "rating" },
+  { label: "Distance ( Near to Far )", value: "distance" },
+  { label: "Recommended", value: "recommended" },
+  { label: "Top Reviewed ( High to Low )", value: "top-reviewed" },
+];
+
+export const bedTypesList = [
+  { label: "Single Bed", value: "Single" },
+  { label: "Double Bed", value: "Double" },
+  { label: "Twin Bed", value: "Twin" },
+  { label: "Queen Bed", value: "Queen" },
+  { label: "King Bed", value: "King" },
+];
 
 export const roomServicesList: RoomServices[] = [
   "Room_cleaning",
@@ -208,26 +281,4 @@ export const roomServicesList: RoomServices[] = [
   "Voice_assistant",
   "Smart_lock",
   "Keyless_entry",
-];
-
-export const priceRanges = [
-  { label: "Under 60", min: 0, max: 60 },
-  { label: "60 - 150", min: 60, max: 150 },
-  { label: "150 - 200", min: 150, max: 200 },
-  { label: "200 - 300", min: 200, max: 300 },
-  { label: "300 - 400", min: 300, max: 400 },
-  { label: "400 - 500", min: 400, max: 500 },
-];
-
-export const paymentFacilitiesList = [
-  { lable: "Prepay Online", value: "Prepay_Online" },
-  { lable: "Pay at Hotel", value: "Pay_At_Hotel" },
-];
-
-export const bedTypesList = [
-  { label: "Single Bed", value: "Single" },
-  { label: "Double Bed", value: "Double" },
-  { label: "Twin Bed", value: "Twin" },
-  { label: "Queen Bed", value: "Queen" },
-  { label: "King Bed", value: "King" },
 ];

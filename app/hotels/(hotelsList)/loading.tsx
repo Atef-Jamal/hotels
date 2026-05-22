@@ -1,4 +1,4 @@
-export default function laoding() {
+export default function Laoding() {
   return (
     <div className="flex h-full flex-col gap-2 p-1 md:p-2">
       <div className="animate-pulse rounded-md bg-white py-3 md:py-4"></div>

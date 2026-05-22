@@ -1,9 +1,12 @@
-import HotelSliderCard from "@/components/HotelSliderCard";
-import SearchBox from "@/components/SearchBox";
+"use cache";
+import HotelSliderCard from "@/components/hotels/HotelSliderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { getDestinations } from "@/actions";
+import SearchBox from "@/components/shared/SearchBox";
 
-export default function Home() {
+export default async function Page() {
+  const initialDestinations = await getDestinations("");
   return (
     <section className="relative flex-1 bg-purple-200">
       <div className="absolute top-0 h-60 w-full bg-linear-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
@@ -15,7 +18,7 @@ export default function Home() {
               offering seamless access to the best accommodations worldwide
             </span>
           </h1>
-          <SearchBox />
+          <SearchBox initialDestinations={initialDestinations} />
         </div>
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-semibold">Popular 5-Star Hotels</h1>

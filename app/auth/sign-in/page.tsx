@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,21 +9,12 @@ import { MdEmail, MdPassword } from "react-icons/md";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { signInSchema } from "@/lib/validation";
+import type { ISignIn } from "@/types";
 
-const formSchema = z.object({
-  email: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
-  }),
-  password: z.string().min(2, {
-    message: "Password must be at least 2 characters.",
-  }),
-});
-
-type FormSchemaField = z.infer<typeof formSchema>;
-
-const SignInPage = () => {
+export default function SignInPage() {
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -32,7 +22,7 @@ const SignInPage = () => {
   });
   const { handleSubmit, control, formState } = form;
 
-  const onSubmit = async (data: FormSchemaField) => {
+  const onSubmit = async (data: ISignIn) => {
     await authClient.signIn.email({
       email: data.email,
       password: data.password,
@@ -122,6 +112,4 @@ const SignInPage = () => {
       </Card>
     </section>
   );
-};
-
-export default SignInPage;
+}
