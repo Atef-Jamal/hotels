@@ -7,44 +7,46 @@ interface IProps {
   searchParams: Promise<{ paymentId: string | undefined }>;
 }
 export default async function PaymentPage({ searchParams }: IProps) {
-  try {
-    const { paymentId } = await searchParams;
+  const { paymentId } = await searchParams;
 
-    const payment = await prisma.payment.findUnique({
-      where: { id: paymentId },
+  const payment = await prisma.payment.findUnique({
+    where: { id: paymentId },
+    select: { id: true, amount: true, expiredAt: true, stripePaymentIntentId: true, bookingId: true },
+  });
+
+  if (!payment) return <ErrorComponent errorMessage={"Booking not found!"} />;
+
+  let paymentIntent;
+
+  if (payment.stripePaymentIntentId) {
+    paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
+  } else {
+    paymentIntent = await stripe.paymentIntents.create({
+      amount: payment.amount,
+      currency: "USD",
+      metadata: {
+        paymentId: payment.id,
+        bookingId: payment.bookingId,
+      },
     });
-
-    if (!payment) throw new Error("Booking not found!");
-
-    let paymentIntent;
-
-    if (payment.stripePaymentIntentId) {
-      paymentIntent = await stripe.paymentIntents.retrieve(payment.stripePaymentIntentId);
-    } else {
-      paymentIntent = await stripe.paymentIntents.create({
-        amount: payment.amount,
-        currency: "USD",
-        metadata: {
-          paymentId: payment.id,
-          bookingId: payment.bookingId,
-        },
-      });
-      await prisma.payment.update({
-        where: {
-          id: payment.id,
-        },
-        data: {
-          stripePaymentIntentId: paymentIntent.id,
-        },
-      });
-    }
-
-    if (!paymentIntent.client_secret) throw new Error("client secret not found");
-
-    return <CheckOutForm clientSecret={paymentIntent.client_secret} />;
-  } catch (error) {
-    let errorMessage = "an error occurred during checkout";
-    if (error instanceof Error) errorMessage = error.message;
-    return <ErrorComponent errorMessage={errorMessage} />;
+    await prisma.payment.update({
+      where: {
+        id: payment.id,
+      },
+      data: {
+        stripePaymentIntentId: paymentIntent.id,
+      },
+    });
   }
+
+  if (!paymentIntent.client_secret) throw new Error("client secret not found");
+
+  return (
+    <CheckOutForm
+      paymentId={payment.id}
+      bookingId={payment.bookingId}
+      bookingExpireAt={payment.expiredAt}
+      clientSecret={paymentIntent.client_secret}
+    />
+  );
 }

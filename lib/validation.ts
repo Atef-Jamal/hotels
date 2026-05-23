@@ -102,6 +102,7 @@ export const bookingOrderSchema = z
     guestName: z.string().min(2, { message: "Name must be at least 2 characters." }),
     guestEmail: z.email("Invalid Email"),
     guestPhone: z.string().min(10, { message: "Phone number must be at least 10 characters." }).optional(),
+    specialRequests: z.string().optional(),
     checkIn: z.date(),
     checkOut: z.date(),
     roomsCount: z.coerce.number(),

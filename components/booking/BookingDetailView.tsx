@@ -34,6 +34,8 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
     ...(user && user.phone ? { phone: user.phone } : { phone: "" }),
   }));
 
+  const [specialRequests, setSpecialRequets] = useState("");
+
   const [price, setPrice] = useState(room.pricePerNight / 100);
   const [promoCode, setPromoCode] = useState("");
   const [promoCodeLoading, setPromoCodeLoading] = useState(false);
@@ -68,13 +70,14 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
       checkIn: queryParams.checkIn,
       checkOut: queryParams.checkOut,
       roomsCount: queryParams.roomsCount,
-      // promoCode: promoCodeApplied ? promoCode : undefined,
-      promoCode: "jhjh",
+      promoCode: promoCodeApplied ? promoCode : undefined,
+      specialRequests,
     });
 
     setBookNowLoading(false);
 
     if (response.status === "error" && response.message.includes("Discount")) {
+      setBookNowError(response.message);
       return setOpenWarningDialog(true);
     }
 
@@ -140,14 +143,18 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
       <Dialog open={openWarningDialog} onOpenChange={setOpenWarningDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Warning Discount Failed</DialogTitle>
+            <DialogTitle className={"text-red-500"}>Warning Discount Failed</DialogTitle>
           </DialogHeader>
-          <div>Want to continue without discount </div>
-          <DialogClose className={"w-full rounded-sm bg-blue-700"} onClick={handleBookWithoutDiscount}>
+          <p>{bookNowError} </p>
+          <p>Want to continue without discount </p>
+          <DialogClose
+            className={"w-full rounded-sm bg-blue-600 py-1 font-medium text-gray-100"}
+            onClick={handleBookWithoutDiscount}
+          >
             continue
           </DialogClose>
           <DialogClose
-            className={"w-full rounded-sm bg-blue-700"}
+            className={"w-full rounded-sm bg-blue-600 py-1 font-medium text-gray-100"}
             onClick={() => {
               setPromoCodeApplied(false);
             }}
@@ -159,8 +166,10 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
 
       <div className="flex w-full flex-1 flex-col gap-4">
         <div className="rounded-md bg-white px-2 py-4 sm:px-4">
-          <h1 className="text-lg font-semibold">Guest Info</h1>
-          <p className="mt-2 text-sm font-thin">Guest names will be used at check in</p>
+          <h1 className="font-semibold md:font-bold">Guest Info</h1>
+          <p className="text-muted-foreground mt-2 text-xs md:text-sm">
+            Guest names will be used at check in
+          </p>
           <div className="mt-6 grid grid-cols-1 gap-3 min-[550px]:grid-cols-2">
             <div className="grid items-center gap-2">
               <Label htmlFor="name" className="ml-1">
@@ -227,23 +236,36 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
           )} */}
         </div>
         <div className="rounded-md bg-white px-2 py-4 sm:px-4">
-          <h1 className="text-lg font-semibold">
-            Special Requests{" "}
+          <h1 className="font-semibold md:font-bold">
+            Special Requests
             <span className="text-muted-foreground ml-1 text-sm font-normal">(Optional)</span>{" "}
           </h1>
-          <p className="mt-2 mb-4 text-sm font-thin">
+          <p className="text-muted-foreground mt-2 mb-4 text-xs md:text-sm">
             The property will do its best, but cannot guarantee to fulfill all requests.
           </p>
 
-          <Textarea placeholder="Enter Your Requests" />
+          <Textarea
+            value={specialRequests}
+            onChange={(e) => setSpecialRequets(e.target.value)}
+            className="text-sm"
+            placeholder="Enter Your Requests"
+          />
         </div>
         {hasDiscounts && (
           <div className="rounded-md bg-white px-2 py-4 sm:px-4">
-            <h1 className="mb-5 text-lg font-semibold">Available For this Booking</h1>
+            <h1 className="mb-5 font-semibold md:font-bold">Available For this Booking</h1>
             <form onSubmit={handleSubmitPromoCode} className="grid items-center gap-2">
-              <Label htmlFor="promo-code" className="ml-1">
-                Promo code
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="promo-code" className="ml-1">
+                  Promo code
+                </Label>
+                {promoCodeApplied && (
+                  <p className="rounded-xs bg-red-200 px-2 py-0.5 text-xs sm:text-sm">
+                    Discount Applied successfully
+                  </p>
+                )}
+              </div>
+
               <div className="relative flex items-center justify-end">
                 <Input
                   type="text"
@@ -284,7 +306,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
       </div>
       <div className="flex w-full flex-col gap-4 lg:w-[33%]">
         <div className="space-y-1 rounded-md bg-white px-2 py-4 sm:px-4">
-          <h1 className="mb-4 font-semibold">{room.type} Room</h1>
+          <h1 className="font-semibold md:font-bold">{room.type} Room</h1>
           <div className="flex flex-wrap items-center gap-x-4">
             {room.beds.map((bed, indx) => (
               <div key={indx} className="flex items-center gap-1">
@@ -302,9 +324,9 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-x-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
             {room.roomServices.slice(0, 10).map((item) => (
-              <div key={item} className="flex items-center gap-1 text-sm font-thin">
+              <div key={item} className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
                 <BadgeCheck size={15} />
                 <span key={item}>{item.replace(/_/g, " ")}.</span>
               </div>
@@ -312,11 +334,11 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
           </div>
           <div className="flex items-center gap-1">
             <InfoIcon size={15} />
-            <p className="text-sm font-thin">Non-Refundable</p>
+            <p className="text-muted-foreground text-xs md:text-sm">Non-Refundable</p>
           </div>
         </div>
         <div className="rounded-md bg-white px-2 py-4 sm:px-4">
-          <div className="flex items-center justify-evenly text-sm font-semibold">
+          <div className="flex items-center justify-evenly text-sm font-medium">
             <p>Check In</p>
             <Separator orientation="vertical" className="bg-black/30" />
             <p>Check Out</p>
@@ -328,7 +350,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
           <Separator orientation="horizontal" className="bg-black/30" />
           <div className="flex items-center gap-1 text-sm">
             <SelectDatesDialog>
-              <DialogTrigger className="flex flex-1 items-center justify-between">
+              <DialogTrigger className="flex flex-1 items-center justify-between font-medium">
                 <div className="flex items-center gap-1">
                   <Calendar size={15} />
                   <span>{nights} Nights</span>
@@ -338,7 +360,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             </SelectDatesDialog>
             <Separator orientation="vertical" className="mx-2 my-2 h-5 bg-black/30" />
 
-            <div className="flex flex-1 items-center justify-between">
+            <div className="flex flex-1 items-center justify-between font-medium">
               <div className="flex items-center gap-1">
                 <MdMeetingRoom size={15} />
                 <span>1 Rooms</span>
@@ -347,9 +369,9 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             </div>
           </div>
         </div>
-        <div className="space-y-3 rounded-md bg-white px-2 py-4 font-thin sm:px-4">
-          <h1 className="mb-4 font-semibold">Price Details</h1>
-          <div className="">
+        <div className="rounded-md bg-white px-2 py-4 sm:px-4">
+          <h1 className="mb-4 font-semibold md:font-bold">Price Details</h1>
+          <div className="text-muted-foreground text-xs md:text-sm">
             <div className="mb-1 flex items-center justify-between">
               <p>
                 {queryParams.roomsCount} Room * {nights} Night
@@ -360,23 +382,23 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
               <p>Taxes & Fees</p>
               <span>SAR 64.39</span>
             </div>
-            <div className="mb-2 ml-1 space-y-1 border-l border-l-black/30 pl-2">
+            <div className="ml-1 space-y-1 border-l border-l-black/30 pl-2">
               <p>City tax: SAR 13.13</p>
               <p>Accommodation tax: SAR 20.42</p>
               <p>Sales tax: SAR 30.84</p>
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold">Prepay Online</h1>
-            <span>SAR 420</span>
+          <div className="mt-3 flex items-center justify-between max-md:text-sm">
+            <h1 className="">Prepay Online</h1>
+            <span className="font-semibold">SAR 420</span>
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold">Pay At Hotels</h1>
-            <span>SAR 99</span>
+          <div className="my-1 flex items-center justify-between max-md:text-sm">
+            <h1 className="">Pay At Hotels</h1>
+            <span className="font-semibold">SAR 99</span>
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold">Total</h1>
-            <span>SAR {price}</span>
+          <div className="flex items-center justify-between max-md:text-sm">
+            <h1 className="">Total</h1>
+            <span className="font-semibold">SAR {price}</span>
           </div>
         </div>
         <div className="lg:hidden">

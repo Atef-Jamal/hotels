@@ -194,23 +194,24 @@ model Review {
 }
 
 model Booking {
-  id         String        @id @default(uuid())
-  userId     String?
-  hotelId    String
-  roomId     String
-  checkIn    DateTime
-  checkOut   DateTime
-  guestName  String
-  guestPhone String?
-  guestEmail String
-  status     BookingStatus
-  user       User?         @relation(fields: [userId], references: [id])
-  hotel      Hotel         @relation(fields: [hotelId], references: [id])
-  room       Room          @relation(fields: [roomId], references: [id])
-  payment    Payment[]
-  expiredAt  DateTime
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id              String        @id @default(uuid())
+  userId          String?
+  hotelId         String
+  roomId          String
+  checkIn         DateTime
+  checkOut        DateTime
+  guestName       String
+  guestPhone      String?
+  guestEmail      String
+  status          BookingStatus
+  user            User?         @relation(fields: [userId], references: [id])
+  hotel           Hotel         @relation(fields: [hotelId], references: [id])
+  room            Room          @relation(fields: [roomId], references: [id])
+  payment         Payment[]
+  specialRequests String?
+  expiredAt       DateTime
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@map("booking")
 }

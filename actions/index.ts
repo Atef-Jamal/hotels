@@ -518,7 +518,8 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
   const validationResult = bookingOrderSchema.safeParse(bookingDetails);
 
   if (!validationResult.success) return { status: "error", message: validationResult.error.message };
-  const { roomId, checkIn, checkOut, guestName, guestEmail, guestPhone, promoCode } = validationResult.data;
+  const { roomId, checkIn, checkOut, guestName, guestEmail, guestPhone, promoCode, specialRequests } =
+    validationResult.data;
 
   const getAuth = await auth.api.getSession({ headers: headerList });
   const user = getAuth?.user;
@@ -531,54 +532,6 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
       });
 
       if (!room) throw new Error("Room Not Found");
-
-      const nights = Math.ceil(Math.abs(checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-
-      let newPrice = nights * room.pricePerNight;
-
-      if (promoCode && promoCode.trim() !== "") {
-        const discount = await tx.discount.findUnique({
-          where: {
-            hotelId_code: {
-              hotelId: room.hotelId,
-              code: promoCode.trim(),
-            },
-          },
-        });
-
-        if (discount) {
-          if (discount.startDate > new Date()) {
-            if (discount.endDate > new Date()) {
-              if (discount.usageLimit > 0) {
-                if (discount.type === "FIXED") {
-                  newPrice = Math.max(newPrice - discount.amount, 0);
-                } else if (discount.type === "PERCENTAGE") {
-                  newPrice = Math.max(newPrice * (1 - discount.amount / 100), 0);
-                }
-                await tx.discount.update({
-                  where: {
-                    hotelId_code: {
-                      hotelId: room.hotelId,
-                      code: promoCode,
-                    },
-                  },
-                  data: {
-                    usageLimit: { decrement: 1 },
-                  },
-                });
-              } else {
-                throw new Error("Discount reach to usage limit");
-              }
-            } else {
-              throw new Error("Discount Expired");
-            }
-          } else {
-            throw new Error(`Discount start in ${discount.startDate.toLocaleDateString("en-CA")}`);
-          }
-        } else {
-          throw new Error("Discount not exists");
-        }
-      }
 
       const existingBooking = await tx.booking.findFirst({
         where: {
@@ -594,6 +547,46 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
         throw new Error("Room are no longer available. choose another room");
       }
 
+      const nights = Math.ceil(Math.abs(checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+
+      let newPrice = nights * room.pricePerNight;
+
+      if (promoCode && promoCode.trim() !== "") {
+        const discount = await tx.discount.findUnique({
+          where: {
+            hotelId_code: {
+              hotelId: room.hotelId,
+              code: promoCode.trim(),
+            },
+          },
+        });
+
+        if (!discount) throw new Error("Discount not exists");
+
+        if (discount.endDate < new Date()) throw new Error("Discount Expired");
+        if (discount.startDate > new Date())
+          throw new Error(`Discount start in ${discount.startDate.toLocaleDateString("en-CA")}`);
+
+        if (discount.usageLimit > 0) throw new Error("Discount reach to usage limit");
+
+        if (discount.type === "FIXED") {
+          newPrice = Math.max(newPrice - discount.amount, 0);
+        } else if (discount.type === "PERCENTAGE") {
+          newPrice = Math.max(newPrice * (1 - discount.amount / 100), 0);
+        }
+        await tx.discount.update({
+          where: {
+            hotelId_code: {
+              hotelId: room.hotelId,
+              code: promoCode,
+            },
+          },
+          data: {
+            usageLimit: { decrement: 1 },
+          },
+        });
+      }
+
       const booking = await tx.booking.create({
         data: {
           hotelId: room.hotelId,
@@ -602,6 +595,7 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
           checkOut: checkOut,
           guestName: guestName,
           guestEmail: guestEmail,
+          ...(specialRequests && specialRequests.trim() !== "" ? { specialRequests } : {}),
           ...(guestPhone ? { guestPhone: guestPhone } : {}),
           ...(user ? { userId: user.id } : {}),
           status: "PENDING",
@@ -738,6 +732,33 @@ export const handlePaymentCancellation = async (paymentIntent: Stripe.PaymentInt
     },
   });
   await prisma.$transaction([cancelBookingPromise, cancelPaymentPromise]);
+};
+
+export const isBookingExpired = async ({
+  bookingId,
+  paymentId,
+}: {
+  bookingId: string;
+  paymentId: string;
+}) => {
+  const [booking, payment] = await prisma.$transaction([
+    prisma.booking.findUnique({ where: { id: bookingId } }),
+    prisma.payment.findUnique({ where: { id: paymentId } }),
+  ]);
+
+  if (!booking || !payment) {
+    return true;
+  }
+
+  if (booking.expiredAt < new Date() || payment.expiredAt < new Date()) {
+    await prisma.$transaction([
+      prisma.booking.update({ where: { id: bookingId }, data: { status: "EXPIRED" } }),
+      prisma.payment.update({ where: { id: paymentId }, data: { status: "EXPIRED" } }),
+    ]);
+    return true;
+  }
+
+  return false;
 };
 
 export const cleanupExpiredBookings = async () => {

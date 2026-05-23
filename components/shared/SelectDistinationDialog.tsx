@@ -117,7 +117,7 @@ export default function SelectDistinationDialog({ children, initialDestinations 
                 data.map((result, indx) => (
                   <DialogClose
                     onClick={() => handleSelect(result)}
-                    className="overflow-hidden rounded-md bg-purple-200 text-sm font-medium"
+                    className="overflow-hidden rounded-md bg-purple-200 text-sm md:font-medium"
                     key={indx + Date.now() * Math.random() * 1000}
                   >
                     <Image src={testImage} alt="" className="h-24 bg-gray-500 object-cover" />
@@ -129,13 +129,13 @@ export default function SelectDistinationDialog({ children, initialDestinations 
                         {result.type === "city" && <p>{result.city}</p>}
                         {result.type === "country" && <p> {result.country}</p>}
                       </div>
-                      <span className="rounded-sm px-2 text-[12px] font-normal text-red-700">
+                      <span className="text-muted-foreground rounded-sm px-2 text-xs font-normal">
                         {result.type === "property" || result.type === "address"
                           ? `${result.city} - ${result.country}`
                           : ""}
 
-                        {result.type === "city" && <p>{result.country}</p>}
-                        {result.type === "country" && <p>country</p>}
+                        {result.type === "city" && <span>{result.country}</span>}
+                        {result.type === "country" && <span>country</span>}
                       </span>
                     </div>
                   </DialogClose>

@@ -3,25 +3,44 @@ import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { StripePaymentElementOptions } from "@stripe/stripe-js";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { getHours, getMinutes } from "date-fns";
+import { isBookingExpired } from "@/actions";
 
-export default function PaymentForm() {
+interface IProps {
+  bookingId: string;
+  paymentId: string;
+  bookingExpireAt: Date;
+}
+
+export default function PaymentForm({ bookingId, paymentId, bookingExpireAt }: IProps) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setPaymentLoading(true);
+
     if (!stripe || !elements) {
       throw new Error("stripe or elements not exists");
     }
-    const { error } = await stripe.confirmPayment({
+
+    const isExpired = await isBookingExpired({ bookingId, paymentId });
+
+    if (isExpired) {
+      setPaymentLoading(false);
+      return router.push("/payment/failed");
+    }
+
+    await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:3000/payment/completed",
+        return_url: `${process.env.BASE_URL}/payment/completed`,
       },
     });
-    console.log(error);
+
     router.push("/payment/failed");
   };
 
@@ -34,20 +53,29 @@ export default function PaymentForm() {
           <p>Informations</p>
         </div>
       </div>
+
       <form id="payment-form" onSubmit={handleSubmit} className="flex-1 rounded-lg bg-white p-2 md:p-4">
+        {bookingExpireAt < new Date() && (
+          <p className="mb-2 rounded-sm bg-blue-100 p-2 text-sm font-medium">Booking order Expired</p>
+        )}
+        {bookingExpireAt > new Date() && (
+          <p className="mb-2 rounded-sm bg-blue-100 p-2 text-sm font-medium">
+            This booking order with Expire at {getHours(bookingExpireAt)}:{getMinutes(bookingExpireAt)}
+          </p>
+        )}
         <PaymentElement id="payment-element" options={paymentElementOptions} />
-        <p className="mb-2 text-sm font-thin">
+        <p className="text-muted-foreground mb-2 text-xs md:text-sm">
           By submitting this booking, I acknowledge that I have read and agree to Hotels.com&lsquo;s Terms of
           Use and Privacy Statement.
         </p>
         <Button
           type="submit"
           id="submit"
-          disabled={!stripe || !elements}
+          disabled={!stripe || !elements || paymentLoading}
           size={"lg"}
           className="w-full rounded-sm bg-blue-700"
         >
-          confirm
+          {paymentLoading ? "processing" : "confirm"}
         </Button>
       </form>
     </div>

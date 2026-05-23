@@ -60,12 +60,12 @@ export default function RoomList({ hotelSlug, initialRooms, queryFilters }: IPro
               </div>
               <div className="flex flex-1 flex-col font-medium">
                 <div className="flex items-center justify-between">
-                  <h1 className="text-lg">{room.type.replace(/_/g, " ")} Room</h1>
+                  <h1 className="">{room.type.replace(/_/g, " ")} Room</h1>
                   <Button variant={"outline"} size={"sm"} className={"rounded-sm text-lg"}>
                     ${room.pricePerNight / 100}
                   </Button>
                 </div>
-                <div className="my-2 flex flex-wrap items-center gap-x-4">
+                <div className="my-1 flex flex-wrap items-center gap-x-4">
                   {room.beds.map((bed, indx) => (
                     <div key={indx} className="flex items-center gap-1 text-sm">
                       <div className="flex">
@@ -87,7 +87,9 @@ export default function RoomList({ hotelSlug, initialRooms, queryFilters }: IPro
                   {room.roomServices.slice(0, 10).map((service, indx) => (
                     <div key={indx} className="flex gap-1 md:gap-2">
                       <MdBathroom size={15} />
-                      <span className="text-xs font-normal md:text-sm">{service.replace(/_/g, " ")}</span>
+                      <span className="text-muted-foreground text-xs font-normal md:text-sm">
+                        {service.replace(/_/g, " ")}
+                      </span>
                     </div>
                   ))}
                 </div>

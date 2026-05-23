@@ -40,7 +40,7 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
           <div className="mx-2 space-y-2 rounded-lg bg-white py-3">
             <div className="px-2">
               <div className="flex items-center justify-between gap-x-2 truncate">
-                <h1 className="font-bold md:text-lg">{hotel.name}</h1>
+                <h1 className="font-semibold md:text-lg">{hotel.name}</h1>
                 <div className="flex items-center justify-center gap-x-1">
                   <Star size={13} className="text-[#f75858]" />
                   <Star size={13} className="text-[#f75858]" />
@@ -116,11 +116,11 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
             <NavigationTabs />
 
             <div id="overview_tab" className="mb-6 space-y-4 rounded-b-md bg-white p-2 md:p-4">
-              <div>
-                <h1 className="font-bold">Amenities</h1>
+              <div className="space-y-2">
+                <h1 className="font-semibold">Amenities</h1>
                 <div className="grid grid-cols-2 gap-2 overflow-hidden text-xs sm:grid-cols-3 md:grid-cols-4 md:text-sm lg:grid-cols-5">
                   {hotel.amenities.map((amenity, indx) => (
-                    <div key={indx} className="flex items-center gap-1">
+                    <div key={indx} className="text-muted-foreground flex items-center gap-1">
                       <SquareCheckBig size={15} />
                       <span className="text-nowrap">{amenity}</span>
                     </div>
@@ -128,35 +128,35 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
                 </div>
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Property description</h1>
-                <p className="text-xs md:text-sm">{hotel.description}</p>
+                <h1 className="font-semibold">Property description</h1>
+                <p className="text-muted-foreground text-xs md:text-sm">{hotel.description}</p>
               </div>
             </div>
 
             <div id="rooms_tab" className="mb-6 space-y-4 overflow-hidden rounded-md bg-white">
-              <h1 className="bg-slate-100 p-2 font-bold">Rooms</h1>
+              <h1 className="bg-slate-100 p-2 font-semibold">Rooms</h1>
               <RoomList hotelSlug={hotel.slug} initialRooms={initialRooms} queryFilters={queryFilters} />
             </div>
 
             <div id="nearby_attractions_tab" className="mb-6 overflow-hidden rounded-md bg-white">
-              <h1 className="bg-slate-100 p-2 font-bold">Nearby Attractions</h1>
+              <h1 className="bg-slate-100 p-2 font-semibold">Nearby Attractions</h1>
               <NearbyAttractionSection attractions={hotel.nearbyAttractions} />
             </div>
 
             <div id="reviews_tab" className="mb-6 space-y-2 overflow-hidden rounded-md bg-white">
               <div className="flex items-center justify-between bg-slate-100 p-2">
-                <h1 className="font-bold">Reviews</h1>
-                <span className="text-sm font-bold text-blue-800">122 reviews</span>
+                <h1 className="font-semibold">Reviews</h1>
+                <span className="text-sm font-medium text-blue-800">122 reviews</span>
               </div>
               <div className="bg-white">
                 <div className="flex items-center justify-between p-1 sm:px-2 md:px-4">
                   <div className="flex flex-col items-center justify-center gap-y-1">
                     <span className="text-4xl font-extrabold text-blue-800">3.7</span>
-                    <p className="text-xs font-bold text-blue-800">Hotels.com</p>
+                    <p className="text-xs font-semibold text-blue-800">Hotels.com</p>
                     <p className="px-1 text-center text-xs font-medium">Comprehensive Rating</p>
                   </div>
                   <div className="grid w-2/3 grid-cols-1 gap-x-4 sm:grid-cols-2 lg:gap-x-8">
-                    <div className="">
+                    <div>
                       <p className="text-sm font-medium">Cleanliness</p>
                       <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
                         <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
@@ -165,7 +165,7 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
                         3.8
                       </div>
                     </div>
-                    <div className="">
+                    <div>
                       <p className="text-sm font-medium">Amentities</p>
                       <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
                         <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
@@ -174,7 +174,7 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
                         3.8
                       </div>
                     </div>
-                    <div className="">
+                    <div>
                       <p className="text-sm font-medium">Location</p>
                       <div className="-mt-1 flex items-center justify-center gap-x-2 font-bold">
                         <div className="h-1.25 w-full overflow-hidden rounded-lg bg-slate-300">
@@ -223,7 +223,7 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
             </div>
 
             <div id="hotels_nearby_tab" className="mb-6 space-y-1 overflow-hidden rounded-lg bg-white">
-              <h1 className="bg-slate-100 p-2 font-bold">Hotels Nearby</h1>
+              <h1 className="bg-slate-100 p-2 font-semibold">Hotels Nearby</h1>
               <div className="scrollbar-none space-x-2 overflow-auto py-2 pl-3 whitespace-nowrap md:space-x-4">
                 {[...Array(10).keys()].map((item) => (
                   <div key={item} className="inline-block w-48 overflow-hidden rounded-md bg-[#c9c3c35d]">

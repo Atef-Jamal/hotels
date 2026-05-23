@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       ),
     ],
   },
-  allowedDevOrigins: ["192.168.8.113"],
+  allowedDevOrigins: ["192.168.8.113", "10.178.162.239"],
   cacheComponents: true,
 };
 
