@@ -578,7 +578,7 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
           where: {
             hotelId_code: {
               hotelId: room.hotelId,
-              code: promoCode,
+              code: promoCode.trim(),
             },
           },
           data: {
@@ -600,20 +600,29 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
           ...(user ? { userId: user.id } : {}),
           status: "PENDING",
           expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+          payment: {
+            create: {
+              status: "PENDING",
+              hotelId: room.hotelId,
+              amount: newPrice,
+              expiredAt: new Date(Date.now() + 30 * 60 * 1000),
+            },
+          },
+        },
+        select: {
+          payment: {
+            select: {
+              id: true,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
         },
       });
 
-      const payment = await tx.payment.create({
-        data: {
-          hotelId: booking.hotelId,
-          bookingId: booking.id,
-          status: "PENDING",
-          amount: newPrice,
-          expiredAt: new Date(Date.now() + 30 * 60 * 1000),
-        },
-      });
-
-      return payment;
+      return booking.payment[0];
     });
     return { status: "success", payment };
   } catch (error: any) {

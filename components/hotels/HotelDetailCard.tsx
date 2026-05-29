@@ -1,11 +1,11 @@
 "use client";
-import { BedDouble, BedSingle, MapPin, PlusIcon, StarIcon } from "lucide-react";
+import { BedDouble, BedSingle, Check, MapPin, PlusIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { MdBreakfastDining } from "react-icons/md";
 import { Button } from "../ui/button";
 import { useSearchParams } from "next/navigation";
 import { IHotelListResponse } from "@/types";
+import { Badge } from "../ui/badge";
 
 interface IProps {
   hotel: IHotelListResponse["hotels"][0];
@@ -50,15 +50,15 @@ export default function HotelDetailCard({ hotel }: IProps) {
       </div>
       <div className="flex flex-col gap-1 lg:col-span-3 lg:h-full">
         <div className="flex w-full items-center">
-          <p className="flex-1 truncate font-semibold">{hotel.name}</p>
+          <p className="flex-1 truncate font-semibold text-blue-700">{hotel.name}</p>
           <span className="flex items-center gap-x-0.5">
             {[...Array(Math.floor(hotel.averageRating)).keys()].map((item) => {
               return <StarIcon size={15} key={item} fill="#4ce747" color="#57c953" />;
             })}
           </span>
         </div>
-        <div className="flex items-center gap-x-3 text-sm font-medium sm:text-base">
-          <span className="rounded-s-lg rounded-b-lg bg-blue-800 px-1 py-0.5 text-xs font-semibold text-white">
+        <div className="flex items-center gap-x-3 text-sm md:font-medium">
+          <span className="rounded-s-lg rounded-b-lg bg-blue-800 px-1 py-0.5 text-xs text-white md:font-semibold">
             {hotel.averageRating} / 5
           </span>
           <span className="leading-3 text-blue-800">
@@ -71,14 +71,9 @@ export default function HotelDetailCard({ hotel }: IProps) {
                   : "Intermediate"}
           </span>
           <span className="text-muted-foreground"> {hotel.reviews.length} Review</span>
-          <button className="ml-auto flex items-center gap-2 rounded-sm bg-[#6a5d99] pr-2 pl-1 text-sm text-white">
-            <PlusIcon size={18} className="" /> WhitList
-          </button>
-        </div>
-
-        <div>
-          {hotel.paymentFacilities} -{hotel.location?.country} -{hotel.location?.city} - cancellation =
-          {String(hotel.policy?.cancellationPolicy)}
+          <Button size="xs" className="ml-auto flex items-center gap-2 rounded-sm bg-blue-600 text-gray-100">
+            <PlusIcon size={18} /> WhitList
+          </Button>
         </div>
 
         <div>
@@ -93,18 +88,46 @@ export default function HotelDetailCard({ hotel }: IProps) {
               </button>
             </div>
           ))}
+          <div className="flex items-center gap-1">
+            <MapPin size={14} />
+            <p className="text-muted-foreground flex-1 truncate text-xs leading-tight md:text-sm">
+              {`Near aribort - (256 meter) - (5 mins)`}
+            </p>
+            <Badge variant={"secondary"} className="rounded-xs text-xs font-medium">
+              Map
+            </Badge>
+          </div>
+          <div className="flex items-center gap-1">
+            <MapPin size={14} />
+            <p className="text-muted-foreground flex-1 truncate text-xs leading-tight md:text-sm">
+              {`Near aribort - (256 meter) - (5 mins)`}
+            </p>
+            <Badge variant={"secondary"} className="rounded-xs text-xs font-medium">
+              Map
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <MapPin size={14} />
+            <p className="text-muted-foreground flex-1 truncate text-xs leading-tight md:text-sm">
+              {`Near aribort - (256 meter) - (5 mins)`}
+            </p>
+            <Badge variant={"secondary"} className="rounded-xs text-xs font-medium">
+              Map
+            </Badge>
+          </div>
         </div>
         <div className="relative mx-2 mt-3 rounded-md bg-purple-200 px-3 py-1 md:mt-auto">
-          <div className="absolute -top-2 right-3 flex items-center gap-1 text-xs font-thin text-white">
-            <p className="rounded-xs bg-[#63c24be3] px-1 py-0.5">First Booking Deal</p>
-            <p className="rounded-xs bg-[#ee3f3ff8] px-1 py-0.5">40% Off</p>
+          <div className="font- absolute -top-2 right-3 flex items-center gap-1 text-xs text-white">
+            <p className="rounded-xs bg-[#63c24be3] px-1">First Booking Deal</p>
+            <p className="rounded-xs bg-[#ee3f3ff8] px-1">40% Off</p>
           </div>
-          <p className="font-medium">{hotel.rooms[0].type} Room</p>
+          <p className="text-sm font-medium text-blue-700">{hotel.rooms[0].type} Room</p>
           <div className="flex flex-wrap items-center gap-x-4">
             {hotel.rooms[0].breakfastIncluded && (
               <div className="flex items-center gap-2">
-                <MdBreakfastDining size={16} />{" "}
-                <span className="text-sm text-black/75">Breakfast Included</span>
+                <Check size={13} />
+                <span className="text-xs font-medium text-green-800">Breakfast Included</span>
               </div>
             )}
             <div className="flex flex-wrap items-center gap-x-4">
@@ -113,27 +136,27 @@ export default function HotelDetailCard({ hotel }: IProps) {
                   <div className="flex">
                     {[...Array(bed.count).keys()].map((num) => {
                       if (bed.type === "Single") return <BedSingle key={num} size={15} />;
-                      return <BedDouble key={num} size={15} />;
+                      return <BedDouble key={num} size={13} />;
                     })}
                   </div>
 
-                  <span className="text-sm text-black/75">
+                  <span className="text-xs font-medium text-green-800">
                     {bed.count} {bed.type} Beds
                   </span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className="ml-auto flex items-end gap-1">
-              <span className="line-through">390 SAR</span>
-              <span className="text-xl font-medium text-blue-700 md:text-2xl">
-                {hotel.rooms[0].pricePerNight / 100} SAR
-              </span>
-            </div>
-            <Button size={"sm"} className="w-full bg-blue-700">
+          <div className="item-center mt-2 flex justify-between gap-x-4">
+            <Button size={"sm"} className="flex-1 rounded-sm bg-blue-700">
               Check Availability
             </Button>
+            <div className="ml-auto flex items-end gap-1">
+              <span className="text-sm line-through">$390</span>
+              <span className="text-lg font-medium text-blue-700 md:text-xl">
+                ${hotel.rooms[0].pricePerNight / 100}
+              </span>
+            </div>
           </div>
         </div>
       </div>

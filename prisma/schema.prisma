@@ -119,12 +119,13 @@ model NearbyAttraction {
   name        String
   description String
   category    AttractionCategory
-  coordinates String[]
-  distance    Int
+  latitude    Float
+  longitude   Float
+  distance    String
   travelTime  String
   rating      Float
   images      String[]
-  website     String
+  website     String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 

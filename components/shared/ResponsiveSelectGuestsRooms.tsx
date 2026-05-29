@@ -20,7 +20,6 @@ import {
 } from "../ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SelectGuestsAndRooms from "./SelectGuestsAndRooms";
-import { User } from "lucide-react";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useState } from "react";
 
@@ -66,10 +65,7 @@ export default function ResponsiveSelectGuestsRooms({ children }: { children: Re
   return (
     <Dialog>
       <DialogTrigger className="hidden items-center gap-x-2 truncate rounded-sm border p-2 md:flex">
-        <User size={16} />
-        <span>
-          {queryParams.roomsCount} Room, {queryParams.adults} Adults, {queryParams.children} Children
-        </span>
+        {queryParams.roomsCount} Room, {queryParams.adults} Adults, {queryParams.children} Children
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

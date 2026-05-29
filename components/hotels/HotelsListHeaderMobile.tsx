@@ -77,12 +77,14 @@ export default function HotelsListHeaderMobile({ initialDestinations, initialSug
             Adults: {queryParams.adults}
           </span>
         )}
-        {queryParams.children ?? (
+
+        {queryParams.children !== undefined && (
           <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-1.5 py-0.75 text-sm text-white">
             Children: {queryParams.children}
           </span>
         )}
-        {queryParams.minPrice ?? (
+
+        {queryParams.minPrice !== undefined && (
           <span className="min-w-fit rounded-sm bg-[#daeeff3b] px-1.5 py-0.75 text-sm text-white">
             Min Price: {queryParams.minPrice}
           </span>
