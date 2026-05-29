@@ -4,16 +4,15 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { StripePaymentElementOptions } from "@stripe/stripe-js";
 import { FormEvent, useState } from "react";
-import { getHours, getMinutes } from "date-fns";
 import { isBookingExpired } from "@/actions";
+import BookingExpiringTimer from "./BookingExpiringTimer";
 
 interface IProps {
-  bookingId: string;
   paymentId: string;
   bookingExpireAt: Date;
 }
 
-export default function PaymentForm({ bookingId, paymentId, bookingExpireAt }: IProps) {
+export default function PaymentForm({ paymentId, bookingExpireAt }: IProps) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -27,7 +26,7 @@ export default function PaymentForm({ bookingId, paymentId, bookingExpireAt }: I
       throw new Error("stripe or elements not exists");
     }
 
-    const isExpired = await isBookingExpired({ bookingId, paymentId });
+    const isExpired = await isBookingExpired({ paymentId });
 
     if (isExpired) {
       setPaymentLoading(false);
@@ -58,11 +57,7 @@ export default function PaymentForm({ bookingId, paymentId, bookingExpireAt }: I
         {bookingExpireAt < new Date() && (
           <p className="mb-2 rounded-sm bg-blue-100 p-2 text-sm font-medium">Booking order Expired</p>
         )}
-        {bookingExpireAt > new Date() && (
-          <p className="mb-2 rounded-sm bg-blue-100 p-2 text-sm font-medium">
-            This booking order with Expire at {getHours(bookingExpireAt)}:{getMinutes(bookingExpireAt)}
-          </p>
-        )}
+        {bookingExpireAt > new Date() && <BookingExpiringTimer expireAt={bookingExpireAt} />}
         <PaymentElement id="payment-element" options={paymentElementOptions} />
         <p className="text-muted-foreground mb-2 text-xs md:text-sm">
           By submitting this booking, I acknowledge that I have read and agree to Hotels.com&lsquo;s Terms of

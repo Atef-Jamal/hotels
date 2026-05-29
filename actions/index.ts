@@ -743,27 +743,23 @@ export const handlePaymentCancellation = async (paymentIntent: Stripe.PaymentInt
   await prisma.$transaction([cancelBookingPromise, cancelPaymentPromise]);
 };
 
-export const isBookingExpired = async ({
-  bookingId,
-  paymentId,
-}: {
-  bookingId: string;
-  paymentId: string;
-}) => {
-  const [booking, payment] = await prisma.$transaction([
-    prisma.booking.findUnique({ where: { id: bookingId } }),
-    prisma.payment.findUnique({ where: { id: paymentId } }),
-  ]);
+export const isBookingExpired = async ({ paymentId }: { paymentId: string }) => {
+  const payment = await prisma.payment.findUnique({ where: { id: paymentId }, select: { expiredAt: true } });
 
-  if (!booking || !payment) {
+  if (!payment) {
     return true;
   }
 
-  if (booking.expiredAt < new Date() || payment.expiredAt < new Date()) {
-    await prisma.$transaction([
-      prisma.booking.update({ where: { id: bookingId }, data: { status: "EXPIRED" } }),
-      prisma.payment.update({ where: { id: paymentId }, data: { status: "EXPIRED" } }),
-    ]);
+  if (payment.expiredAt < new Date()) {
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: "EXPIRED",
+        booking: {
+          update: { status: "EXPIRED" },
+        },
+      },
+    });
     return true;
   }
 

@@ -44,7 +44,6 @@ export default async function PaymentPage({ searchParams }: IProps) {
   return (
     <CheckOutForm
       paymentId={payment.id}
-      bookingId={payment.bookingId}
       bookingExpireAt={payment.expiredAt}
       clientSecret={paymentIntent.client_secret}
     />

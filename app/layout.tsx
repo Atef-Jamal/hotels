@@ -28,6 +28,7 @@ export default async function RootLayout({
         <QueryProvider>
           <main className="flex min-h-screen flex-col bg-purple-200">
             <Navbare />
+
             <section className="flex flex-1 flex-col">{children}</section>
             <Footer />
           </main>
