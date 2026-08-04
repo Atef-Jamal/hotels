@@ -58,7 +58,7 @@ export default function SelectDistinationDialog({ children, initialDestinations 
     }
   };
 
-  const { status, data, error } = useQuery({
+  const { data, status, error } = useQuery({
     queryKey: ["destinations-list", searchTerm],
     queryFn: () => getDestinations(searchTerm),
     initialData: initialDestinations,

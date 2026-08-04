@@ -28,6 +28,12 @@ export function useQueryParams() {
   const bedTypeParam = searchParams.get("bedType");
   const roomServicesParam = searchParams.getAll("roomServices");
 
+  type IUpdateQueryParamsArg =
+    | { method: "append"; key: keyof IHotelsFilter; value: string }
+    | { method: "set"; key: keyof IHotelsFilter; value: string }
+    | { method: "delete"; key: keyof IHotelsFilter }
+    | { method: "toggle"; key: keyof IHotelsFilter; value: string };
+
   const validationResult = hotelsFilterSchema.safeParse({
     ...(pageParam ? { page: pageParam } : {}),
     ...(adultsParam ? { adults: adultsParam } : {}),
@@ -54,16 +60,10 @@ export function useQueryParams() {
     throw new Error(validationResult.error.message);
   }
 
-  type IProps =
-    | { method: "append"; key: keyof IHotelsFilter; value: string }
-    | { method: "set"; key: keyof IHotelsFilter; value: string }
-    | { method: "delete"; key: keyof IHotelsFilter }
-    | { method: "toggle"; key: keyof IHotelsFilter; value: string };
-
-  const updateQueryParams = (props: IProps[]) => {
+  const updateQueryParams = (arg: IUpdateQueryParamsArg[]) => {
     const params = new URLSearchParams(searchParams);
 
-    props.forEach((action) => {
+    arg.forEach((action) => {
       switch (action.method) {
         case "append":
           params.append(action.key, action.value);
