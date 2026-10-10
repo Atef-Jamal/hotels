@@ -20,7 +20,7 @@ export default async function HotelDetailsPage({ params, searchParams }: IProps)
   const [hotel, initialRooms, initialDestinations] = await Promise.all([
     getHotelDetails({ hotelSlug }),
     getHotelRooms({ hotelSlug, queryFilters: validatedResult.data }),
-    getDestinations(""),
+    getDestinations(),
   ]);
 
   return (

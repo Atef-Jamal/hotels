@@ -1,11 +1,11 @@
 import Image from "next/image";
-import gamePhoto from "@/public/gamePhoto-43.jpg";
+import hotelImage from "@/public/hotel-image.jpg";
 import { MapPin } from "lucide-react";
 
 export default function HotelSliderCard() {
   return (
     <div className="inline-block h-62.5 w-52.5 overflow-hidden rounded-sm">
-      <Image src={gamePhoto} priority={true} alt="" className="h-[45%] w-full object-cover" />
+      <Image src={hotelImage} priority={true} alt="" className="h-[45%] w-full object-cover" />
       <div className="bg-foreground/5 h-[55%] px-2 py-1">
         <h1 className="truncate font-medium max-md:text-sm">Asia international Hotel</h1>
         <div className="flex gap-x-1">

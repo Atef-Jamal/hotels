@@ -6,7 +6,7 @@ import { getDestinations } from "@/actions";
 import SearchBox from "@/components/shared/SearchBox";
 
 export default async function Page() {
-  const initialDestinations = await getDestinations("");
+  const initialDestinations = await getDestinations();
   return (
     <section className="relative flex-1 bg-purple-200">
       <div className="absolute top-0 h-60 w-full bg-linear-to-b from-[#623af3] via-[#623af3d2] to-purple-200"></div>
@@ -138,22 +138,22 @@ export default async function Page() {
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
-                  How do I book a hotel on Trip.com?
+                  How do I book a hotel on Hotels.com?
                 </AccordionTrigger>
                 <AccordionContent>
-                  To book a hotel on Trip.com, simply enter your destination, travel dates, and the number of
-                  guests on the page. Then, browse through the available hotels and select the one you want to
-                  book. Follow the prompts to enter your payment information and complete the booking.
+                  To book a hotel on Hotels.com, simply enter your destination, travel dates, and the number
+                  of guests on the page. Then, browse through the available hotels and select the one you want
+                  to book. Follow the prompts to enter your payment information and complete the booking.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
-                  How to get cheap hotels on Trip.com?
+                  How to get cheap hotels on Hotels.com?
                 </AccordionTrigger>
                 <AccordionContent>
-                  There are several ways to discover affordable hotels on Trip.com. You can narrow down your
+                  There are several ways to discover affordable hotels on Hotels.com. You can narrow down your
                   search results by filtering hotels according to your preferred price range, or you can sort
                   the results by price to view the least expensive options first.
                 </AccordionContent>
@@ -162,10 +162,10 @@ export default async function Page() {
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
-                  Where can I find hotel deals on Trip.com?
+                  Where can I find hotel deals on Hotels.com?
                 </AccordionTrigger>
                 <AccordionContent>
-                  Trip.com offers a diverse selection of hotel deals and promotions that are available
+                  Hotels.com offers a diverse selection of hotel deals and promotions that are available
                   throughout the year. You can easily find these special offers on our deals page. Moreover,
                   if you are a member of our loyalty program, you can log in to your account and discover
                   exclusive discounted rates at hotel list pages.
@@ -196,7 +196,7 @@ export default async function Page() {
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
-                  Can I cancel or change my hotel reservation on Trip.com?
+                  Can I cancel or change my hotel reservation on Hotels.com?
                 </AccordionTrigger>
                 <AccordionContent>
                   It depends on the hotel policy and cancellation date. Kindly check the policy section of
@@ -208,7 +208,7 @@ export default async function Page() {
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger className="py-2 font-medium max-md:text-sm sm:py-4">
-                  How do I contact trip.com customer service?
+                  How do I contact Hotels.com customer service?
                 </AccordionTrigger>
                 <AccordionContent>
                   You can contact Hotels com 24/7 customer service by visiting the Hotels com help center and

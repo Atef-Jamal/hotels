@@ -327,7 +327,7 @@ export const checkRoomAvailability = async ({
   return room;
 };
 
-export const getDestinations = async (searchTerm: string): Promise<IDestinationResponse> => {
+export const getDestinations = async (searchTerm: string = ""): Promise<IDestinationResponse> => {
   if (searchTerm.trim() === "") {
     const destinations = await prisma.hotelLocation.findMany({
       distinct: ["country", "city"],

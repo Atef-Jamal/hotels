@@ -5,7 +5,7 @@ import SearchBox from "@/components/shared/SearchBox";
 
 export default async function HotelsListingLayout({ children }: { children: React.ReactNode }) {
   const [initialDestinations, initialSuggestedLocations] = await Promise.all([
-    getDestinations(""),
+    getDestinations(),
     suggestedLocations({}),
   ]);
   return (

@@ -3,6 +3,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { IHotelsFilter } from "@/types";
 import { hotelsFilterSchema } from "@/lib/validation";
 
+type IUpdateQueryParamsArg =
+  | { method: "append"; key: keyof IHotelsFilter; value: string }
+  | { method: "set"; key: keyof IHotelsFilter; value: string }
+  | { method: "delete"; key: keyof IHotelsFilter }
+  | { method: "toggle"; key: keyof IHotelsFilter; value: string };
+
 export function useQueryParams() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -27,12 +33,6 @@ export function useQueryParams() {
   const sortParam = searchParams.get("sort");
   const bedTypeParam = searchParams.get("bedType");
   const roomServicesParam = searchParams.getAll("roomServices");
-
-  type IUpdateQueryParamsArg =
-    | { method: "append"; key: keyof IHotelsFilter; value: string }
-    | { method: "set"; key: keyof IHotelsFilter; value: string }
-    | { method: "delete"; key: keyof IHotelsFilter }
-    | { method: "toggle"; key: keyof IHotelsFilter; value: string };
 
   const validationResult = hotelsFilterSchema.safeParse({
     ...(pageParam ? { page: pageParam } : {}),

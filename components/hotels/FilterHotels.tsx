@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SortAsc, Star } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import testImage from "@/public/gamePhoto-43.jpg";
+import hotelImage from "@/public/hotel-image.jpg";
 import { useQuery } from "@tanstack/react-query";
 import { suggestedLocations } from "@/actions";
 import { Button } from "../ui/button";
@@ -459,7 +459,7 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
       <div className="space-y-3 border-b pb-4 max-sm:hidden">
         <h1 className="font-bold">Recently Viewed</h1>
         <div className="flex">
-          <Image src={testImage} alt="" className="h-full w-[40%] object-cover" />
+          <Image src={hotelImage} alt="" className="h-full w-[40%] object-cover" />
           <div className="flex-1 px-2">
             <h1 className="text-sm font-bold">Ramcaly Dubai Hotel</h1>
             <div className="flex items-center gap-x-2">

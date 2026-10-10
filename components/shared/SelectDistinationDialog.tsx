@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getDestinations } from "@/actions";
-import testImage from "@/public/gamePhoto-43.jpg";
+import hotelImage from "@/public/hotel-image.jpg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { MdClose } from "react-icons/md";
 import { useQueryParams } from "@/hooks/useQueryParams";
@@ -120,7 +120,7 @@ export default function SelectDistinationDialog({ children, initialDestinations 
                     className="overflow-hidden rounded-md bg-purple-200 text-sm md:font-medium"
                     key={indx + Date.now() * Math.random() * 1000}
                   >
-                    <Image src={testImage} alt="" className="h-24 bg-gray-500 object-cover" />
+                    <Image src={hotelImage} alt="" className="h-24 bg-gray-500 object-cover" />
                     <div className="flex flex-col items-start p-1">
                       <div className="flex items-center gap-x-1 truncate">
                         {result.type === "property" ? <Hotel color="blue" size={18} /> : <MapPin size={18} />}

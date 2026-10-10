@@ -1,4 +1,4 @@
-import testImage from "@/public/gamePhoto-43.jpg";
+import hotelImage from "@/public/hotel-image.jpg";
 import Image from "next/image";
 import { SquareCheckBig, Star } from "lucide-react";
 import ImageSlider from "@/components/hotelDetails/ImageSlider";
@@ -227,7 +227,7 @@ export default function HotelDetails({ hotel, queryFilters, initialRooms, initia
               <div className="scrollbar-none space-x-2 overflow-auto py-2 pl-3 whitespace-nowrap md:space-x-4">
                 {[...Array(10).keys()].map((item) => (
                   <div key={item} className="inline-block w-48 overflow-hidden rounded-md bg-[#c9c3c35d]">
-                    <Image src={testImage} priority={true} alt="" className="h-32 object-cover" />
+                    <Image src={hotelImage} priority={true} alt="" className="h-32 object-cover" />
                     <div className="space-y-1 p-2">
                       <h1 className="truncate text-sm font-bold">Atura Blacktwon, an EVA Hotel</h1>
                       <div className="flex items-center gap-x-1">

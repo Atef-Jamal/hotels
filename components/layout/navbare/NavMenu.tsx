@@ -78,14 +78,20 @@ export default function NavMenu() {
             <div className="space-y-2 rounded-lg bg-[#7fabe428] px-2 py-3">
               <h1 className="text-center font-medium">Access saving just for you - in only one step</h1>
               <div className={"mx-auto grid w-full max-w-100 grid-cols-2 gap-1"}>
-                <Button variant={"outline"} className={"rounded-sm"}>
-                  Search Hotels
-                </Button>
-                <Button variant={"outline"} className={"rounded-sm bg-blue-700 text-gray-100"}>
-                  <Link href={"/auth/sign-in"}>Sign in</Link>
-                  <span className="mx-1">/</span>
-                  <Link href={"/auth/sign-up"}>Register</Link>
-                </Button>
+                <DialogClose>
+                  <Button variant={"outline"} className={"rounded-sm"}>
+                    Search Hotels
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button variant={"outline"} className={"rounded-sm bg-blue-700 text-gray-100"}>
+                    <Link href={"/auth/sign-in"}>Sign in</Link>
+
+                    <span className="mx-1">/</span>
+
+                    <Link href={"/auth/sign-up"}>Register</Link>
+                  </Button>
+                </DialogClose>
               </div>
             </div>
             <div>
