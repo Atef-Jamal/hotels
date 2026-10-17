@@ -9,6 +9,7 @@ import {
   Menu,
   MessageSquare,
   View,
+  ReceiptText,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -104,13 +105,13 @@ export default function NavMenu() {
                 </li>
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
-                    <Hotel size={18} />
-                    <Link href={"/hotels/Details"}>Hotel Details</Link>
+                    <ReceiptText size={18} />
+                    <Link href={"/myBookings"}>My Bookings</Link>
                   </DialogClose>
                 </li>
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
-                    <Hotel size={18} /> <Link href={"/bookNew"}>BookNew</Link>
+                    <View size={18} /> <Link href={"/recentlyViewed"}>Recently Viewed</Link>
                   </DialogClose>
                 </li>
               </ul>
@@ -121,22 +122,22 @@ export default function NavMenu() {
               <ul className="space-y-2">
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
+                    <MdAccountBox size={18} /> <Link href={"/services"}>Services</Link>
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
+                    <HelpCircle size={18} /> <Link href={"/about"}>About</Link>
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <Languages size={18} /> English ( US )
                   </DialogClose>
                 </li>
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <CurrencyIcon size={18} /> Currency ( SAR )
-                  </DialogClose>
-                </li>
-                <li>
-                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
-                    <MdAccountBox size={18} /> My Bookings
-                  </DialogClose>
-                </li>
-                <li>
-                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
-                    <View size={18} /> Recently Viewed
                   </DialogClose>
                 </li>
               </ul>
@@ -147,17 +148,17 @@ export default function NavMenu() {
               <ul className="space-y-2">
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
-                    <HelpCircle size={18} /> Help
-                  </DialogClose>
-                </li>
-                <li>
-                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <MessageSquare size={18} /> Notifications
                   </DialogClose>
                 </li>
                 <li>
                   <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
                     <AppWindow size={18} /> Download the App
+                  </DialogClose>
+                </li>
+                <li>
+                  <DialogClose className={"flex items-center gap-x-2 text-sm text-blue-700"}>
+                    <HelpCircle size={18} /> Help
                   </DialogClose>
                 </li>
                 <li>

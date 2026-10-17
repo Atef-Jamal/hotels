@@ -15,19 +15,12 @@ import {
   bookingOrderSchema,
   applyDiscountSchema,
 } from "@/lib/validation";
-import { cacheTag } from "next/cache";
 import type {
   HotelLocationFindManyArgs,
   HotelWhereInput,
   RoomWhereInput,
 } from "@/app/generated/prisma/models";
-import {
-  discountsCacheTag,
-  hotelDetailsCacheTag,
-  limitedHotelsPerPage,
-  limitedRoomsPerPage,
-  suggestedLocationCacheTag,
-} from "@/constants/constants";
+import { limitedHotelsPerPage, limitedRoomsPerPage } from "@/constants/constants";
 import Stripe from "stripe";
 
 export const getHotelsList = async (queryFilters: IHotelsFilter) => {
@@ -219,9 +212,6 @@ export const getTotalHotelsCount = async (queryFilters: IHotelsFilter) => {
 };
 
 export const getHotelDetails = async ({ hotelSlug }: { hotelSlug: string }) => {
-  "use cache";
-  cacheTag(hotelDetailsCacheTag, hotelSlug);
-
   const hotel = await prisma.hotel.findUnique({
     where: {
       slug: hotelSlug,
@@ -465,8 +455,6 @@ export const getDestinations = async (searchTerm: string = ""): Promise<IDestina
 };
 
 export const suggestedLocations = async ({ country, city }: Pick<IHotelsFilter, "country" | "city">) => {
-  "use cache";
-  cacheTag(suggestedLocationCacheTag);
   let query: HotelLocationFindManyArgs = {};
 
   if (city) {
@@ -631,8 +619,6 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
 };
 
 export const hotelHasDiscount = async ({ hotelSlug }: { hotelSlug: string }) => {
-  "use cache";
-  cacheTag(hotelDetailsCacheTag, hotelSlug, discountsCacheTag);
   const discounts = await prisma.discount.count({ where: { hotel: { slug: hotelSlug } } });
   return discounts > 0;
 };

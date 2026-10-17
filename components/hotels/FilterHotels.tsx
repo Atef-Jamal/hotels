@@ -9,7 +9,7 @@ import hotelImage from "@/public/hotel-image.jpg";
 import { useQuery } from "@tanstack/react-query";
 import { suggestedLocations } from "@/actions";
 import { Button } from "../ui/button";
-import { BedTypeEnum, RoomServices } from "@/app/generated/prisma/enums";
+import { BedTypeEnum, PaymentFacilities, RoomServices } from "@/app/generated/prisma/enums";
 import { useEffect, useRef, useState } from "react";
 import {
   bedTypesList,
@@ -18,15 +18,15 @@ import {
   roomServicesList,
   sortOptions,
 } from "@/constants/constants";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import type { IResetFilters, ISortType } from "@/types";
 import { Slider } from "../ui/slider";
+import { useAppContext } from "@/context/appContext";
 
 interface IProps {
   initialSuggestedLocations: string[];
 }
 export default function FilterHotels({ initialSuggestedLocations }: IProps) {
-  const { queryParams, updateQueryParams } = useQueryParams();
+  const { queryParams, setQueryParams, updateQueryParams } = useAppContext();
   const timeoutRef = useRef<NodeJS.Timeout>();
   const [roomServicesPage, setRoomServicesPage] = useState(1);
 
@@ -36,24 +36,28 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
 
   const placesChangeHandler = (value: string) => {
     if (queryParams.address) {
+      setQueryParams(({ hotelName, ...rest }) => ({ ...rest, address: value }));
       return updateQueryParams([
         { method: "delete", key: "hotelName" },
         { method: "set", key: "address", value },
       ]);
     }
     if (queryParams.city) {
+      setQueryParams(({ hotelName, ...rest }) => ({ ...rest, address: value }));
       return updateQueryParams([
         { method: "delete", key: "hotelName" },
         { method: "set", key: "address", value },
       ]);
     }
     if (queryParams.country) {
+      setQueryParams(({ hotelName, address, ...rest }) => ({ ...rest, city: value }));
       return updateQueryParams([
         { method: "delete", key: "hotelName" },
         { method: "delete", key: "address" },
         { method: "set", key: "city", value },
       ]);
     }
+    setQueryParams(({ hotelName, address, city, ...rest }) => ({ ...rest, country: value }));
     return updateQueryParams([
       { method: "delete", key: "hotelName" },
       { method: "delete", key: "address" },
@@ -63,6 +67,15 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
   };
 
   const handleRoomServiceChange = (service: RoomServices) => {
+    setQueryParams((prev) => {
+      const exist = prev.roomServices.find((item) => item == service);
+      if (exist) {
+        const filtered = prev.roomServices.filter((v) => v !== service);
+        return { ...prev, roomServices: filtered };
+      } else {
+        return { ...prev, roomServices: [...prev.roomServices, service] };
+      }
+    });
     return updateQueryParams([
       {
         method: "toggle",
@@ -75,16 +88,19 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
   const resetFilters = (type: IResetFilters) => {
     switch (type) {
       case "Price":
+        setQueryParams((prev) => ({ ...prev, minPrice: 0, maxPrice: 700 }));
         updateQueryParams([
           { method: "delete", key: "minPrice" },
           { method: "delete", key: "maxPrice" },
         ]);
         break;
       case "Bed_Types":
+        setQueryParams(({ bedType, ...rest }) => ({ ...rest }));
         updateQueryParams([{ method: "delete", key: "bedType" }]);
 
         break;
       case "Popular_Filters":
+        setQueryParams(({ breakfastIncluded, cancellationPolicy, ...rest }) => ({ ...rest }));
         updateQueryParams([
           { method: "delete", key: "breakfastIncluded" },
           { method: "delete", key: "cancellationPolicy" },
@@ -92,19 +108,22 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
 
         break;
       case "Room_Facilities_Services":
+        setQueryParams((prev) => ({ ...prev, roomServices: [] }));
         updateQueryParams([{ method: "delete", key: "roomServices" }]);
 
         break;
       case "Average_Rating":
+        setQueryParams(({ averageRating, ...rest }) => ({ ...rest }));
         updateQueryParams([{ method: "delete", key: "averageRating" }]);
         break;
       case "Payment_Facilities":
+        setQueryParams(({ paymentFacilities, ...rest }) => ({ ...rest }));
         updateQueryParams([{ method: "delete", key: "paymentFacilities" }]);
 
         break;
       case "Sort":
+        setQueryParams(({ sort, ...rest }) => rest);
         updateQueryParams([{ method: "delete", key: "sort" }]);
-
         break;
       default:
         break;
@@ -112,6 +131,7 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
   };
 
   const handlePriceChange = (value: number[]) => {
+    setQueryParams((prev) => ({ ...prev, minPrice: value[0], maxPrice: value[1] }));
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -120,10 +140,11 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
         { method: "set", key: "minPrice", value: value[0].toString() },
         { method: "set", key: "maxPrice", value: value[1].toString() },
       ]);
-    }, 500);
+    }, 300);
   };
 
   const handleSortChange = (type: ISortType) => {
+    setQueryParams((prev) => ({ ...prev, sort: type }));
     return updateQueryParams([{ method: "set", key: "sort", value: type }]);
   };
 
@@ -175,12 +196,7 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
             {priceRanges.map((range) => (
               <Button
                 key={range.max}
-                onClick={() => {
-                  updateQueryParams([
-                    { method: "set", key: "minPrice", value: range.min.toString() },
-                    { method: "set", key: "maxPrice", value: range.max.toString() },
-                  ]);
-                }}
+                onClick={() => handlePriceChange([range.min, range.max])}
                 size={"sm"}
                 className="text-blue-700"
                 variant={"secondary"}
@@ -207,21 +223,14 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
             Reset
           </Button>
         </div>
-        {sortOptions.map((item) => (
-          <div key={item.value} className="flex items-center space-x-2 p-2">
-            <Checkbox
-              checked={queryParams.sort === item.value}
-              onCheckedChange={() => handleSortChange(item.value)}
-              id={item.value}
-            />
-            <label
-              htmlFor={item.value}
-              className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {item.label}
-            </label>
-          </div>
-        ))}
+        <RadioGroup value={queryParams.sort || ""} onValueChange={handleSortChange}>
+          {sortOptions.map(({ label, value }) => (
+            <div key={value} className="flex items-center space-x-2">
+              <RadioGroupItem value={value} id={value} />
+              <Label htmlFor={value}>{label}</Label>
+            </div>
+          ))}
+        </RadioGroup>
       </div>
       <div className="space-y-3 border-b pb-4">
         <div className="flex items-center justify-between">
@@ -242,8 +251,10 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               checked={queryParams.breakfastIncluded === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
+                  setQueryParams((prev) => ({ ...prev, breakfastIncluded: true }));
                   updateQueryParams([{ method: "set", key: "breakfastIncluded", value: "true" }]);
                 } else {
+                  setQueryParams(({ breakfastIncluded, ...rest }) => rest);
                   updateQueryParams([{ method: "delete", key: "breakfastIncluded" }]);
                 }
               }}
@@ -261,8 +272,10 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               checked={queryParams.cancellationPolicy === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
+                  setQueryParams((prev) => ({ ...prev, cancellationPolicy: true }));
                   updateQueryParams([{ method: "set", key: "cancellationPolicy", value: "true" }]);
                 } else {
+                  setQueryParams(({ cancellationPolicy, ...rest }) => rest);
                   updateQueryParams([{ method: "delete", key: "cancellationPolicy" }]);
                 }
               }}
@@ -313,8 +326,10 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               key={i}
               onClick={() => {
                 if (queryParams.averageRating === i + 2) {
+                  setQueryParams(({ averageRating, ...rest }) => rest);
                   return updateQueryParams([{ method: "delete", key: "averageRating" }]);
                 }
+                setQueryParams((prev) => ({ ...prev, averageRating: i + 2 }));
                 return updateQueryParams([
                   { method: "set", key: "averageRating", value: (i + 2).toString() },
                 ]);
@@ -345,8 +360,9 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
         </div>
 
         <RadioGroup
-          value={queryParams.bedType}
+          value={queryParams.bedType || ""}
           onValueChange={(value: BedTypeEnum) => {
+            setQueryParams((prev) => ({ ...prev, bedType: value }));
             return updateQueryParams([{ method: "set", key: "bedType", value }]);
           }}
           className="pl-2"
@@ -401,8 +417,9 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
         </div>
 
         <RadioGroup
-          value={queryParams.paymentFacilities}
-          onValueChange={(value) => {
+          value={queryParams.paymentFacilities || ""}
+          onValueChange={(value: PaymentFacilities) => {
+            setQueryParams((prev) => ({ ...prev, paymentFacilities: value }));
             return updateQueryParams([{ method: "set", key: "paymentFacilities", value }]);
           }}
           className="pl-2"

@@ -58,8 +58,10 @@ export default function PaymentForm({ paymentId, bookingExpireAt }: IProps) {
           <p className="mb-2 rounded-sm bg-blue-100 p-2 text-sm font-medium">Booking order Expired</p>
         )}
         {bookingExpireAt > new Date() && <BookingExpiringTimer expireAt={bookingExpireAt} />}
+
         <PaymentElement id="payment-element" options={paymentElementOptions} />
-        <p className="text-muted-foreground mb-2 text-xs md:text-sm">
+
+        <p className="text-muted-foreground my-2 text-xs md:text-sm">
           By submitting this booking, I acknowledge that I have read and agree to Hotels.com&lsquo;s Terms of
           Use and Privacy Statement.
         </p>

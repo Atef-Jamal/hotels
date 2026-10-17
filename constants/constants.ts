@@ -18,16 +18,12 @@ export const navLinks = [
     title: "Hotels",
   },
   {
-    href: "/hotels/details",
-    title: "Hotel Details",
+    href: "/myBookings",
+    title: "My Bookings",
   },
   {
-    href: "/bookNew",
-    title: "Book New",
-  },
-  {
-    href: "/services",
-    title: "Services",
+    href: "/recentlyViewed",
+    title: "Recently Viewed",
   },
   {
     href: "/about",

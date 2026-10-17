@@ -1,9 +1,9 @@
-"use cache";
 import HotelSliderCard from "@/components/hotels/HotelSliderCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getDestinations } from "@/actions";
 import SearchBox from "@/components/shared/SearchBox";
+import { Suspense } from "react";
 
 export default async function Page() {
   const initialDestinations = await getDestinations();
@@ -18,7 +18,9 @@ export default async function Page() {
               offering seamless access to the best accommodations worldwide
             </span>
           </h1>
-          <SearchBox initialDestinations={initialDestinations} />
+          <Suspense>
+            <SearchBox initialDestinations={initialDestinations} />
+          </Suspense>
         </div>
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-medium">Popular 5-Star Hotels</h1>

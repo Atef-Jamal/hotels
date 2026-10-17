@@ -6,11 +6,11 @@ import SortHotelsDrawer from "../shared/SortHotelsDrawer";
 import { DrawerTrigger } from "../ui/drawer";
 import { DialogTrigger } from "../ui/dialog";
 import ResponsiveSelectGuestsRooms from "../shared/ResponsiveSelectGuestsRooms";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import { IDestinationResponse } from "@/types";
 import SelectDistinationDialog from "@/components/shared/SelectDistinationDialog";
 import SelectDatesDialog from "@/components/shared/SelectDatesDialog";
 import FilterDrawer from "@/components/shared/FilterDrawer";
+import { useAppContext } from "@/context/appContext";
 
 interface IProps {
   initialDestinations: IDestinationResponse;
@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export default function HotelsListHeaderMobile({ initialDestinations, initialSuggestedLocations }: IProps) {
-  const { queryParams } = useQueryParams();
+  const { queryParams } = useAppContext();
 
   return (
     <header className="sticky top-0 z-1 bg-[#623af3] py-2 md:hidden">

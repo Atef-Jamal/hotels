@@ -1,13 +1,13 @@
 "use client";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "../ui/drawer";
 import { ArrowDown, CheckIcon } from "lucide-react";
 import { ISortType } from "@/types";
 import { Button } from "../ui/button";
 import { sortOptions } from "@/constants/constants";
+import { useAppContext } from "@/context/appContext";
 
 export default function SortHotelsDrawer() {
-  const { queryParams, updateQueryParams } = useQueryParams();
+  const { queryParams, updateQueryParams } = useAppContext();
 
   const updateSort = (sortValue: ISortType) => {
     return updateQueryParams([{ method: "set", key: "sort", value: sortValue }]);

@@ -1,4 +1,3 @@
-"use cache";
-export default async function PaymentFailedPage() {
+export default function PaymentFailedPage() {
   return <div>Payment Failed, try again</div>;
 }

@@ -62,6 +62,12 @@ export type IResetFilters =
   | "Bed_Types"
   | "Sort";
 
+export type IUpdateQueryParamsArg =
+  | { method: "append"; key: keyof IHotelsFilter; value: string }
+  | { method: "set"; key: keyof IHotelsFilter; value: string }
+  | { method: "delete"; key: keyof IHotelsFilter }
+  | { method: "toggle"; key: keyof IHotelsFilter; value: string };
+
 export interface IErrorPageProps {
   error: Error & { digest?: string };
   unstable_retry: () => void;

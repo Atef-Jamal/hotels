@@ -20,24 +20,17 @@ import {
 } from "../ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SelectGuestsAndRooms from "./SelectGuestsAndRooms";
-import { useQueryParams } from "@/hooks/useQueryParams";
-import { useState } from "react";
+import { useAppContext } from "@/context/appContext";
 
 export default function ResponsiveSelectGuestsRooms({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
-  const { queryParams, updateQueryParams } = useQueryParams();
-
-  const [guestsAndRooms, setGuestsAndRooms] = useState({
-    adults: queryParams.adults,
-    children: queryParams.children,
-    rooms: queryParams.roomsCount,
-  });
+  const { queryParams, updateQueryParams } = useAppContext();
 
   const handleApply = () => {
     return updateQueryParams([
-      { method: "set", key: "adults", value: guestsAndRooms.adults.toString() },
-      { method: "set", key: "children", value: guestsAndRooms.children.toString() },
-      { method: "set", key: "roomsCount", value: guestsAndRooms.rooms.toString() },
+      { method: "set", key: "adults", value: queryParams.adults.toString() },
+      { method: "set", key: "children", value: queryParams.children.toString() },
+      { method: "set", key: "roomsCount", value: queryParams.roomsCount.toString() },
     ]);
   };
 
@@ -49,7 +42,7 @@ export default function ResponsiveSelectGuestsRooms({ children }: { children: Re
           <DrawerHeader className="px-1">
             <DrawerTitle className="font-medium">Guests and Rooms</DrawerTitle>
           </DrawerHeader>
-          <SelectGuestsAndRooms guestsAndRooms={guestsAndRooms} setGuestsAndRooms={setGuestsAndRooms} />
+          <SelectGuestsAndRooms />
           <DrawerDescription className="mb-2 text-center text-xs font-light">
             if there are more guests. consider adding more rooms
           </DrawerDescription>
@@ -71,7 +64,7 @@ export default function ResponsiveSelectGuestsRooms({ children }: { children: Re
         <DialogHeader>
           <DialogTitle></DialogTitle>
         </DialogHeader>
-        <SelectGuestsAndRooms guestsAndRooms={guestsAndRooms} setGuestsAndRooms={setGuestsAndRooms} />
+        <SelectGuestsAndRooms />
         <DialogDescription>if there are more guests. consider adding more rooms</DialogDescription>
         <DialogFooter className="p-0">
           <DialogClose onClick={handleApply} className="m-2 w-full rounded-md bg-blue-700 py-1 text-gray-200">

@@ -5,7 +5,6 @@ import SelectDistinationDialog from "./SelectDistinationDialog";
 import SelectDatesDialog from "./SelectDatesDialog";
 import ResponsiveSelectGuestsRooms from "./ResponsiveSelectGuestsRooms";
 import { SendIcon } from "lucide-react";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import { IDestinationResponse } from "@/types";
 import { DialogTrigger } from "../ui/dialog";
 import { Badge } from "../ui/badge";
@@ -13,13 +12,14 @@ import { DrawerTrigger } from "../ui/drawer";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { useAppContext } from "@/context/appContext";
 
 interface IProps {
   initialDestinations: IDestinationResponse;
 }
 
 export default function SearchBox({ initialDestinations }: IProps) {
-  const { queryParams } = useQueryParams();
+  const { queryParams } = useAppContext();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

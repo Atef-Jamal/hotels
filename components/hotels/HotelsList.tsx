@@ -4,9 +4,9 @@ import HotelDetailCard from "@/components/hotels/HotelDetailCard";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import type { IHotelListResponse } from "@/types";
 import ErrorComponent from "../shared/ErrorComponent";
+import { useAppContext } from "@/context/appContext";
 
 interface IProps {
   initialHotels: IHotelListResponse;
@@ -14,7 +14,7 @@ interface IProps {
 }
 
 export default function HotelsList({ initialHotels, matchedHotelsCount }: IProps) {
-  const { queryParams } = useQueryParams();
+  const { queryParams } = useAppContext();
 
   const { data, status, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["loadMore", queryParams],

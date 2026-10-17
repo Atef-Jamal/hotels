@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { BadgeCheck, BedDouble, BedSingle, Calendar, ChevronDown, InfoIcon } from "lucide-react";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import { MdMeetingRoom } from "react-icons/md";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { applyDiscountTemporarily, bookNow } from "@/actions";
@@ -16,6 +15,7 @@ import type { IRoomsDetailResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { FaExclamationCircle } from "react-icons/fa";
 import SelectDatesDialog from "@/components/shared/SelectDatesDialog";
+import { useAppContext } from "@/context/appContext";
 
 interface IProps {
   room: IRoomsDetailResponse;
@@ -24,7 +24,7 @@ interface IProps {
 
 export default function BookingDetailView({ room, hasDiscounts }: IProps) {
   const auth = authClient.useSession();
-  const { queryParams } = useQueryParams();
+  const { queryParams } = useAppContext();
   const router = useRouter();
   const user = auth.data?.user;
 
@@ -139,7 +139,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
   };
 
   return (
-    <section className="mx-2 flex flex-col gap-4 rounded-xl max-md:py-2 lg:flex-row">
+    <section className="mx-2 flex flex-col gap-4 rounded-xl max-md:py-2 md:flex-row">
       <Dialog open={openWarningDialog} onOpenChange={setOpenWarningDialog}>
         <DialogContent>
           <DialogHeader>
@@ -297,14 +297,14 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             </form>
           </div>
         )}
-        <div className="hidden lg:block">
+        <div className="hidden md:block">
           {bookNowError && <p className="bg-red-200 py-1 text-center text-red-700">{bookNowError}</p>}
           <Button onClick={handleBook} size={"lg"} className="w-full rounded-md bg-blue-700">
             {bookNowLoading ? "processing..." : "Next Step"}
           </Button>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-4 lg:w-[33%]">
+      <div className="flex w-full flex-col gap-4 md:w-[33%]">
         <div className="space-y-1 rounded-md bg-white px-2 py-4 sm:px-4">
           <h1 className="font-semibold md:font-bold">{room.type} Room</h1>
           <div className="flex flex-wrap items-center gap-x-4">
@@ -324,7 +324,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+          <div className="grid grid-cols-2">
             {room.roomServices.slice(0, 10).map((item) => (
               <div key={item} className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
                 <BadgeCheck size={15} />
@@ -401,7 +401,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
             <span className="font-semibold">SAR {price}</span>
           </div>
         </div>
-        <div className="lg:hidden">
+        <div className="md:hidden">
           {bookNowError && <p className="bg-red-200 py-1 text-center text-red-700">{bookNowError}</p>}
           <Button onClick={handleBook} className="w-full rounded-md bg-blue-700">
             {bookNowLoading ? "processing..." : "Next Step"}

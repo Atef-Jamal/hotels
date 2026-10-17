@@ -1,82 +1,57 @@
 "use client";
 import { MinusCircle, PlusCircle } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
+import { useAppContext } from "@/context/appContext";
 
-interface IProps {
-  guestsAndRooms: {
-    adults: number;
-    children: number;
-    rooms: number;
-  };
-  setGuestsAndRooms: Dispatch<
-    SetStateAction<{
-      adults: number;
-      children: number;
-      rooms: number;
-    }>
-  >;
-}
+export default function SelectGuestsAndRooms() {
+  const { queryParams, setQueryParams } = useAppContext();
 
-export default function SelectGuestsAndRooms({ guestsAndRooms, setGuestsAndRooms }: IProps) {
   const decreaseAdults = () => {
-    setGuestsAndRooms((prev) => ({
+    setQueryParams((prev) => ({
       ...prev,
       adults: prev.adults - 1,
     }));
-    // updateQueryParams([{ method: "set", key: "adults", value: (queryParams.adults - 1).toString() }]);
   };
 
   const increaseAdults = () => {
-    setGuestsAndRooms((prev) => ({
+    setQueryParams((prev) => ({
       ...prev,
       adults: prev.adults + 1,
     }));
-    // updateQueryParams([{ method: "set", key: "adults", value: (queryParams.adults + 1).toString() }]);
   };
 
   const decreasChildren = () => {
-    setGuestsAndRooms((prev) => ({
+    setQueryParams((prev) => ({
       ...prev,
       children: prev.children - 1,
     }));
-    // updateQueryParams([{ method: "set", key: "children", value: (queryParams.children - 1).toString() }]);
   };
   const increaseChildren = () => {
-    setGuestsAndRooms((prev) => ({
+    setQueryParams((prev) => ({
       ...prev,
       children: prev.children + 1,
     }));
-    // updateQueryParams([{ method: "set", key: "children", value: (queryParams.children + 1).toString() }]);
   };
 
   const decreaseRoomCount = () => {
-    setGuestsAndRooms((prev) => ({
+    setQueryParams((prev) => ({
       ...prev,
-      rooms: prev.rooms - 1,
+      roomsCount: prev.roomsCount - 1,
     }));
-    // updateQueryParams([{ method: "set", key: "roomsCount", value: (queryParams.roomsCount - 1).toString() }]);
   };
 
   const increaseRoomCount = () => {
-    if (guestsAndRooms.adults <= guestsAndRooms.rooms && guestsAndRooms.rooms < 10) {
-      setGuestsAndRooms((prev) => ({
+    if (queryParams.adults <= queryParams.roomsCount && queryParams.roomsCount < 10) {
+      setQueryParams((prev) => ({
         ...prev,
         adults: prev.adults + 1,
-        rooms: prev.rooms + 1,
+        roomsCount: prev.roomsCount + 1,
       }));
-      // updateQueryParams([
-      //   { method: "set", key: "adults", value: (queryParams.adults + 1).toString() },
-      //   { method: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
-      // ]);
     } else {
-      setGuestsAndRooms((prev) => ({
+      setQueryParams((prev) => ({
         ...prev,
-        rooms: prev.rooms + 1,
+        roomsCount: prev.roomsCount + 1,
       }));
-      // updateQueryParams([
-      //   { method: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
-      // ]);
     }
   };
   return (
@@ -87,16 +62,16 @@ export default function SelectGuestsAndRooms({ guestsAndRooms, setGuestsAndRooms
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.adults <= 1}
+            disabled={queryParams.adults <= 1}
             onClick={decreaseAdults}
           >
             <MinusCircle size={17} />
           </Button>
-          <span> {guestsAndRooms.adults} </span>
+          <span> {queryParams.adults} </span>
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.adults >= 30}
+            disabled={queryParams.adults >= 30}
             onClick={increaseAdults}
           >
             <PlusCircle size={17} />
@@ -109,16 +84,16 @@ export default function SelectGuestsAndRooms({ guestsAndRooms, setGuestsAndRooms
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.children <= 0}
+            disabled={queryParams.children <= 0}
             onClick={decreasChildren}
           >
             <MinusCircle size={17} />
           </Button>
-          <span>{guestsAndRooms.children}</span>
+          <span>{queryParams.children}</span>
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.children >= 30}
+            disabled={queryParams.children >= 30}
             onClick={increaseChildren}
           >
             <PlusCircle size={17} />
@@ -131,16 +106,16 @@ export default function SelectGuestsAndRooms({ guestsAndRooms, setGuestsAndRooms
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.rooms <= 1}
+            disabled={queryParams.roomsCount <= 1}
             onClick={decreaseRoomCount}
           >
             <MinusCircle size={17} />
           </Button>
-          <span> {guestsAndRooms.rooms} </span>
+          <span> {queryParams.roomsCount} </span>
           <Button
             size={"icon-sm"}
             variant={"secondary"}
-            disabled={guestsAndRooms.rooms >= 10}
+            disabled={queryParams.roomsCount >= 10}
             onClick={increaseRoomCount}
           >
             <PlusCircle size={17} />
