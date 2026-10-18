@@ -10,7 +10,7 @@ import { IDestinationResponse } from "@/types";
 import SelectDistinationDialog from "@/components/shared/SelectDistinationDialog";
 import SelectDatesDialog from "@/components/shared/SelectDatesDialog";
 import FilterDrawer from "@/components/shared/FilterDrawer";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface IProps {
   initialDestinations: IDestinationResponse;
@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export default function HotelsListHeaderMobile({ initialDestinations, initialSuggestedLocations }: IProps) {
-  const { queryParams } = useAppContext();
+  const { queryParams } = useQueryParams();
 
   return (
     <header className="sticky top-0 z-1 bg-[#623af3] py-2 md:hidden">

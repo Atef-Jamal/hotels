@@ -15,7 +15,7 @@ import type { IRoomsDetailResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { FaExclamationCircle } from "react-icons/fa";
 import SelectDatesDialog from "@/components/shared/SelectDatesDialog";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface IProps {
   room: IRoomsDetailResponse;
@@ -24,7 +24,7 @@ interface IProps {
 
 export default function BookingDetailView({ room, hasDiscounts }: IProps) {
   const auth = authClient.useSession();
-  const { queryParams } = useAppContext();
+  const { queryParams } = useQueryParams();
   const router = useRouter();
   const user = auth.data?.user;
 
@@ -326,7 +326,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
 
           <div className="grid grid-cols-2">
             {room.roomServices.slice(0, 10).map((item) => (
-              <div key={item} className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
+              <div key={item} className="text-muted-foreground flex gap-1 text-xs md:text-sm">
                 <BadgeCheck size={15} />
                 <span key={item}>{item.replace(/_/g, " ")}.</span>
               </div>

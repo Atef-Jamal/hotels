@@ -4,10 +4,10 @@ import { ArrowDown, CheckIcon } from "lucide-react";
 import { ISortType } from "@/types";
 import { Button } from "../ui/button";
 import { sortOptions } from "@/constants/constants";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 export default function SortHotelsDrawer() {
-  const { queryParams, updateQueryParams } = useAppContext();
+  const { queryParams, updateQueryParams } = useQueryParams();
 
   const updateSort = (sortValue: ISortType) => {
     return updateQueryParams([{ method: "set", key: "sort", value: sortValue }]);

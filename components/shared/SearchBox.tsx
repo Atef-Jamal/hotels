@@ -12,14 +12,14 @@ import { DrawerTrigger } from "../ui/drawer";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface IProps {
   initialDestinations: IDestinationResponse;
 }
 
 export default function SearchBox({ initialDestinations }: IProps) {
-  const { queryParams } = useAppContext();
+  const { queryParams } = useQueryParams();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

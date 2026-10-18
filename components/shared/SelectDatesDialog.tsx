@@ -1,11 +1,11 @@
 "use client";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "../ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default function SelectDatesDialog({ children }: { children: React.ReactNode }) {
-  const { queryParams, updateQueryParams } = useAppContext();
+  const { queryParams, updateQueryParams } = useQueryParams();
 
   return (
     <Dialog>

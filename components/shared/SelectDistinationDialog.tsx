@@ -10,7 +10,7 @@ import { MdClose } from "react-icons/md";
 import { IDestinationItem, IDestinationResponse } from "@/types";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface IProps {
   children: React.ReactNode;
@@ -19,17 +19,10 @@ interface IProps {
 
 export default function SelectDistinationDialog({ children, initialDestinations }: IProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const { queryParams, setQueryParams, updateQueryParams } = useAppContext();
+  const { queryParams, updateQueryParams } = useQueryParams();
 
   const handleSelect = (distination: IDestinationItem) => {
     if (distination.type === "property") {
-      setQueryParams((prev) => ({
-        ...prev,
-        hotelName: distination.hotelSlug,
-        address: distination.address,
-        city: distination.city,
-        country: distination.country,
-      }));
       return updateQueryParams([
         { method: "set", key: "hotelName", value: distination.hotelSlug },
         { method: "set", key: "address", value: distination.address },
@@ -38,12 +31,6 @@ export default function SelectDistinationDialog({ children, initialDestinations 
       ]);
     }
     if (distination.type === "address") {
-      setQueryParams(({ hotelName, ...rest }) => ({
-        ...rest,
-        address: distination.address,
-        city: distination.city,
-        country: distination.country,
-      }));
       return updateQueryParams([
         { method: "delete", key: "hotelName" },
         { method: "set", key: "address", value: distination.address },
@@ -53,11 +40,6 @@ export default function SelectDistinationDialog({ children, initialDestinations 
     }
 
     if (distination.type === "city") {
-      setQueryParams(({ hotelName, address, ...rest }) => ({
-        ...rest,
-        city: distination.city,
-        country: distination.country,
-      }));
       return updateQueryParams([
         { method: "set", key: "city", value: distination.city },
         { method: "set", key: "country", value: distination.country },
@@ -67,10 +49,6 @@ export default function SelectDistinationDialog({ children, initialDestinations 
     }
 
     if (distination.type === "country") {
-      setQueryParams(({ hotelName, address, city, ...rest }) => ({
-        ...rest,
-        country: distination.country,
-      }));
       return updateQueryParams([
         { method: "set", key: "country", value: distination.country },
         { method: "delete", key: "hotelName" },

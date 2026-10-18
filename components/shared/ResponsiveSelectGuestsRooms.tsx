@@ -20,11 +20,11 @@ import {
 } from "../ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SelectGuestsAndRooms from "./SelectGuestsAndRooms";
-import { useAppContext } from "@/context/appContext";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 export default function ResponsiveSelectGuestsRooms({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
-  const { queryParams, updateQueryParams } = useAppContext();
+  const { queryParams, updateQueryParams } = useQueryParams();
 
   const handleApply = () => {
     return updateQueryParams([
