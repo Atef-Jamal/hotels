@@ -37,36 +37,36 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
   const placesChangeHandler = (value: string) => {
     if (queryParams.address) {
       return updateQueryParams([
-        { method: "delete", key: "hotelName" },
-        { method: "set", key: "address", value },
+        { action: "delete", key: "hotelName" },
+        { action: "set", key: "address", value },
       ]);
     }
     if (queryParams.city) {
       return updateQueryParams([
-        { method: "delete", key: "hotelName" },
-        { method: "set", key: "address", value },
+        { action: "delete", key: "hotelName" },
+        { action: "set", key: "address", value },
       ]);
     }
     if (queryParams.country) {
       return updateQueryParams([
-        { method: "delete", key: "hotelName" },
-        { method: "delete", key: "address" },
-        { method: "set", key: "city", value },
+        { action: "delete", key: "hotelName" },
+        { action: "delete", key: "address" },
+        { action: "set", key: "city", value },
       ]);
     }
 
     return updateQueryParams([
-      { method: "delete", key: "hotelName" },
-      { method: "delete", key: "address" },
-      { method: "delete", key: "city" },
-      { method: "set", key: "country", value },
+      { action: "delete", key: "hotelName" },
+      { action: "delete", key: "address" },
+      { action: "delete", key: "city" },
+      { action: "set", key: "country", value },
     ]);
   };
 
   const handleRoomServiceChange = (service: RoomServices) => {
     return updateQueryParams([
       {
-        method: "toggle",
+        action: "toggle",
         key: "roomServices",
         value: service,
       },
@@ -77,34 +77,34 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
     switch (type) {
       case "Price":
         updateQueryParams([
-          { method: "delete", key: "minPrice" },
-          { method: "delete", key: "maxPrice" },
+          { action: "delete", key: "minPrice" },
+          { action: "delete", key: "maxPrice" },
         ]);
         break;
       case "Bed_Types":
-        updateQueryParams([{ method: "delete", key: "bedType" }]);
+        updateQueryParams([{ action: "delete", key: "bedType" }]);
 
         break;
       case "Popular_Filters":
         updateQueryParams([
-          { method: "delete", key: "breakfastIncluded" },
-          { method: "delete", key: "cancellationPolicy" },
+          { action: "delete", key: "breakfastIncluded" },
+          { action: "delete", key: "cancellationPolicy" },
         ]);
 
         break;
       case "Room_Facilities_Services":
-        updateQueryParams([{ method: "delete", key: "roomServices" }]);
+        updateQueryParams([{ action: "delete", key: "roomServices" }]);
 
         break;
       case "Average_Rating":
-        updateQueryParams([{ method: "delete", key: "averageRating" }]);
+        updateQueryParams([{ action: "delete", key: "averageRating" }]);
         break;
       case "Payment_Facilities":
-        updateQueryParams([{ method: "delete", key: "paymentFacilities" }]);
+        updateQueryParams([{ action: "delete", key: "paymentFacilities" }]);
 
         break;
       case "Sort":
-        updateQueryParams([{ method: "delete", key: "sort" }]);
+        updateQueryParams([{ action: "delete", key: "sort" }]);
         break;
       default:
         break;
@@ -117,14 +117,14 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
     }
     timeoutRef.current = setTimeout(() => {
       updateQueryParams([
-        { method: "set", key: "minPrice", value: value[0].toString() },
-        { method: "set", key: "maxPrice", value: value[1].toString() },
+        { action: "set", key: "minPrice", value: value[0].toString() },
+        { action: "set", key: "maxPrice", value: value[1].toString() },
       ]);
     }, 300);
   };
 
   const handleSortChange = (type: ISortType) => {
-    return updateQueryParams([{ method: "set", key: "sort", value: type }]);
+    return updateQueryParams([{ action: "set", key: "sort", value: type }]);
   };
 
   const {
@@ -230,9 +230,9 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               checked={queryParams.breakfastIncluded === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
-                  updateQueryParams([{ method: "set", key: "breakfastIncluded", value: "true" }]);
+                  updateQueryParams([{ action: "set", key: "breakfastIncluded", value: "true" }]);
                 } else {
-                  updateQueryParams([{ method: "delete", key: "breakfastIncluded" }]);
+                  updateQueryParams([{ action: "delete", key: "breakfastIncluded" }]);
                 }
               }}
             />
@@ -249,9 +249,9 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               checked={queryParams.cancellationPolicy === true}
               onCheckedChange={(checked) => {
                 if (checked === true) {
-                  updateQueryParams([{ method: "set", key: "cancellationPolicy", value: "true" }]);
+                  updateQueryParams([{ action: "set", key: "cancellationPolicy", value: "true" }]);
                 } else {
-                  updateQueryParams([{ method: "delete", key: "cancellationPolicy" }]);
+                  updateQueryParams([{ action: "delete", key: "cancellationPolicy" }]);
                 }
               }}
             />
@@ -301,11 +301,11 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
               key={i}
               onClick={() => {
                 if (queryParams.averageRating === i + 2) {
-                  return updateQueryParams([{ method: "delete", key: "averageRating" }]);
+                  return updateQueryParams([{ action: "delete", key: "averageRating" }]);
                 }
 
                 return updateQueryParams([
-                  { method: "set", key: "averageRating", value: (i + 2).toString() },
+                  { action: "set", key: "averageRating", value: (i + 2).toString() },
                 ]);
               }}
               variant={"secondary"}
@@ -336,7 +336,7 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
         <RadioGroup
           value={queryParams.bedType || ""}
           onValueChange={(value: BedTypeEnum) => {
-            return updateQueryParams([{ method: "set", key: "bedType", value }]);
+            return updateQueryParams([{ action: "set", key: "bedType", value }]);
           }}
           className="pl-2"
         >
@@ -392,7 +392,7 @@ export default function FilterHotels({ initialSuggestedLocations }: IProps) {
         <RadioGroup
           value={queryParams.paymentFacilities || ""}
           onValueChange={(value: PaymentFacilities) => {
-            return updateQueryParams([{ method: "set", key: "paymentFacilities", value }]);
+            return updateQueryParams([{ action: "set", key: "paymentFacilities", value }]);
           }}
           className="pl-2"
         >

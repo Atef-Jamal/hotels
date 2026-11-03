@@ -28,9 +28,9 @@ export default function ResponsiveSelectGuestsRooms({ children }: { children: Re
 
   const handleApply = () => {
     return updateQueryParams([
-      { method: "set", key: "adults", value: queryParams.adults.toString() },
-      { method: "set", key: "children", value: queryParams.children.toString() },
-      { method: "set", key: "roomsCount", value: queryParams.roomsCount.toString() },
+      { action: "set", key: "adults", value: queryParams.adults.toString() },
+      { action: "set", key: "children", value: queryParams.children.toString() },
+      { action: "set", key: "roomsCount", value: queryParams.roomsCount.toString() },
     ]);
   };
 

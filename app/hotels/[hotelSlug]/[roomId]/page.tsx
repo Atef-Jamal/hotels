@@ -13,6 +13,7 @@ export default async function BookingDetailPage({ params, searchParams }: IProps
   const getSearchParams = await searchParams;
 
   const validatedResult = roomsFilterSchema.safeParse(getSearchParams);
+
   if (!validatedResult.success) {
     return <ErrorComponent errorMessage={validatedResult.error.message} />;
   }
@@ -21,6 +22,7 @@ export default async function BookingDetailPage({ params, searchParams }: IProps
     roomId,
     dates: { checkIn: validatedResult.data.checkIn, checkOut: validatedResult.data.checkOut },
   });
+
   const hasDiscounts = await hotelHasDiscount({ hotelSlug: room.hotel.slug });
 
   return <BookingDetailView room={room} hasDiscounts={hasDiscounts} />;

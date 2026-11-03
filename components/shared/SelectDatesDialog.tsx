@@ -26,8 +26,8 @@ export default function SelectDatesDialog({ children }: { children: React.ReactN
             onSelect={(dateRange) => {
               if (dateRange?.from && dateRange.to) {
                 return updateQueryParams([
-                  { method: "set", key: "checkIn", value: dateRange.from.toLocaleDateString("en-CA") },
-                  { method: "set", key: "checkOut", value: dateRange.to.toLocaleDateString("en-CA") },
+                  { action: "set", key: "checkIn", value: dateRange.from.toLocaleDateString("en-CA") },
+                  { action: "set", key: "checkOut", value: dateRange.to.toLocaleDateString("en-CA") },
                 ]);
               }
             }}

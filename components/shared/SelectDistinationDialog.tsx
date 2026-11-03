@@ -24,36 +24,36 @@ export default function SelectDistinationDialog({ children, initialDestinations 
   const handleSelect = (distination: IDestinationItem) => {
     if (distination.type === "property") {
       return updateQueryParams([
-        { method: "set", key: "hotelName", value: distination.hotelSlug },
-        { method: "set", key: "address", value: distination.address },
-        { method: "set", key: "city", value: distination.city },
-        { method: "set", key: "country", value: distination.country },
+        { action: "set", key: "hotelName", value: distination.hotelSlug },
+        { action: "set", key: "address", value: distination.address },
+        { action: "set", key: "city", value: distination.city },
+        { action: "set", key: "country", value: distination.country },
       ]);
     }
     if (distination.type === "address") {
       return updateQueryParams([
-        { method: "delete", key: "hotelName" },
-        { method: "set", key: "address", value: distination.address },
-        { method: "set", key: "city", value: distination.city },
-        { method: "set", key: "country", value: distination.country },
+        { action: "delete", key: "hotelName" },
+        { action: "set", key: "address", value: distination.address },
+        { action: "set", key: "city", value: distination.city },
+        { action: "set", key: "country", value: distination.country },
       ]);
     }
 
     if (distination.type === "city") {
       return updateQueryParams([
-        { method: "set", key: "city", value: distination.city },
-        { method: "set", key: "country", value: distination.country },
-        { method: "delete", key: "hotelName" },
-        { method: "delete", key: "address" },
+        { action: "set", key: "city", value: distination.city },
+        { action: "set", key: "country", value: distination.country },
+        { action: "delete", key: "hotelName" },
+        { action: "delete", key: "address" },
       ]);
     }
 
     if (distination.type === "country") {
       return updateQueryParams([
-        { method: "set", key: "country", value: distination.country },
-        { method: "delete", key: "hotelName" },
-        { method: "delete", key: "address" },
-        { method: "delete", key: "city" },
+        { action: "set", key: "country", value: distination.country },
+        { action: "delete", key: "hotelName" },
+        { action: "delete", key: "address" },
+        { action: "delete", key: "city" },
       ]);
     }
   };

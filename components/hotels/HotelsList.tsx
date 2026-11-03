@@ -7,6 +7,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { IHotelListResponse } from "@/types";
 import ErrorComponent from "../shared/ErrorComponent";
 import { useQueryParams } from "@/hooks/useQueryParams";
+
 interface IProps {
   initialHotels: IHotelListResponse;
   matchedHotelsCount: number;
@@ -14,7 +15,7 @@ interface IProps {
 
 export default function HotelsList({ initialHotels, matchedHotelsCount }: IProps) {
   const { queryParams } = useQueryParams();
-
+  console.log(initialHotels);
   const { data, status, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["loadMore", queryParams],
     queryFn: ({ pageParam }) => getHotelsList({ ...queryParams, page: pageParam }),
@@ -31,7 +32,7 @@ export default function HotelsList({ initialHotels, matchedHotelsCount }: IProps
         },
       ],
     },
-    staleTime: 1000 * 60 * 60,
+    // staleTime: 1000 * 60 * 60,
   });
 
   const hotels = data.pages.flatMap((page) => page.hotels);

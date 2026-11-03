@@ -3,7 +3,7 @@ import NavMenu from "./NavMenu";
 
 import { navLinks } from "@/constants/constants";
 import { Button } from "@/components/ui/button";
-import LoginRegisterButton from "./LoginRegisterButton";
+import ProfileButton from "./ProfileButton";
 
 export default function Navbare() {
   return (
@@ -20,7 +20,7 @@ export default function Navbare() {
           </li>
         ))}
       </ul>
-      <LoginRegisterButton />
+      <ProfileButton />
       <NavMenu />
     </div>
   );

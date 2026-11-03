@@ -22,111 +22,21 @@ export default async function Page() {
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-medium">Popular 5-Star Hotels</h1>
           <div className="scrollbar-none space-x-2 overflow-x-auto rounded-s-xl bg-white px-2 pt-2 pb-1 whitespace-nowrap">
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
+            {Array.from({ length: 50 })
+              .keys()
+              .map((ele) => (
+                <HotelSliderCard key={ele} />
+              ))}
           </div>
         </div>
         <div className="ml-4 lg:ml-8">
           <h1 className="my-2 text-xl font-semibold">Popular 5-Star Hotels</h1>
           <div className="scrollbar-none space-x-2 overflow-x-auto rounded-s-xl bg-white px-2 pt-2 pb-1 whitespace-nowrap">
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
-            <HotelSliderCard />
+            {Array.from({ length: 50 })
+              .keys()
+              .map((ele) => (
+                <HotelSliderCard key={ele} />
+              ))}
           </div>
         </div>
         <Card className="mx-2">

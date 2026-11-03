@@ -4,12 +4,8 @@ import { LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
-export default function LoginRegisterButton() {
+export default function ProfileButton() {
   const auth = authClient.useSession();
-
-  const handleSignOut = async () => {
-    await authClient.signOut();
-  };
 
   if (auth.isPending) {
     return (
@@ -21,7 +17,7 @@ export default function LoginRegisterButton() {
   if (auth.data) {
     return (
       <button
-        onClick={handleSignOut}
+        onClick={() => authClient.signOut()}
         className="hidden rounded-sm bg-white text-sm leading-4 font-semibold tracking-wide text-blue-900 md:flex"
       >
         <LogOut size={18} />

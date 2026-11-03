@@ -1,29 +1,31 @@
 "use server";
+
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import type {
-  IHotelsFilter,
-  IRoomsFilter,
   IBookingOrder,
-  IDestinationResponse,
   IApplyDiscount,
+  IHotelsFilter,
+  IDestinationResponse,
+  IRoomsFilter,
 } from "@/types";
 import {
-  hotelsFilterSchema,
-  roomsFilterSchema,
   bookingOrderSchema,
   applyDiscountSchema,
+  roomsFilterSchema,
+  hotelsFilterSchema,
 } from "@/lib/validation";
-import type {
-  HotelLocationFindManyArgs,
-  HotelWhereInput,
-  RoomWhereInput,
-} from "@/app/generated/prisma/models";
-import { limitedHotelsPerPage, limitedRoomsPerPage } from "@/constants/constants";
+
 import Stripe from "stripe";
+import { cacheTag, updateTag } from "next/cache";
+import { HotelLocationFindManyArgs, HotelWhereInput, RoomWhereInput } from "@/app/generated/prisma/models";
+import { limitedHotelsPerPage, limitedRoomsPerPage } from "@/constants/constants";
 
 export const getHotelsList = async (queryFilters: IHotelsFilter) => {
+  "use cache";
+  cacheTag("hotels");
+
   const validationResult = hotelsFilterSchema.safeParse(queryFilters);
   if (!validationResult.success) {
     throw new Error(validationResult.error.message);
@@ -144,6 +146,10 @@ export const getHotelsList = async (queryFilters: IHotelsFilter) => {
 };
 
 export const getTotalHotelsCount = async (queryFilters: IHotelsFilter) => {
+  "use cache";
+  cacheTag("hotels");
+  cacheTag("hotels-count");
+
   const validationResult = hotelsFilterSchema.safeParse(queryFilters);
   if (!validationResult.success) {
     return 0;
@@ -212,6 +218,10 @@ export const getTotalHotelsCount = async (queryFilters: IHotelsFilter) => {
 };
 
 export const getHotelDetails = async ({ hotelSlug }: { hotelSlug: string }) => {
+  "use cache";
+  cacheTag("hotels");
+  cacheTag(`hotels-${hotelSlug}`);
+
   const hotel = await prisma.hotel.findUnique({
     where: {
       slug: hotelSlug,
@@ -233,6 +243,9 @@ export const getHotelRooms = async ({
   hotelSlug: string;
   queryFilters: IRoomsFilter;
 }) => {
+  "use cache";
+  cacheTag(`hotels-rooms-${hotelSlug}`);
+
   const validatedResult = roomsFilterSchema.safeParse(queryFilters);
   if (!validatedResult.success) {
     throw new Error(validatedResult.error.message);
@@ -317,7 +330,18 @@ export const checkRoomAvailability = async ({
   return room;
 };
 
+export const hotelHasDiscount = async ({ hotelSlug }: { hotelSlug: string }) => {
+  "use cache";
+  cacheTag(`discount-${hotelSlug}`);
+
+  const discounts = await prisma.discount.count({ where: { hotel: { slug: hotelSlug } } });
+  return discounts > 0;
+};
+
 export const getDestinations = async (searchTerm: string = ""): Promise<IDestinationResponse> => {
+  "use cache";
+  cacheTag("distinations");
+
   if (searchTerm.trim() === "") {
     const destinations = await prisma.hotelLocation.findMany({
       distinct: ["country", "city"],
@@ -455,6 +479,9 @@ export const getDestinations = async (searchTerm: string = ""): Promise<IDestina
 };
 
 export const suggestedLocations = async ({ country, city }: Pick<IHotelsFilter, "country" | "city">) => {
+  "use cache";
+  cacheTag("suggestedLocations");
+
   let query: HotelLocationFindManyArgs = {};
 
   if (city) {
@@ -501,13 +528,45 @@ export const suggestedLocations = async ({ country, city }: Pick<IHotelsFilter, 
   return mappedLocations;
 };
 
+export const isBookingExpired = async ({ paymentId }: { paymentId: string }) => {
+  const payment = await prisma.payment.findUnique({ where: { id: paymentId }, select: { expiredAt: true } });
+
+  if (!payment) {
+    return true;
+  }
+
+  if (payment.expiredAt < new Date()) {
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: "EXPIRED",
+        booking: {
+          update: { status: "EXPIRED" },
+        },
+      },
+    });
+    return true;
+  }
+
+  return false;
+};
+
 export const bookNow = async (bookingDetails: IBookingOrder) => {
   const headerList = await headers();
   const validationResult = bookingOrderSchema.safeParse(bookingDetails);
 
   if (!validationResult.success) return { status: "error", message: validationResult.error.message };
-  const { roomId, checkIn, checkOut, guestName, guestEmail, guestPhone, promoCode, specialRequests } =
-    validationResult.data;
+  const {
+    hotelSlug,
+    roomId,
+    checkIn,
+    checkOut,
+    guestName,
+    guestEmail,
+    guestPhone,
+    promoCode,
+    specialRequests,
+  } = validationResult.data;
 
   const getAuth = await auth.api.getSession({ headers: headerList });
   const user = getAuth?.user;
@@ -612,15 +671,12 @@ export const bookNow = async (bookingDetails: IBookingOrder) => {
 
       return booking.payment[0];
     });
+    updateTag("hotels");
+    updateTag(`hotels-rooms-${hotelSlug}`);
     return { status: "success", payment };
   } catch (error: any) {
     return { status: "error", message: error.message };
   }
-};
-
-export const hotelHasDiscount = async ({ hotelSlug }: { hotelSlug: string }) => {
-  const discounts = await prisma.discount.count({ where: { hotel: { slug: hotelSlug } } });
-  return discounts > 0;
 };
 
 export const applyDiscountTemporarily = async (discountArgs: IApplyDiscount) => {
@@ -727,29 +783,6 @@ export const handlePaymentCancellation = async (paymentIntent: Stripe.PaymentInt
     },
   });
   await prisma.$transaction([cancelBookingPromise, cancelPaymentPromise]);
-};
-
-export const isBookingExpired = async ({ paymentId }: { paymentId: string }) => {
-  const payment = await prisma.payment.findUnique({ where: { id: paymentId }, select: { expiredAt: true } });
-
-  if (!payment) {
-    return true;
-  }
-
-  if (payment.expiredAt < new Date()) {
-    await prisma.payment.update({
-      where: { id: paymentId },
-      data: {
-        status: "EXPIRED",
-        booking: {
-          update: { status: "EXPIRED" },
-        },
-      },
-    });
-    return true;
-  }
-
-  return false;
 };
 
 export const cleanupExpiredBookings = async () => {

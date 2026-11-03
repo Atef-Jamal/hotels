@@ -98,6 +98,7 @@ export const hotelsFilterSchema = roomsFilterSchema.extend({
 
 export const bookingOrderSchema = z
   .object({
+    hotelSlug: z.string(),
     roomId: z.uuid("Invalid Room ID"),
     guestName: z.string().min(2, { message: "Name must be at least 2 characters." }),
     guestEmail: z.email("Invalid Email"),

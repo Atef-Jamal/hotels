@@ -29,9 +29,13 @@ export default function SearchBox({ initialDestinations }: IProps) {
   );
 
   const handelSearch = () => {
-    if (queryParams.hotelName)
-      return router.replace(`/hotels/${queryParams.hotelName}?${searchParams.toString()}`);
-    return router.replace(`/hotels?${searchParams.toString()}`);
+    let url = `/hotels?${searchParams.toString()}`;
+
+    if (queryParams.hotelName) {
+      url = `/hotels/${queryParams.hotelName}?${searchParams.toString()}`;
+    }
+
+    return router.replace(url);
   };
 
   return (
@@ -83,6 +87,7 @@ export default function SearchBox({ initialDestinations }: IProps) {
               {queryParams.roomsCount} Room, {queryParams.adults} Adults, {queryParams.children} Children
             </DrawerTrigger>
           </ResponsiveSelectGuestsRooms>
+
           {pathname !== "/hotels" && (
             <Button onClick={handelSearch} className="w-full rounded-sm py-4.5">
               Search

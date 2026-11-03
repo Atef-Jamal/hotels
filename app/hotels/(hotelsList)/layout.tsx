@@ -4,6 +4,7 @@ import HotelsListHeaderMobile from "@/components/hotels/HotelsListHeaderMobile";
 import SearchBox from "@/components/shared/SearchBox";
 
 export default async function HotelsListingLayout({ children }: { children: React.ReactNode }) {
+  "use cache";
   const [initialDestinations, initialSuggestedLocations] = await Promise.all([
     getDestinations(),
     suggestedLocations({}),

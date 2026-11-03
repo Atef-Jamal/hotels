@@ -10,11 +10,11 @@ export default function SortHotelsDrawer() {
   const { queryParams, updateQueryParams } = useQueryParams();
 
   const updateSort = (sortValue: ISortType) => {
-    return updateQueryParams([{ method: "set", key: "sort", value: sortValue }]);
+    return updateQueryParams([{ action: "set", key: "sort", value: sortValue }]);
   };
 
   const handleReset = () => {
-    return updateQueryParams([{ method: "delete", key: "sort" }]);
+    return updateQueryParams([{ action: "delete", key: "sort" }]);
   };
 
   return (

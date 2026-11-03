@@ -7,39 +7,39 @@ export default function SelectGuestsAndRooms() {
   const { queryParams, updateQueryParams } = useQueryParams();
 
   const decreaseAdults = () => {
-    return updateQueryParams([{ method: "set", key: "adults", value: (queryParams.adults - 1).toString() }]);
+    return updateQueryParams([{ action: "set", key: "adults", value: (queryParams.adults - 1).toString() }]);
   };
 
   const increaseAdults = () => {
-    return updateQueryParams([{ method: "set", key: "adults", value: (queryParams.adults + 1).toString() }]);
+    return updateQueryParams([{ action: "set", key: "adults", value: (queryParams.adults + 1).toString() }]);
   };
 
   const decreasChildren = () => {
     return updateQueryParams([
-      { method: "set", key: "children", value: (queryParams.children - 1).toString() },
+      { action: "set", key: "children", value: (queryParams.children - 1).toString() },
     ]);
   };
   const increaseChildren = () => {
     return updateQueryParams([
-      { method: "set", key: "children", value: (queryParams.children + 1).toString() },
+      { action: "set", key: "children", value: (queryParams.children + 1).toString() },
     ]);
   };
 
   const decreaseRoomCount = () => {
     return updateQueryParams([
-      { method: "set", key: "roomsCount", value: (queryParams.roomsCount - 1).toString() },
+      { action: "set", key: "roomsCount", value: (queryParams.roomsCount - 1).toString() },
     ]);
   };
 
   const increaseRoomCount = () => {
     if (queryParams.adults <= queryParams.roomsCount && queryParams.roomsCount < 10) {
       return updateQueryParams([
-        { method: "set", key: "adults", value: (queryParams.adults + 1).toString() },
-        { method: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
+        { action: "set", key: "adults", value: (queryParams.adults + 1).toString() },
+        { action: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
       ]);
     } else {
       return updateQueryParams([
-        { method: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
+        { action: "set", key: "roomsCount", value: (queryParams.roomsCount + 1).toString() },
       ]);
     }
   };

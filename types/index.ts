@@ -1,11 +1,5 @@
 import z from "zod";
-import {
-  getHotelDetails,
-  getHotelRooms,
-  getHotelsList,
-  checkRoomAvailability,
-  suggestedLocations,
-} from "@/actions";
+
 import {
   applyDiscountSchema,
   bookingOrderSchema,
@@ -14,6 +8,14 @@ import {
   signInSchema,
   signUpSchema,
 } from "@/lib/validation";
+
+import {
+  checkRoomAvailability,
+  getHotelDetails,
+  getHotelRooms,
+  getHotelsList,
+  suggestedLocations,
+} from "@/actions";
 
 export type ISignUp = z.infer<typeof signUpSchema>;
 export type ISignIn = z.infer<typeof signInSchema>;
@@ -63,10 +65,10 @@ export type IResetFilters =
   | "Sort";
 
 export type IUpdateQueryParamsArg =
-  | { method: "append"; key: keyof IHotelsFilter; value: string }
-  | { method: "set"; key: keyof IHotelsFilter; value: string }
-  | { method: "delete"; key: keyof IHotelsFilter }
-  | { method: "toggle"; key: keyof IHotelsFilter; value: string };
+  | { action: "append"; key: keyof IHotelsFilter; value: string }
+  | { action: "set"; key: keyof IHotelsFilter; value: string }
+  | { action: "delete"; key: keyof IHotelsFilter }
+  | { action: "toggle"; key: keyof IHotelsFilter; value: string };
 
 export interface IErrorPageProps {
   error: Error & { digest?: string };

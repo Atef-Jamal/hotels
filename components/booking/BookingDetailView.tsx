@@ -63,6 +63,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
     setBookNowError(null);
 
     const response = await bookNow({
+      hotelSlug: room.hotel.slug,
       roomId: room.id,
       guestName: guestDetails.name,
       guestEmail: guestDetails.email,
@@ -95,6 +96,7 @@ export default function BookingDetailView({ room, hasDiscounts }: IProps) {
     setBookNowError(null);
 
     const response = await bookNow({
+      hotelSlug: room.hotel.slug,
       roomId: room.id,
       guestName: guestDetails.name,
       guestEmail: guestDetails.email,

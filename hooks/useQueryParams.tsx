@@ -1,13 +1,7 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { IHotelsFilter } from "@/types";
 import { hotelsFilterSchema } from "@/lib/validation";
-
-type IUpdateQueryParamsArg =
-  | { method: "append"; key: keyof IHotelsFilter; value: string }
-  | { method: "set"; key: keyof IHotelsFilter; value: string }
-  | { method: "delete"; key: keyof IHotelsFilter }
-  | { method: "toggle"; key: keyof IHotelsFilter; value: string };
+import { IUpdateQueryParamsArg } from "@/types";
 
 export function useQueryParams() {
   const searchParams = useSearchParams();
@@ -63,42 +57,42 @@ export function useQueryParams() {
   const updateQueryParams = (arg: IUpdateQueryParamsArg[]) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    arg.forEach((action) => {
-      switch (action.method) {
+    arg.forEach((item) => {
+      switch (item.action) {
         case "append":
-          params.append(action.key, action.value);
+          params.append(item.key, item.value);
           break;
 
         case "set":
-          params.set(action.key, action.value);
+          params.set(item.key, item.value);
           break;
 
         case "delete":
-          params.delete(action.key);
+          params.delete(item.key);
           break;
 
         case "toggle": {
-          const values = params.getAll(action.key);
-          const exist = values.find((item) => item == action.value);
+          const values = params.getAll(item.key);
+          const exist = values.find((ele) => ele == item.value);
           if (exist) {
-            const filtered = values.filter((v) => v !== action.value);
-            params.delete(action.key);
-            filtered.forEach((v) => params.append(action.key, v));
+            const filtered = values.filter((ele) => ele !== item.value);
+            params.delete(item.key);
+            filtered.forEach((ele) => params.append(item.key, ele));
             break;
           } else {
-            params.append(action.key, action.value);
+            params.append(item.key, item.value);
             break;
           }
         }
 
         default: {
-          const _exhaustive: never = action;
+          const _exhaustive: never = item;
           return _exhaustive;
         }
       }
     });
 
-    window.history.pushState(null, "", `${pathname}?${params.toString()}`);
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
     return router.refresh();
   };
 
